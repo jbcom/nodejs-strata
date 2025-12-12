@@ -202,7 +202,8 @@ export {
     ProceduralGait,
     createBoneChain,
     createBoneChainFromLengths,
-    clampAngle,
+    // Re-export with original name for convenience; aliased in core to avoid potential collisions
+    animationClampAngle as clampAngle,
     dampedSpring,
     dampedSpringVector3,
     hermiteInterpolate,
@@ -269,8 +270,9 @@ export type {
     ScreenShakeIntensity,
     // Cloud types
     CloudLayerConfig,
-    // Note: WindConfig from clouds module omitted to avoid collision with weather WindConfig.
-    // Import CloudWindConfig directly from './core/clouds' if needed.
+    // Note: The clouds module has its own WindConfig type which conflicts with weather WindConfig.
+    // If you need the cloud-specific wind configuration, import it directly:
+    //   import type { WindConfig as CloudWindConfig } from '@jbcom/strata/core/clouds';
     DayNightConfig,
     CloudMaterialOptions,
     VolumetricCloudOptions,
@@ -603,6 +605,7 @@ export type {
     YukaVehicleRef,
     YukaPathProps,
     YukaPathRef,
+    // Alias StateConfig as YukaStateConfig to avoid naming conflict with state management StoreConfig
     StateConfig as YukaStateConfig,
     YukaStateMachineProps,
     YukaStateMachineRef,

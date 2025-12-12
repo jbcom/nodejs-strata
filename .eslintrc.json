@@ -28,5 +28,5 @@
         "@typescript-eslint/no-confusing-void-expression": "off",
         "@typescript-eslint/no-invalid-void-type": "off"
     },
-    "ignorePatterns": ["dist/", "node_modules/", "*.js"]
+    "ignorePatterns": ["dist/", "node_modules/", "*.js", "packages/*/"]
 }

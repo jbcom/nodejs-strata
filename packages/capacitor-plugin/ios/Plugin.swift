@@ -244,7 +244,8 @@ public class StrataPlugin: CAPPlugin, CAPBridgedPlugin {
         let controllerIndex = call.getInt("controllerIndex") ?? 0
         let controllers = GCController.controllers()
         
-        if controllerIndex < controllers.count,
+        // Validate controller index bounds (including negative values)
+        if controllerIndex >= 0 && controllerIndex < controllers.count,
            let gamepad = controllers[controllerIndex].extendedGamepad {
             let deadzone = gamepadDeadzone
             

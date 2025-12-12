@@ -8,6 +8,7 @@ import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Display;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -42,7 +43,8 @@ public class StrataPlugin extends Plugin {
     private Vibrator vibrator;
     // Cache last gamepad MotionEvent for reading axis values in getInputSnapshot
     private MotionEvent lastGamepadEvent = null;
-    private boolean[] lastGamepadButtons = new boolean[20];
+    // Use SparseBooleanArray since gamepad keycodes (e.g., KEYCODE_BUTTON_A=96) exceed small array bounds
+    private SparseBooleanArray lastGamepadButtons = new SparseBooleanArray();
 
     @Override
     public void load() {
@@ -301,9 +303,10 @@ public class StrataPlugin extends Plugin {
         }
         
         // Read cached button states
-        buttons.put("jump", lastGamepadButtons[KeyEvent.KEYCODE_BUTTON_A]);
-        buttons.put("action", lastGamepadButtons[KeyEvent.KEYCODE_BUTTON_B]);
-        buttons.put("cancel", lastGamepadButtons[KeyEvent.KEYCODE_BUTTON_X]);
+        // Use SparseBooleanArray.get() which safely returns false for missing keys
+        buttons.put("jump", lastGamepadButtons.get(KeyEvent.KEYCODE_BUTTON_A));
+        buttons.put("action", lastGamepadButtons.get(KeyEvent.KEYCODE_BUTTON_B));
+        buttons.put("cancel", lastGamepadButtons.get(KeyEvent.KEYCODE_BUTTON_X));
 
         JSArray touchesArray = new JSArray();
         for (Map.Entry<Integer, JSObject> entry : activeTouches.entrySet()) {
@@ -513,6 +516,10 @@ public class StrataPlugin extends Plugin {
     public boolean handleGamepadMotionEvent(MotionEvent event) {
         if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK ||
             (event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
+            // Recycle the previous event to prevent memory leak
+            if (lastGamepadEvent != null) {
+                lastGamepadEvent.recycle();
+            }
             // Cache the event for reading in getInputSnapshot
             lastGamepadEvent = MotionEvent.obtain(event);
             return true;
@@ -526,10 +533,8 @@ public class StrataPlugin extends Plugin {
      */
     public boolean handleGamepadKeyEvent(KeyEvent event) {
         int keyCode = event.getKeyCode();
-        if (keyCode >= 0 && keyCode < lastGamepadButtons.length) {
-            lastGamepadButtons[keyCode] = (event.getAction() == KeyEvent.ACTION_DOWN);
-            return true;
-        }
-        return false;
+        // SparseBooleanArray handles any keyCode without bounds issues
+        lastGamepadButtons.put(keyCode, event.getAction() == KeyEvent.ACTION_DOWN);
+        return true;
     }
 }

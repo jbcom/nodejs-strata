@@ -57,6 +57,8 @@ export class LODManager {
     > = new Map();
     private nextId: number = 0;
     private cameraPosition: THREE.Vector3 = new THREE.Vector3();
+    // Reusable vector to avoid allocations in update loop
+    private tempObjectPosition: THREE.Vector3 = new THREE.Vector3();
 
     generateId(): string {
         return `lod_${this.nextId++}`;
@@ -95,10 +97,10 @@ export class LODManager {
 
         this.objects.forEach((entry) => {
             const { config, state, object } = entry;
-            const objectPosition = new THREE.Vector3();
-            object.getWorldPosition(objectPosition);
+            // Reuse temporary vector to avoid allocations
+            object.getWorldPosition(this.tempObjectPosition);
 
-            const distance = objectPosition.distanceTo(this.cameraPosition);
+            const distance = this.tempObjectPosition.distanceTo(this.cameraPosition);
             const targetLevel = this.calculateLevel(distance, config, state);
 
             if (targetLevel !== state.currentLevel) {
@@ -165,6 +167,10 @@ export function calculateLODLevel(
     cameraPosition: THREE.Vector3,
     levels: LODLevel[]
 ): number {
+    if (!levels || levels.length === 0) {
+        throw new Error('calculateLODLevel: levels array cannot be empty');
+    }
+
     const distance = objectPosition.distanceTo(cameraPosition);
 
     for (let i = 0; i < levels.length; i++) {
@@ -189,6 +195,14 @@ export function createLODLevels(
     }));
 }
 
+/**
+ * Simplify geometry by sampling complete triangles.
+ *
+ * Note: This is a naive triangle decimation that preserves mesh topology
+ * by operating on complete triangles rather than individual vertices.
+ * For production use with complex meshes, consider using a proper
+ * mesh simplification library (e.g., meshoptimizer, simplify-geometry).
+ */
 export function simplifyGeometry(
     geometry: THREE.BufferGeometry,
     options: SimplificationOptions
@@ -200,32 +214,51 @@ export function simplifyGeometry(
         return geometry.clone();
     }
 
-    const originalCount = positionAttr.count;
-    const targetCount = Math.max(3, Math.floor(originalCount * targetRatio));
+    const normalAttr = geometry.getAttribute('normal');
+    const uvAttr = geometry.getAttribute('uv');
+    const indexAttr = geometry.getIndex();
 
-    if (targetCount >= originalCount) {
+    // Calculate triangle count
+    const triangleCount = indexAttr ? indexAttr.count / 3 : positionAttr.count / 3;
+
+    const targetTriangles = Math.max(1, Math.floor(triangleCount * targetRatio));
+
+    if (targetTriangles >= triangleCount) {
         return geometry.clone();
     }
 
     const simplified = new THREE.BufferGeometry();
-    const step = Math.ceil(originalCount / targetCount);
+
+    // Calculate step to sample complete triangles
+    const triangleStep = Math.max(1, Math.ceil(triangleCount / targetTriangles));
 
     const newPositions: number[] = [];
     const newNormals: number[] = [];
     const newUvs: number[] = [];
 
-    const normalAttr = geometry.getAttribute('normal');
-    const uvAttr = geometry.getAttribute('uv');
+    for (let tri = 0; tri < triangleCount; tri += triangleStep) {
+        // Process all 3 vertices of this triangle
+        for (let v = 0; v < 3; v++) {
+            // Get vertex index - use index buffer if available
+            const vertexIndex = indexAttr ? indexAttr.getX(tri * 3 + v) : tri * 3 + v;
 
-    for (let i = 0; i < originalCount; i += step) {
-        newPositions.push(positionAttr.getX(i), positionAttr.getY(i), positionAttr.getZ(i));
+            newPositions.push(
+                positionAttr.getX(vertexIndex),
+                positionAttr.getY(vertexIndex),
+                positionAttr.getZ(vertexIndex)
+            );
 
-        if (preserveNormals && normalAttr) {
-            newNormals.push(normalAttr.getX(i), normalAttr.getY(i), normalAttr.getZ(i));
-        }
+            if (preserveNormals && normalAttr) {
+                newNormals.push(
+                    normalAttr.getX(vertexIndex),
+                    normalAttr.getY(vertexIndex),
+                    normalAttr.getZ(vertexIndex)
+                );
+            }
 
-        if (uvAttr) {
-            newUvs.push(uvAttr.getX(i), uvAttr.getY(i));
+            if (uvAttr) {
+                newUvs.push(uvAttr.getX(vertexIndex), uvAttr.getY(vertexIndex));
+            }
         }
     }
 
@@ -264,7 +297,8 @@ export function createImpostorTexture(
 ): THREE.Texture | null {
     const { resolution = 256, views = 8, billboardMode = 'cylindrical' } = config;
 
-    if (typeof document === 'undefined') {
+    // Check if renderer has a valid WebGL context rather than checking for document
+    if (!renderer || !renderer.getContext()) {
         return null;
     }
 
@@ -275,13 +309,22 @@ export function createImpostorTexture(
         type: THREE.UnsignedByteType,
     });
 
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
-    const scene = new THREE.Scene();
-
     const boundingBox = new THREE.Box3().setFromObject(object);
     const size = new THREE.Vector3();
     boundingBox.getSize(size);
     const maxDim = Math.max(size.x, size.y, size.z);
+
+    // Scale camera frustum based on object size (add padding for safety)
+    const frustumSize = maxDim * 0.6;
+    const camera = new THREE.OrthographicCamera(
+        -frustumSize,
+        frustumSize,
+        frustumSize,
+        -frustumSize,
+        0.1,
+        maxDim * 4
+    );
+    const scene = new THREE.Scene();
 
     const objectClone = object.clone();
     scene.add(objectClone);
@@ -376,12 +419,11 @@ export function interpolateLODMaterials(
     material2: THREE.Material,
     progress: number
 ): void {
-    if ('opacity' in material1 && 'opacity' in material2) {
-        (material1 as any).opacity = 1 - progress;
-        (material2 as any).opacity = progress;
-        (material1 as any).transparent = true;
-        (material2 as any).transparent = true;
-    }
+    // THREE.Material base class includes opacity and transparent properties
+    material1.opacity = 1 - progress;
+    material2.opacity = progress;
+    material1.transparent = true;
+    material2.transparent = true;
 }
 
 export function createDitherPattern(size: number = 4): THREE.DataTexture {

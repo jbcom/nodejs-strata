@@ -158,6 +158,7 @@ export class DecalProjector {
 
         const posAttr = geometry.getAttribute('position');
         const normAttr = geometry.getAttribute('normal');
+        const indexAttr = geometry.getIndex();
 
         if (!posAttr) return null;
 
@@ -165,19 +166,25 @@ export class DecalProjector {
         const tempPos = new THREE.Vector3();
         const tempNorm = new THREE.Vector3();
 
-        for (let i = 0; i < posAttr.count; i += 3) {
+        // Determine triangle count based on whether geometry is indexed
+        const triangleCount = indexAttr ? indexAttr.count / 3 : posAttr.count / 3;
+
+        for (let tri = 0; tri < triangleCount; tri++) {
             const triPositions: THREE.Vector3[] = [];
             const triNormals: THREE.Vector3[] = [];
             let allInside = true;
 
             for (let j = 0; j < 3; j++) {
-                tempPos.fromBufferAttribute(posAttr, i + j);
+                // Get vertex index - use index buffer if available, otherwise sequential
+                const vertexIndex = indexAttr ? indexAttr.getX(tri * 3 + j) : tri * 3 + j;
+
+                tempPos.fromBufferAttribute(posAttr, vertexIndex);
                 const localPos = tempPos.clone().sub(center);
 
                 triPositions.push(tempPos.clone());
 
                 if (normAttr) {
-                    tempNorm.fromBufferAttribute(normAttr, i + j);
+                    tempNorm.fromBufferAttribute(normAttr, vertexIndex);
                     triNormals.push(tempNorm.clone());
                 }
 
@@ -218,7 +225,7 @@ export class DecalProjector {
         return decalGeometry;
     }
 
-    update(deltaTime: number): void {
+    update(_deltaTime: number): void {
         const now = Date.now();
         const toRemove: string[] = [];
 
@@ -233,10 +240,15 @@ export class DecalProjector {
                 decal.opacity = 1.0 - fadeProgress;
 
                 if (decal.mesh && decal.mesh.material) {
-                    const material = decal.mesh.material as THREE.Material;
-                    if ('opacity' in material) {
-                        (material as any).opacity = decal.opacity;
-                    }
+                    // Handle both single materials and material arrays
+                    const materials = Array.isArray(decal.mesh.material)
+                        ? decal.mesh.material
+                        : [decal.mesh.material];
+                    materials.forEach((mat) => {
+                        // THREE.Material base class has opacity property
+                        mat.opacity = decal.opacity;
+                        mat.transparent = true;
+                    });
                 }
             }
         });
@@ -249,9 +261,11 @@ export class DecalProjector {
         if (decal) {
             if (decal.mesh) {
                 decal.mesh.geometry.dispose();
-                if (decal.mesh.material instanceof THREE.Material) {
-                    decal.mesh.material.dispose();
-                }
+                // Handle both single materials and material arrays
+                const materials = Array.isArray(decal.mesh.material)
+                    ? decal.mesh.material
+                    : [decal.mesh.material];
+                materials.forEach((mat) => mat.dispose());
             }
             this.decals.delete(id);
             return true;
@@ -285,9 +299,11 @@ export class DecalProjector {
         this.decals.forEach((decal) => {
             if (decal.mesh) {
                 decal.mesh.geometry.dispose();
-                if (decal.mesh.material instanceof THREE.Material) {
-                    decal.mesh.material.dispose();
-                }
+                // Handle both single materials and material arrays
+                const materials = Array.isArray(decal.mesh.material)
+                    ? decal.mesh.material
+                    : [decal.mesh.material];
+                materials.forEach((mat) => mat.dispose());
             }
         });
         this.decals.clear();
@@ -366,7 +382,7 @@ export function sortBillboardsByDepth(
     return distances.map((d) => d.billboard);
 }
 
-export function createSpriteSheetAnimation(config: SpriteSheetConfig): SpriteAnimationState {
+export function createSpriteSheetAnimation(_config: SpriteSheetConfig): SpriteAnimationState {
     return {
         currentFrame: 0,
         elapsedTime: 0,
@@ -385,6 +401,12 @@ export function updateSpriteSheetAnimation(
     const frameTime = 1 / config.frameRate;
     const totalFrames = config.frameCount ?? config.columns * config.rows;
 
+    // Handle edge case: single frame animation
+    if (totalFrames <= 1) {
+        state.currentFrame = 0;
+        return state;
+    }
+
     state.elapsedTime += deltaTime;
 
     if (state.elapsedTime >= frameTime) {
@@ -394,7 +416,8 @@ export function updateSpriteSheetAnimation(
         if (state.currentFrame >= totalFrames) {
             if (config.pingPong) {
                 state.direction = -1;
-                state.currentFrame = totalFrames - 2;
+                // Clamp to valid range for small frame counts
+                state.currentFrame = Math.max(0, totalFrames - 2);
             } else if (config.loop !== false) {
                 state.currentFrame = 0;
             } else {
@@ -404,7 +427,8 @@ export function updateSpriteSheetAnimation(
         } else if (state.currentFrame < 0) {
             if (config.pingPong) {
                 state.direction = 1;
-                state.currentFrame = 1;
+                // Clamp to valid range for small frame counts
+                state.currentFrame = Math.min(1, totalFrames - 1);
             } else {
                 state.currentFrame = 0;
             }

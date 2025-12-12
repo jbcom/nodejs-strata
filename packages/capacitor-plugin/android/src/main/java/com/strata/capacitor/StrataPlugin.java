@@ -7,6 +7,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.InputDevice;
 import android.view.MotionEvent;
@@ -35,6 +36,10 @@ public class StrataPlugin extends Plugin {
     private Map<String, List<String>> inputMapping = new HashMap<>();
     private Map<Integer, JSObject> activeTouches = new HashMap<>();
     private Vibrator vibrator;
+    
+    // Gamepad state storage
+    private Map<Integer, float[]> gamepadAxes = new HashMap<>();
+    private Map<Integer, Map<Integer, Boolean>> gamepadButtons = new HashMap<>();
 
     @Override
     public void load() {
@@ -135,6 +140,29 @@ public class StrataPlugin extends Plugin {
     private boolean hasTouchScreen() {
         return getContext().getPackageManager().hasSystemFeature("android.hardware.touchscreen");
     }
+    
+    /**
+     * Handle gamepad motion events to track axis and button states.
+     * This should be called from the activity's onGenericMotionEvent and onKeyDown/onKeyUp.
+     * For now, we'll poll InputDevice state in getInputSnapshot.
+     */
+    private void updateGamepadState(MotionEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK) {
+            int deviceId = event.getDeviceId();
+            InputDevice device = InputDevice.getDevice(deviceId);
+            if (device != null) {
+                // Read joystick axes
+                float[] axes = new float[6];
+                axes[0] = event.getAxisValue(MotionEvent.AXIS_X);
+                axes[1] = event.getAxisValue(MotionEvent.AXIS_Y);
+                axes[2] = event.getAxisValue(MotionEvent.AXIS_Z);
+                axes[3] = event.getAxisValue(MotionEvent.AXIS_RZ);
+                axes[4] = event.getAxisValue(MotionEvent.AXIS_LTRIGGER);
+                axes[5] = event.getAxisValue(MotionEvent.AXIS_RTRIGGER);
+                gamepadAxes.put(deviceId, axes);
+            }
+        }
+    }
 
     private String getOrientation() {
         Configuration config = getContext().getResources().getConfiguration();
@@ -166,6 +194,7 @@ public class StrataPlugin extends Plugin {
                     insets.put("left", systemInsets.left / density);
                 }
             } catch (Exception e) {
+                Log.w("StrataPlugin", "Failed to get system bar insets", e);
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             try {
@@ -182,6 +211,7 @@ public class StrataPlugin extends Plugin {
                     }
                 }
             } catch (Exception e) {
+                Log.w("StrataPlugin", "Failed to get display cutout insets", e);
             }
         }
 
@@ -279,6 +309,37 @@ public class StrataPlugin extends Plugin {
                 int sources = device.getSources();
                 if ((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
                     (sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK) {
+                    
+                    // Read gamepad state if available
+                    float[] axes = gamepadAxes.get(deviceId);
+                    Map<Integer, Boolean> buttonStates = gamepadButtons.get(deviceId);
+                    
+                    if (axes != null && axes.length >= 4) {
+                        // Apply deadzone
+                        float deadzone = 0.15f;
+                        float lx = Math.abs(axes[0]) > deadzone ? axes[0] : 0;
+                        float ly = Math.abs(axes[1]) > deadzone ? axes[1] : 0;
+                        float rx = axes.length > 2 && Math.abs(axes[2]) > deadzone ? axes[2] : 0;
+                        float ry = axes.length > 3 && Math.abs(axes[3]) > deadzone ? axes[3] : 0;
+                        
+                        leftStick.put("x", lx);
+                        leftStick.put("y", ly);
+                        rightStick.put("x", rx);
+                        rightStick.put("y", ry);
+                    }
+                    
+                    if (buttonStates != null) {
+                        // Map common gamepad buttons (A=96, B=97, X=99 on Android)
+                        buttons.put("jump", buttonStates.getOrDefault(96, false)); // A button
+                        buttons.put("action", buttonStates.getOrDefault(97, false)); // B button
+                        buttons.put("cancel", buttonStates.getOrDefault(99, false)); // X button
+                        
+                        // Triggers (L2=104, R2=105)
+                        if (axes != null && axes.length > 5) {
+                            triggers.put("left", axes[4]); // L2 trigger
+                            triggers.put("right", axes[5]); // R2 trigger
+                        }
+                    }
                     break;
                 }
             }
@@ -292,6 +353,7 @@ public class StrataPlugin extends Plugin {
                 touchData.put("position", entry.getValue().get("position"));
                 touchData.put("phase", entry.getValue().getString("phase"));
             } catch (JSONException e) {
+                Log.e("StrataPlugin", "Failed to serialize touch data", e);
             }
             touchesArray.put(touchData);
         }
@@ -308,42 +370,20 @@ public class StrataPlugin extends Plugin {
 
     @PluginMethod
     public void setInputMapping(PluginCall call) {
+        String[] actionNames = {
+            "moveForward", "moveBackward", "moveLeft", "moveRight",
+            "jump", "action", "cancel"
+        };
+        
         try {
-            JSArray moveForward = call.getArray("moveForward");
-            if (moveForward != null) {
-                inputMapping.put("moveForward", jsArrayToStringList(moveForward));
-            }
-            
-            JSArray moveBackward = call.getArray("moveBackward");
-            if (moveBackward != null) {
-                inputMapping.put("moveBackward", jsArrayToStringList(moveBackward));
-            }
-            
-            JSArray moveLeft = call.getArray("moveLeft");
-            if (moveLeft != null) {
-                inputMapping.put("moveLeft", jsArrayToStringList(moveLeft));
-            }
-            
-            JSArray moveRight = call.getArray("moveRight");
-            if (moveRight != null) {
-                inputMapping.put("moveRight", jsArrayToStringList(moveRight));
-            }
-            
-            JSArray jump = call.getArray("jump");
-            if (jump != null) {
-                inputMapping.put("jump", jsArrayToStringList(jump));
-            }
-            
-            JSArray action = call.getArray("action");
-            if (action != null) {
-                inputMapping.put("action", jsArrayToStringList(action));
-            }
-            
-            JSArray cancel = call.getArray("cancel");
-            if (cancel != null) {
-                inputMapping.put("cancel", jsArrayToStringList(cancel));
+            for (String actionName : actionNames) {
+                JSArray array = call.getArray(actionName);
+                if (array != null) {
+                    inputMapping.put(actionName, jsArrayToStringList(array));
+                }
             }
         } catch (JSONException e) {
+            Log.e("StrataPlugin", "Failed to parse input mapping", e);
         }
         
         call.resolve();

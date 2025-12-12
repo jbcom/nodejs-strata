@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capacitor Plugin Test App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #4ecca3;
+        }
+        .section {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            color: #4ecca3;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .info-item {
+            background: #0f3460;
+            padding: 12px;
+            border-radius: 6px;
+        }
+        .info-item label {
+            display: block;
+            font-size: 0.85rem;
+            color: #93b5c6;
+            margin-bottom: 5px;
+        }
+        .info-item .value {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+        .joystick-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        .joystick {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            background: #0f3460;
+            border-radius: 50%;
+            border: 3px solid #4ecca3;
+        }
+        .joystick-thumb {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #4ecca3;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.1s ease;
+        }
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .button-state {
+            background: #0f3460;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .button-state.pressed {
+            background: #4ecca3;
+            color: #16213e;
+            transform: scale(1.05);
+        }
+        .touch-area {
+            background: #0f3460;
+            border: 2px dashed #4ecca3;
+            border-radius: 8px;
+            min-height: 200px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        .touch-point {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(78, 204, 163, 0.6);
+            border: 2px solid #4ecca3;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+        .touch-point::after {
+            content: attr(data-id);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            color: #fff;
+        }
+        .haptics-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .haptic-btn {
+            background: #4ecca3;
+            color: #16213e;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .haptic-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(78, 204, 163, 0.4);
+        }
+        .haptic-btn:active {
+            transform: scale(0.95);
+        }
+        .log {
+            background: #000;
+            color: #4ecca3;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            padding: 15px;
+            border-radius: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        .log-entry.error {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 data-testid="page-title">Capacitor Plugin Test Application</h1>
+
+        <!-- Device Profile Section -->
+        <div class="section" data-testid="device-section">
+            <h2>Device Profile</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Platform</label>
+                    <div class="value" data-testid="platform">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Device Type</label>
+                    <div class="value" data-testid="device-type">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Input Mode</label>
+                    <div class="value" data-testid="input-mode">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Orientation</label>
+                    <div class="value" data-testid="orientation">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Screen Size</label>
+                    <div class="value" data-testid="screen-size">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Pixel Ratio</label>
+                    <div class="value" data-testid="pixel-ratio">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Has Touch</label>
+                    <div class="value" data-testid="has-touch">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Has Gamepad</label>
+                    <div class="value" data-testid="has-gamepad">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input State Section -->
+        <div class="section" data-testid="input-section">
+            <h2>Input State</h2>
+            <div class="joystick-container">
+                <div>
+                    <label>Left Stick (Movement)</label>
+                    <div class="joystick" data-testid="left-joystick">
+                        <div class="joystick-thumb" data-testid="left-thumb"></div>
+                    </div>
+                    <div data-testid="left-stick-values" style="margin-top: 10px; text-align: center;">
+                        X: <span data-testid="left-x">0.00</span> | Y: <span data-testid="left-y">0.00</span>
+                    </div>
+                </div>
+                <div>
+                    <label>Right Stick (Camera)</label>
+                    <div class="joystick" data-testid="right-joystick">
+                        <div class="joystick-thumb" data-testid="right-thumb"></div>
+                    </div>
+                    <div data-testid="right-stick-values" style="margin-top: 10px; text-align: center;">
+                        X: <span data-testid="right-x">0.00</span> | Y: <span data-testid="right-y">0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">Buttons</h3>
+            <div class="buttons-grid" data-testid="buttons-grid">
+                <!-- Buttons populated dynamically -->
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">Triggers</h3>
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <label>Left Trigger</label>
+                    <div data-testid="left-trigger" style="margin-top: 8px;">
+                        <div style="background: #0f3460; height: 20px; border-radius: 10px; overflow: hidden;">
+                            <div data-testid="left-trigger-bar" style="height: 100%; background: #4ecca3; width: 0%; transition: width 0.1s;"></div>
+                        </div>
+                        <span data-testid="left-trigger-value">0.00</span>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <label>Right Trigger</label>
+                    <div data-testid="right-trigger" style="margin-top: 8px;">
+                        <div style="background: #0f3460; height: 20px; border-radius: 10px; overflow: hidden;">
+                            <div data-testid="right-trigger-bar" style="height: 100%; background: #4ecca3; width: 0%; transition: width 0.1s;"></div>
+                        </div>
+                        <span data-testid="right-trigger-value">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Touch Section -->
+        <div class="section" data-testid="touch-section">
+            <h2>Touch Input</h2>
+            <div class="touch-area" data-testid="touch-area">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; text-align: center;">
+                    Touch or drag here
+                </div>
+                <!-- Touch points added dynamically -->
+            </div>
+            <div data-testid="touch-count" style="margin-top: 10px;">
+                Active touches: <span data-testid="active-touches">0</span>
+            </div>
+        </div>
+
+        <!-- Haptics Section -->
+        <div class="section" data-testid="haptics-section">
+            <h2>Haptics</h2>
+            <div class="haptics-controls">
+                <button class="haptic-btn" data-testid="haptic-light" data-action="light">Light</button>
+                <button class="haptic-btn" data-testid="haptic-medium" data-action="medium">Medium</button>
+                <button class="haptic-btn" data-testid="haptic-heavy" data-action="heavy">Heavy</button>
+                <button class="haptic-btn" data-testid="haptic-custom" data-action="custom">Custom (0.5, 200ms)</button>
+                <button class="haptic-btn" data-testid="haptic-pattern" data-action="pattern">Pattern</button>
+            </div>
+            <div data-testid="haptics-log" class="log">
+                <!-- Haptics log entries -->
+            </div>
+        </div>
+
+        <!-- Control Hints Section -->
+        <div class="section" data-testid="hints-section">
+            <h2>Control Hints</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Movement</label>
+                    <div class="value" data-testid="hint-movement">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Camera</label>
+                    <div class="value" data-testid="hint-camera">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Action</label>
+                    <div class="value" data-testid="hint-action">-</div>
+                </div>
+                <div class="info-item">
+                    <label>Menu</label>
+                    <div class="value" data-testid="hint-menu">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Log -->
+        <div class="section" data-testid="event-log-section">
+            <h2>Event Log</h2>
+            <div data-testid="event-log" class="log">
+                <div class="log-entry">Initializing...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Mock Capacitor plugin for web testing
+        const StrataPlugin = {
+            async getDeviceProfile() {
+                const profile = {
+                    platform: (() => {
+                        const ua = navigator.userAgent.toLowerCase();
+                        if (ua.includes('android')) return 'android';
+                        if (ua.includes('iphone') || ua.includes('ipad')) return 'ios';
+                        if (ua.includes('win')) return 'windows';
+                        if (ua.includes('mac')) return 'macos';
+                        if (ua.includes('linux')) return 'linux';
+                        return 'web';
+                    })(),
+                    deviceType: (() => {
+                        const width = window.innerWidth;
+                        if (width < 768) return 'mobile';
+                        if (width < 1024) return 'tablet';
+                        return 'desktop';
+                    })(),
+                    inputMode: (() => {
+                        if ('ontouchstart' in window) return 'touch';
+                        if (navigator.getGamepads && navigator.getGamepads().some(gp => gp)) return 'gamepad';
+                        return 'keyboard';
+                    })(),
+                    orientation: window.innerWidth > window.innerHeight ? 'landscape' : 'portrait',
+                    hasTouch: 'ontouchstart' in window,
+                    hasPointer: window.matchMedia('(pointer: fine)').matches,
+                    hasGamepad: Boolean(navigator.getGamepads && navigator.getGamepads().some(gp => gp)),
+                    screenWidth: window.innerWidth,
+                    screenHeight: window.innerHeight,
+                    pixelRatio: window.devicePixelRatio || 1,
+                    safeAreaInsets: { top: 0, right: 0, bottom: 0, left: 0 }
+                };
+                return profile;
+            },
+
+            async getInputSnapshot() {
+                const snapshot = {
+                    leftStick: window.__inputState?.leftStick || { x: 0, y: 0 },
+                    rightStick: window.__inputState?.rightStick || { x: 0, y: 0 },
+                    buttons: window.__inputState?.buttons || {},
+                    triggers: window.__inputState?.triggers || { left: 0, right: 0 },
+                    touches: window.__inputState?.touches || []
+                };
+                return snapshot;
+            },
+
+            async getControlHints() {
+                const profile = await this.getDeviceProfile();
+                const hints = {
+                    movement: profile.inputMode === 'touch' ? 'Drag joystick to move' :
+                             profile.inputMode === 'gamepad' ? 'Left stick to move' :
+                             'WASD to move',
+                    camera: profile.inputMode === 'touch' ? 'Drag to look around' :
+                           profile.inputMode === 'gamepad' ? 'Right stick to look' :
+                           'Mouse to look',
+                    action: profile.inputMode === 'touch' ? 'Tap to interact' :
+                           profile.inputMode === 'gamepad' ? 'A button to interact' :
+                           'E to interact',
+                    menu: profile.inputMode === 'touch' ? 'Tap menu button' :
+                         profile.inputMode === 'gamepad' ? 'Start button' :
+                         'ESC for menu'
+                };
+                return hints;
+            },
+
+            async triggerHaptics(options) {
+                addHapticsLog(`Haptics triggered: ${JSON.stringify(options)}`);
+                if ('vibrate' in navigator) {
+                    if (options.pattern) {
+                        navigator.vibrate(options.pattern);
+                    } else {
+                        const duration = options.duration ||
+                                       (options.intensity === 'light' ? 10 :
+                                        options.intensity === 'medium' ? 25 :
+                                        options.intensity === 'heavy' ? 50 : 25);
+                        navigator.vibrate(duration);
+                    }
+                }
+                return { success: true };
+            },
+
+            listeners: {},
+            async addListener(eventName, callback) {
+                if (!this.listeners[eventName]) {
+                    this.listeners[eventName] = [];
+                }
+                this.listeners[eventName].push(callback);
+                return {
+                    remove: () => {
+                        const idx = this.listeners[eventName].indexOf(callback);
+                        if (idx > -1) this.listeners[eventName].splice(idx, 1);
+                    }
+                };
+            }
+        };
+
+        // Initialize input state
+        window.__inputState = {
+            leftStick: { x: 0, y: 0 },
+            rightStick: { x: 0, y: 0 },
+            buttons: {},
+            triggers: { left: 0, right: 0 },
+            touches: []
+        };
+
+        // Update device profile
+        async function updateDeviceProfile() {
+            const profile = await StrataPlugin.getDeviceProfile();
+            document.querySelector('[data-testid="platform"]').textContent = profile.platform;
+            document.querySelector('[data-testid="device-type"]').textContent = profile.deviceType;
+            document.querySelector('[data-testid="input-mode"]').textContent = profile.inputMode;
+            document.querySelector('[data-testid="orientation"]').textContent = profile.orientation;
+            document.querySelector('[data-testid="screen-size"]').textContent =
+                `${profile.screenWidth} × ${profile.screenHeight}`;
+            document.querySelector('[data-testid="pixel-ratio"]').textContent = profile.pixelRatio;
+            document.querySelector('[data-testid="has-touch"]').textContent = profile.hasTouch ? 'Yes' : 'No';
+            document.querySelector('[data-testid="has-gamepad"]').textContent = profile.hasGamepad ? 'Yes' : 'No';
+
+            addLog('Device profile loaded');
+        }
+
+        // Update control hints
+        async function updateControlHints() {
+            const hints = await StrataPlugin.getControlHints();
+            document.querySelector('[data-testid="hint-movement"]').textContent = hints.movement;
+            document.querySelector('[data-testid="hint-camera"]').textContent = hints.camera;
+            document.querySelector('[data-testid="hint-action"]').textContent = hints.action;
+            document.querySelector('[data-testid="hint-menu"]').textContent = hints.menu;
+        }
+
+        // Update input visualization
+        function updateInputVisuals() {
+            const { leftStick, rightStick, buttons, triggers, touches } = window.__inputState;
+
+            // Update left stick
+            const leftThumb = document.querySelector('[data-testid="left-thumb"]');
+            leftThumb.style.transform = `translate(calc(-50% + ${leftStick.x * 55}px), calc(-50% + ${leftStick.y * -55}px))`;
+            document.querySelector('[data-testid="left-x"]').textContent = leftStick.x.toFixed(2);
+            document.querySelector('[data-testid="left-y"]').textContent = leftStick.y.toFixed(2);
+
+            // Update right stick
+            const rightThumb = document.querySelector('[data-testid="right-thumb"]');
+            rightThumb.style.transform = `translate(calc(-50% + ${rightStick.x * 55}px), calc(-50% + ${rightStick.y * -55}px))`;
+            document.querySelector('[data-testid="right-x"]').textContent = rightStick.x.toFixed(2);
+            document.querySelector('[data-testid="right-y"]').textContent = rightStick.y.toFixed(2);
+
+            // Update buttons
+            const buttonNames = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 'LS', 'RS'];
+            const buttonsGrid = document.querySelector('[data-testid="buttons-grid"]');
+            buttonsGrid.innerHTML = buttonNames.map(name =>
+                `<div class="button-state ${buttons[name] ? 'pressed' : ''}" data-testid="button-${name.toLowerCase()}">
+                    ${name}
+                </div>`
+            ).join('');
+
+            // Update triggers
+            document.querySelector('[data-testid="left-trigger-bar"]').style.width = `${triggers.left * 100}%`;
+            document.querySelector('[data-testid="left-trigger-value"]').textContent = triggers.left.toFixed(2);
+            document.querySelector('[data-testid="right-trigger-bar"]').style.width = `${triggers.right * 100}%`;
+            document.querySelector('[data-testid="right-trigger-value"]').textContent = triggers.right.toFixed(2);
+
+            // Update touches
+            const touchArea = document.querySelector('[data-testid="touch-area"]');
+            touchArea.querySelectorAll('.touch-point').forEach(el => el.remove());
+            touches.forEach(touch => {
+                const point = document.createElement('div');
+                point.className = 'touch-point';
+                point.setAttribute('data-id', touch.id);
+                point.style.left = `${touch.x}px`;
+                point.style.top = `${touch.y}px`;
+                touchArea.appendChild(point);
+            });
+            document.querySelector('[data-testid="active-touches"]').textContent = touches.length;
+        }
+
+        // Keyboard input simulation
+        const keyMap = {
+            'w': () => window.__inputState.leftStick.y = -1,
+            's': () => window.__inputState.leftStick.y = 1,
+            'a': () => window.__inputState.leftStick.x = -1,
+            'd': () => window.__inputState.leftStick.x = 1,
+            'arrowup': () => window.__inputState.rightStick.y = -1,
+            'arrowdown': () => window.__inputState.rightStick.y = 1,
+            'arrowleft': () => window.__inputState.rightStick.x = -1,
+            'arrowright': () => window.__inputState.rightStick.x = 1,
+        };
+
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (keyMap[key]) {
+                keyMap[key]();
+                addLog(`Key pressed: ${e.key}`);
+            }
+            if (e.key === ' ') {
+                window.__inputState.buttons.A = true;
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (['w', 's'].includes(key)) window.__inputState.leftStick.y = 0;
+            if (['a', 'd'].includes(key)) window.__inputState.leftStick.x = 0;
+            if (['arrowup', 'arrowdown'].includes(key)) window.__inputState.rightStick.y = 0;
+            if (['arrowleft', 'arrowright'].includes(key)) window.__inputState.rightStick.x = 0;
+            if (e.key === ' ') window.__inputState.buttons.A = false;
+        });
+
+        // Touch input handling
+        const touchArea = document.querySelector('[data-testid="touch-area"]');
+        touchArea.addEventListener('touchstart', handleTouch);
+        touchArea.addEventListener('touchmove', handleTouch);
+        touchArea.addEventListener('touchend', handleTouchEnd);
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const rect = touchArea.getBoundingClientRect();
+            window.__inputState.touches = Array.from(e.touches).map(touch => ({
+                id: touch.identifier,
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top,
+                phase: e.type === 'touchstart' ? 'began' : 'moved'
+            }));
+            addLog(`Touch ${e.type}: ${e.touches.length} points`);
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            window.__inputState.touches = [];
+        }
+
+        // Gamepad polling
+        function pollGamepads() {
+            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            const gamepad = gamepads[0];
+
+            if (gamepad) {
+                window.__inputState.leftStick.x = Math.abs(gamepad.axes[0]) > 0.15 ? gamepad.axes[0] : 0;
+                window.__inputState.leftStick.y = Math.abs(gamepad.axes[1]) > 0.15 ? gamepad.axes[1] : 0;
+                window.__inputState.rightStick.x = Math.abs(gamepad.axes[2]) > 0.15 ? gamepad.axes[2] : 0;
+                window.__inputState.rightStick.y = Math.abs(gamepad.axes[3]) > 0.15 ? gamepad.axes[3] : 0;
+
+                window.__inputState.buttons = {
+                    A: gamepad.buttons[0]?.pressed || false,
+                    B: gamepad.buttons[1]?.pressed || false,
+                    X: gamepad.buttons[2]?.pressed || false,
+                    Y: gamepad.buttons[3]?.pressed || false,
+                    LB: gamepad.buttons[4]?.pressed || false,
+                    RB: gamepad.buttons[5]?.pressed || false,
+                    Back: gamepad.buttons[8]?.pressed || false,
+                    Start: gamepad.buttons[9]?.pressed || false,
+                };
+
+                window.__inputState.triggers.left = gamepad.buttons[6]?.value || 0;
+                window.__inputState.triggers.right = gamepad.buttons[7]?.value || 0;
+            }
+
+            requestAnimationFrame(pollGamepads);
+        }
+
+        // Haptics controls
+        document.querySelectorAll('.haptic-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const action = btn.getAttribute('data-action');
+                let options = {};
+
+                switch (action) {
+                    case 'light':
+                        options = { intensity: 'light' };
+                        break;
+                    case 'medium':
+                        options = { intensity: 'medium' };
+                        break;
+                    case 'heavy':
+                        options = { intensity: 'heavy' };
+                        break;
+                    case 'custom':
+                        options = { customIntensity: 0.5, duration: 200 };
+                        break;
+                    case 'pattern':
+                        options = { pattern: [100, 50, 100, 50, 200] };
+                        break;
+                }
+
+                await StrataPlugin.triggerHaptics(options);
+            });
+        });
+
+        // Logging functions
+        function addLog(message) {
+            const log = document.querySelector('[data-testid="event-log"]');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function addHapticsLog(message) {
+            const log = document.querySelector('[data-testid="haptics-log"]');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Main loop
+        function mainLoop() {
+            updateInputVisuals();
+            requestAnimationFrame(mainLoop);
+        }
+
+        // Initialize
+        async function init() {
+            window.__StrataPlugin = StrataPlugin;
+            await updateDeviceProfile();
+            await updateControlHints();
+            pollGamepads();
+            mainLoop();
+            addLog('Application initialized');
+        }
+
+        init();
+    </script>
+</body>
+</html>

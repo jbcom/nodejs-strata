@@ -58,6 +58,9 @@
         "test:coverage": "vitest run --coverage",
         "test:e2e": "playwright test",
         "test:e2e:ui": "playwright test --ui",
+        "test:e2e:capacitor": "playwright test tests/e2e/capacitor-plugin.spec.ts",
+        "test:e2e:headed": "playwright test --headed",
+        "test:e2e:debug": "playwright test --debug",
         "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
         "prepublishOnly": "npm run build && npm run test:unit",
         "prepare": "husky"
@@ -145,6 +148,7 @@
     },
     "devDependencies": {
         "@playwright/test": "^1.40.0",
+        "@testomatio/reporter": "^1.9.0",
         "@react-three/drei": "^9.114.0",
         "@react-three/fiber": "^8.15.0",
         "@react-three/postprocessing": "^2.16.0",

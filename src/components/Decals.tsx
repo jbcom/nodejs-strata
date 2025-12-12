@@ -334,7 +334,12 @@ export const Billboard = forwardRef<BillboardRef, BillboardProps>(
         }
 
         return (
-            <sprite ref={spriteRef} position={pos} renderOrder={renderOrder}>
+            <sprite
+                ref={spriteRef}
+                position={pos}
+                renderOrder={renderOrder}
+                scale={[billboardSize[0], billboardSize[1], 1]}
+            >
                 <spriteMaterial
                     map={texture}
                     color={color}
@@ -343,12 +348,6 @@ export const Billboard = forwardRef<BillboardRef, BillboardProps>(
                     alphaTest={alphaTest}
                     depthWrite={depthWrite}
                 />
-                {spriteRef.current && (
-                    <primitive
-                        object={spriteRef.current.scale}
-                        set={[billboardSize[0], billboardSize[1], 1]}
-                    />
-                )}
             </sprite>
         );
     }

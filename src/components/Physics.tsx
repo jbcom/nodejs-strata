@@ -532,12 +532,18 @@ export const VehicleBody = forwardRef<VehicleBodyRef, VehicleBodyProps>(
             }
 
             if (input.brake) {
-                const brakeDir = new THREE.Vector3(vel.x, 0, vel.z).normalize().multiplyScalar(-1);
-                const brakeForce = brakeDir.multiplyScalar(config.brakeForce * Math.min(speed, 1));
-                rigidBodyRef.current.applyImpulse(
-                    { x: brakeForce.x * delta, y: 0, z: brakeForce.z * delta },
-                    true
-                );
+                const velocityVec = new THREE.Vector3(vel.x, 0, vel.z);
+                // Prevent division by zero when normalizing zero-length vector
+                if (velocityVec.lengthSq() > 0.001) {
+                    const brakeDir = velocityVec.normalize().multiplyScalar(-1);
+                    const brakeForce = brakeDir.multiplyScalar(
+                        config.brakeForce * Math.min(speed, 1)
+                    );
+                    rigidBodyRef.current.applyImpulse(
+                        { x: brakeForce.x * delta, y: 0, z: brakeForce.z * delta },
+                        true
+                    );
+                }
             }
 
             if (input.handbrake) {
@@ -553,9 +559,6 @@ export const VehicleBody = forwardRef<VehicleBodyRef, VehicleBodyProps>(
                 rigidBodyRef.current.setAngvel({ x: angVel.x, y: turnRate, z: angVel.z }, true);
             }
         });
-
-        const eulerRotation = new THREE.Euler(...rotation);
-        const quaternion = new THREE.Quaternion().setFromEuler(eulerRotation);
 
         return (
             <RigidBody
@@ -657,24 +660,7 @@ export const Destructible = forwardRef<DestructibleRef, DestructibleProps>(
             }[]
         >([]);
 
-        const damage = useCallback(
-            (amount: number) => {
-                setHealth((prev) => {
-                    const newHealth = Math.max(0, prev - amount);
-                    onDamage?.(newHealth);
-
-                    if (newHealth <= 0 && !destroyed) {
-                        setDestroyed(true);
-                        createShards();
-                        onBreak?.();
-                    }
-
-                    return newHealth;
-                });
-            },
-            [destroyed, onDamage, onBreak]
-        );
-
+        // Define createShards before damage to satisfy dependency order
         const createShards = useCallback(() => {
             if (!rigidBodyRef.current) return;
 
@@ -710,6 +696,24 @@ export const Destructible = forwardRef<DestructibleRef, DestructibleProps>(
                 setShards([]);
             }, config.shardLifetime * 1000);
         }, [config, size]);
+
+        const damage = useCallback(
+            (amount: number) => {
+                setHealth((prev: number) => {
+                    const newHealth = Math.max(0, prev - amount);
+                    onDamage?.(newHealth);
+
+                    if (newHealth <= 0 && !destroyed) {
+                        setDestroyed(true);
+                        createShards();
+                        onBreak?.();
+                    }
+
+                    return newHealth;
+                });
+            },
+            [destroyed, onDamage, onBreak, createShards]
+        );
 
         const destroy = useCallback(() => {
             if (!destroyed) {
@@ -878,7 +882,12 @@ export const Buoyancy = forwardRef<BuoyancyRef, BuoyancyProps>(
                 submersionRef.current = avgDepth;
                 onSubmerged?.(avgDepth);
 
-                forcePoint.divideScalar(totalBuoyancy);
+                // Prevent division by zero when totalBuoyancy is 0
+                if (totalBuoyancy > 0) {
+                    forcePoint.divideScalar(totalBuoyancy);
+                } else {
+                    forcePoint.set(pos.x, pos.y, pos.z);
+                }
 
                 const buoyancyForce = { x: 0, y: totalBuoyancy, z: 0 };
                 rigidBodyRef.current.applyImpulseAtPoint(

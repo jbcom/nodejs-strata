@@ -125,6 +125,10 @@ export const AdvancedWater = forwardRef<THREE.Mesh, AdvancedWaterProps>(
                 if (mat.uniforms?.uTime) {
                     mat.uniforms.uTime.value = state.clock.getElapsedTime() * waveSpeed;
                 }
+                // Apply waveHeight to material uniform if available
+                if (mat.uniforms?.uWaveHeight) {
+                    mat.uniforms.uWaveHeight.value = waveHeight;
+                }
             }
         });
 

@@ -811,7 +811,8 @@ export const BlinkController = forwardRef<BlinkControllerRef, BlinkControllerPro
                 );
 
                 const t = blinkProgressRef.current;
-                const blinkValue = t < 0.5 ? 1 - Math.sin(t * Math.PI) : 1 - Math.sin(t * Math.PI);
+                // Use proper blink animation: closing phase (0-0.5), opening phase (0.5-1)
+                const blinkValue = 1 - Math.sin(t * Math.PI);
                 const scaleY = Math.max(0.1, blinkValue);
 
                 if (leftEyeRef?.current && baseScaleRef.current) {

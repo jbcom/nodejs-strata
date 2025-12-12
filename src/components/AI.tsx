@@ -656,7 +656,10 @@ export const YukaStateMachine = forwardRef<YukaStateMachineRef, YukaStateMachine
         useImperativeHandle(
             ref,
             () => ({
-                stateMachine: stateMachineRef.current!,
+                // Use getter to return current value instead of captured null
+                get stateMachine() {
+                    return stateMachineRef.current!;
+                },
                 changeTo: (stateName: string) => {
                     const sm = stateMachineRef.current;
                     const state = statesMapRef.current.get(stateName);

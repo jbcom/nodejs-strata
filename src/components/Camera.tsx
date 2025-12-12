@@ -160,9 +160,10 @@ export const FollowCamera = forwardRef<FollowCameraRef, FollowCameraProps>(
             const currentQuat = cameraRef.current.quaternion.clone();
             cameraRef.current.lookAt(lookTarget);
             const targetQuat = cameraRef.current.quaternion.clone();
+            // Use correct frame-rate independent exponential smoothing formula
             cameraRef.current.quaternion
                 .copy(currentQuat)
-                .slerp(targetQuat, 1 - Math.exp(-rotationSmoothing / delta));
+                .slerp(targetQuat, 1 - Math.exp(-rotationSmoothing * delta));
         });
 
         return (

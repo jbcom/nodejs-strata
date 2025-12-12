@@ -41,6 +41,7 @@ export interface SpriteSheetConfig {
     frameRate: number;
     loop?: boolean;
     pingPong?: boolean;
+    startFrame?: number;
 }
 
 export interface SpriteAnimationState {
@@ -87,7 +88,7 @@ export class DecalProjector {
         const fadeTime = options.fadeTime ?? this.config.fadeTime;
 
         const quaternion = new THREE.Quaternion();
-        const up = new THREE.Vector3(0, 1, 0);
+        let up = new THREE.Vector3(0, 1, 0);
         if (Math.abs(normal.dot(up)) > 0.99) {
             up.set(0, 0, 1);
         }
@@ -382,9 +383,9 @@ export function sortBillboardsByDepth(
     return distances.map((d) => d.billboard);
 }
 
-export function createSpriteSheetAnimation(_config: SpriteSheetConfig): SpriteAnimationState {
+export function createSpriteSheetAnimation(config: SpriteSheetConfig): SpriteAnimationState {
     return {
-        currentFrame: 0,
+        currentFrame: config.startFrame ?? 0,
         elapsedTime: 0,
         isPlaying: true,
         direction: 1,

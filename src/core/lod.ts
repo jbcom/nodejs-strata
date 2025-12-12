@@ -298,7 +298,8 @@ export function createImpostorTexture(
     const { resolution = 256, views = 8, billboardMode = 'cylindrical' } = config;
 
     // Check if renderer has a valid WebGL context rather than checking for document
-    if (!renderer || !renderer.getContext()) {
+    const gl = renderer?.getContext();
+    if (!gl || gl.isContextLost()) {
         return null;
     }
 
@@ -314,7 +315,9 @@ export function createImpostorTexture(
     boundingBox.getSize(size);
     const maxDim = Math.max(size.x, size.y, size.z);
 
-    // Scale camera frustum based on object size (add padding for safety)
+    // Scale camera frustum based on object size
+    // Factor of 0.6 provides padding while ensuring object fits in view
+    // (accounts for rotation and prevents clipping at extreme angles)
     const frustumSize = maxDim * 0.6;
     const camera = new THREE.OrthographicCamera(
         -frustumSize,
@@ -364,6 +367,21 @@ export function createImpostorTexture(
 
     const texture = renderTarget.texture.clone();
     texture.needsUpdate = true;
+
+    // Clean up temporary scene resources
+    objectClone.traverse((node) => {
+        if (node instanceof THREE.Mesh) {
+            node.geometry?.dispose();
+            if (Array.isArray(node.material)) {
+                node.material.forEach((m) => m.dispose());
+            } else {
+                node.material?.dispose();
+            }
+        }
+    });
+    scene.remove(objectClone);
+    scene.remove(ambientLight);
+    scene.remove(directionalLight);
 
     renderTarget.dispose();
 

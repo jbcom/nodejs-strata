@@ -224,7 +224,10 @@ export function useSeparation(
 
     useEffect(() => {
         behavior.weight = weight;
-    }, [behavior, weight]);
+        // Note: In YUKA, flocking behaviors work with the vehicle's steering manager
+        // The entities array should be registered with the EntityManager, not the behavior directly.
+        // This hook returns the behavior; users should manage entity registration separately.
+    }, [behavior, weight, entities]);
 
     return behavior;
 }
@@ -249,7 +252,10 @@ export function useAlignment(
 
     useEffect(() => {
         behavior.weight = weight;
-    }, [behavior, weight]);
+        // Note: In YUKA, flocking behaviors work with the vehicle's steering manager
+        // The entities array should be registered with the EntityManager, not the behavior directly.
+        // This hook returns the behavior; users should manage entity registration separately.
+    }, [behavior, weight, entities]);
 
     return behavior;
 }
@@ -274,7 +280,10 @@ export function useCohesion(
 
     useEffect(() => {
         behavior.weight = weight;
-    }, [behavior, weight]);
+        // Note: In YUKA, flocking behaviors work with the vehicle's steering manager
+        // The entities array should be registered with the EntityManager, not the behavior directly.
+        // This hook returns the behavior; users should manage entity registration separately.
+    }, [behavior, weight, entities]);
 
     return behavior;
 }
@@ -296,7 +305,7 @@ export function useObstacleAvoidance(
 
     const behavior = useMemo(() => {
         return new YUKA.ObstacleAvoidanceBehavior(obstacles);
-    }, []);
+    }, [obstacles]);
 
     useEffect(() => {
         behavior.weight = weight;
@@ -359,7 +368,8 @@ export function useInterpose(
 }
 
 // =============================================================================
-// EXPORTS
+// RE-EXPORTS
 // =============================================================================
 
-export type { YUKA };
+// Re-export YUKA namespace for convenience
+export { YUKA };

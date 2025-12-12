@@ -16,6 +16,7 @@ export {
     useObstacleAvoidance,
     useOffsetPursuit,
     useInterpose,
+    YUKA,
 } from './useYuka';
 export type {
     UseSeekOptions,

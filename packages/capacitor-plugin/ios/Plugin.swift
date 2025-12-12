@@ -33,6 +33,9 @@ public class StrataPlugin: CAPPlugin, CAPBridgedPlugin {
     private var mediumImpactGenerator: UIImpactFeedbackGenerator?
     private var heavyImpactGenerator: UIImpactFeedbackGenerator?
     
+    /// Gamepad deadzone threshold for stick input filtering
+    private let gamepadDeadzone: Float = 0.15
+    
     public override func load() {
         lightImpactGenerator = UIImpactFeedbackGenerator(style: .light)
         mediumImpactGenerator = UIImpactFeedbackGenerator(style: .medium)
@@ -243,7 +246,7 @@ public class StrataPlugin: CAPPlugin, CAPBridgedPlugin {
         
         if controllerIndex < controllers.count,
            let gamepad = controllers[controllerIndex].extendedGamepad {
-            let deadzone: Float = 0.15
+            let deadzone = gamepadDeadzone
             
             let lx = gamepad.leftThumbstick.xAxis.value
             let ly = gamepad.leftThumbstick.yAxis.value
@@ -286,26 +289,13 @@ public class StrataPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     
     @objc func setInputMapping(_ call: CAPPluginCall) {
-        if let moveForward = call.getArray("moveForward", String.self) {
-            inputMapping["moveForward"] = moveForward
-        }
-        if let moveBackward = call.getArray("moveBackward", String.self) {
-            inputMapping["moveBackward"] = moveBackward
-        }
-        if let moveLeft = call.getArray("moveLeft", String.self) {
-            inputMapping["moveLeft"] = moveLeft
-        }
-        if let moveRight = call.getArray("moveRight", String.self) {
-            inputMapping["moveRight"] = moveRight
-        }
-        if let jump = call.getArray("jump", String.self) {
-            inputMapping["jump"] = jump
-        }
-        if let action = call.getArray("action", String.self) {
-            inputMapping["action"] = action
-        }
-        if let cancel = call.getArray("cancel", String.self) {
-            inputMapping["cancel"] = cancel
+        // Refactored to use loop and added validation to prevent empty mappings
+        let actionNames = ["moveForward", "moveBackward", "moveLeft", "moveRight", "jump", "action", "cancel"]
+        
+        for actionName in actionNames {
+            if let mapping = call.getArray(actionName, String.self), !mapping.isEmpty {
+                inputMapping[actionName] = mapping
+            }
         }
         
         call.resolve()

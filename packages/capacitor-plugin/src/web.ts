@@ -365,8 +365,9 @@ export class StrataWeb extends WebPlugin implements StrataPlugin, StrataPlatform
       buttons['action'] = buttons['action'] || (gamepad.buttons[1]?.pressed ?? false);
       buttons['cancel'] = buttons['cancel'] || (gamepad.buttons[2]?.pressed ?? false);
 
-      if (gamepad.buttons.length > 6) triggers.left = gamepad.buttons[6].value;
-      if (gamepad.buttons.length > 7) triggers.right = gamepad.buttons[7].value;
+      // Use nullish coalescing for trigger values for consistency
+      triggers.left = gamepad.buttons[6]?.value ?? 0;
+      triggers.right = gamepad.buttons[7]?.value ?? 0;
     }
 
     const touchArray = Array.from(this.touches.entries()).map(([id, data]) => ({

@@ -61,6 +61,16 @@ public class StrataPlugin extends Plugin {
         initVibrator();
     }
 
+    @Override
+    protected void handleOnDestroy() {
+        super.handleOnDestroy();
+        // Recycle cached MotionEvent to prevent memory leak
+        if (lastGamepadEvent != null) {
+            lastGamepadEvent.recycle();
+            lastGamepadEvent = null;
+        }
+    }
+
     private List<String> createStringList(String... items) {
         List<String> list = new ArrayList<>();
         for (String item : items) {
@@ -285,13 +295,15 @@ public class StrataPlugin extends Plugin {
         triggers.put("right", 0);
 
         // Read actual gamepad axis values from cached MotionEvent
-        if (lastGamepadEvent != null) {
-            float lx = lastGamepadEvent.getAxisValue(MotionEvent.AXIS_X);
-            float ly = lastGamepadEvent.getAxisValue(MotionEvent.AXIS_Y);
-            float rx = lastGamepadEvent.getAxisValue(MotionEvent.AXIS_Z);
-            float ry = lastGamepadEvent.getAxisValue(MotionEvent.AXIS_RZ);
-            float lt = lastGamepadEvent.getAxisValue(MotionEvent.AXIS_LTRIGGER);
-            float rt = lastGamepadEvent.getAxisValue(MotionEvent.AXIS_RTRIGGER);
+        // Store in local variable to prevent race conditions with concurrent access
+        MotionEvent gamepadEvent = lastGamepadEvent;
+        if (gamepadEvent != null) {
+            float lx = gamepadEvent.getAxisValue(MotionEvent.AXIS_X);
+            float ly = gamepadEvent.getAxisValue(MotionEvent.AXIS_Y);
+            float rx = gamepadEvent.getAxisValue(MotionEvent.AXIS_Z);
+            float ry = gamepadEvent.getAxisValue(MotionEvent.AXIS_RZ);
+            float lt = gamepadEvent.getAxisValue(MotionEvent.AXIS_LTRIGGER);
+            float rt = gamepadEvent.getAxisValue(MotionEvent.AXIS_RTRIGGER);
             
             if (Math.abs(lx) > GAMEPAD_DEADZONE) leftStick.put("x", lx);
             if (Math.abs(ly) > GAMEPAD_DEADZONE) leftStick.put("y", ly);

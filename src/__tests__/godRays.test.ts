@@ -101,7 +101,7 @@ describe('getLightScreenPosition', () => {
         camera.position.set(0, 0, 0);
         camera.updateMatrixWorld();
 
-        const result = getLightScreenPosition(lightPos, camera, new THREE.Vector2(800, 600));
+        const result = getLightScreenPosition(lightPos, camera);
         expect(result).not.toBe(null);
         if (result) {
             expect(result.x).toBeGreaterThanOrEqual(0);
@@ -115,7 +115,7 @@ describe('getLightScreenPosition', () => {
         camera.position.set(0, 0, 0);
         camera.updateMatrixWorld();
 
-        const result = getLightScreenPosition(lightPos, camera, new THREE.Vector2(800, 600));
+        const result = getLightScreenPosition(lightPos, camera);
         expect(result).toBe(null);
     });
 });

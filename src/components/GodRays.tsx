@@ -173,7 +173,7 @@ export const GodRays = forwardRef<GodRaysRef, GodRaysProps>(function GodRays(
                 }
             },
             setLightPosition: (position: THREE.Vector3) => {
-                const screenPos = getLightScreenPosition(position, camera, new THREE.Vector2(1, 1));
+                const screenPos = getLightScreenPosition(position, camera);
                 if (screenPos && material.uniforms.uLightPosition) {
                     material.uniforms.uLightPosition.value.set(screenPos.x, screenPos.y, 0);
                 }
@@ -187,7 +187,7 @@ export const GodRays = forwardRef<GodRaysRef, GodRaysProps>(function GodRays(
 
         material.uniforms.uTime.value = state.clock.elapsedTime;
 
-        const screenPos = getLightScreenPosition(lightPos, camera, new THREE.Vector2(1, 1));
+        const screenPos = getLightScreenPosition(lightPos, camera);
         if (screenPos) {
             material.uniforms.uLightPosition.value.set(screenPos.x, screenPos.y, 0);
         }

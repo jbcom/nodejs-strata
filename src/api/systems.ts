@@ -60,11 +60,14 @@ export {
     verifyChecksum,
     webPersistenceAdapter,
     createWebPersistenceAdapter,
-    create,
-    useStore,
-    temporal,
-    immer,
 } from '../core';
+
+// Zustand re-exports - import directly from zustand packages if needed
+// These are provided for convenience but can also be imported from 'zustand' directly
+export { create } from 'zustand';
+export { useStore } from 'zustand';
+export { temporal } from 'zundo';
+export { immer } from 'zustand/middleware/immer';
 
 export type {
     GameStoreState,

@@ -120,6 +120,14 @@ export interface SSAOSettings {
     rangeThreshold?: number;
     /** Range falloff */
     rangeFalloff?: number;
+    /** World distance threshold (default 0.97) */
+    worldDistanceThreshold?: number;
+    /** World distance falloff (default 0.03) */
+    worldDistanceFalloff?: number;
+    /** World proximity threshold (default 0.0005) */
+    worldProximityThreshold?: number;
+    /** World proximity falloff (default 0.001) */
+    worldProximityFalloff?: number;
     /** Luminance influence (default 0.7) */
     luminanceInfluence?: number;
     /** Bias (default 0.5) */

@@ -161,6 +161,10 @@ export const EffectStack: React.FC<EffectStackProps> = ({
                 radius={preset.ssao.radius ?? 0.1}
                 intensity={preset.ssao.intensity ?? 1}
                 luminanceInfluence={preset.ssao.luminanceInfluence ?? 0.7}
+                worldDistanceThreshold={preset.ssao.worldDistanceThreshold ?? 0.97}
+                worldDistanceFalloff={preset.ssao.worldDistanceFalloff ?? 0.03}
+                worldProximityThreshold={preset.ssao.worldProximityThreshold ?? 0.0005}
+                worldProximityFalloff={preset.ssao.worldProximityFalloff ?? 0.001}
             />
         );
     }
@@ -411,6 +415,10 @@ export const RealisticEffects: React.FC<RealisticEffectsProps> = ({
                 radius={0.05}
                 intensity={ssaoIntensity}
                 luminanceInfluence={0.5}
+                worldDistanceThreshold={0.97}
+                worldDistanceFalloff={0.03}
+                worldProximityThreshold={0.0005}
+                worldProximityFalloff={0.001}
             />
         );
     }

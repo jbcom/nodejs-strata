@@ -7,8 +7,10 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
@@ -28,16 +30,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @CapacitorPlugin(name = "Strata")
 public class StrataPlugin extends Plugin {
 
+    private static final String TAG = "StrataPlugin";
     private static final int MAX_INPUT_MAPPING_SIZE = 5;
     private static final int MAX_INPUT_ACTION_LENGTH = 32;
+    private static final float GAMEPAD_DEADZONE = 0.15f;
 
     private Map<String, List<String>> inputMapping = new HashMap<>();
-    private Map<Integer, JSObject> activeTouches = new HashMap<>();
+    // Use ConcurrentHashMap for thread safety - touch events come from UI thread,
+    // while plugin methods may run on background threads
+    private Map<Integer, JSObject> activeTouches = new ConcurrentHashMap<>();
     private Vibrator vibrator;
+    // Store the last gamepad motion event for reading stick/trigger values
+    private volatile MotionEvent lastGamepadEvent = null;
 
     @Override
     public void load() {
@@ -169,6 +178,7 @@ public class StrataPlugin extends Plugin {
                     insets.put("left", systemInsets.left / density);
                 }
             } catch (Exception e) {
+                Log.w(TAG, "Error getting safe area insets (API 30+)", e);
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             try {
@@ -185,6 +195,7 @@ public class StrataPlugin extends Plugin {
                     }
                 }
             } catch (Exception e) {
+                Log.w(TAG, "Error getting safe area insets (API 28+)", e);
             }
         }
 
@@ -259,12 +270,12 @@ public class StrataPlugin extends Plugin {
         JSObject snapshot = new JSObject();
         
         JSObject leftStick = new JSObject();
-        leftStick.put("x", 0);
-        leftStick.put("y", 0);
+        leftStick.put("x", 0.0f);
+        leftStick.put("y", 0.0f);
         
         JSObject rightStick = new JSObject();
-        rightStick.put("x", 0);
-        rightStick.put("y", 0);
+        rightStick.put("x", 0.0f);
+        rightStick.put("y", 0.0f);
         
         JSObject buttons = new JSObject();
         buttons.put("jump", false);
@@ -272,18 +283,47 @@ public class StrataPlugin extends Plugin {
         buttons.put("cancel", false);
         
         JSObject triggers = new JSObject();
-        triggers.put("left", 0);
-        triggers.put("right", 0);
+        triggers.put("left", 0.0f);
+        triggers.put("right", 0.0f);
 
-        int[] deviceIds = InputDevice.getDeviceIds();
-        for (int deviceId : deviceIds) {
-            InputDevice device = InputDevice.getDevice(deviceId);
-            if (device != null) {
-                int sources = device.getSources();
-                if ((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
-                    (sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK) {
-                    break;
+        // Read gamepad input from the last motion event if available
+        MotionEvent gamepadEvent = lastGamepadEvent;
+        if (gamepadEvent != null) {
+            try {
+                // Read left stick values with deadzone
+                float lx = gamepadEvent.getAxisValue(MotionEvent.AXIS_X);
+                float ly = gamepadEvent.getAxisValue(MotionEvent.AXIS_Y);
+                if (Math.abs(lx) > GAMEPAD_DEADZONE) {
+                    leftStick.put("x", lx);
                 }
+                if (Math.abs(ly) > GAMEPAD_DEADZONE) {
+                    leftStick.put("y", -ly); // Invert Y for game-style coordinates
+                }
+                
+                // Read right stick values with deadzone
+                float rx = gamepadEvent.getAxisValue(MotionEvent.AXIS_Z);
+                float ry = gamepadEvent.getAxisValue(MotionEvent.AXIS_RZ);
+                if (Math.abs(rx) > GAMEPAD_DEADZONE) {
+                    rightStick.put("x", rx);
+                }
+                if (Math.abs(ry) > GAMEPAD_DEADZONE) {
+                    rightStick.put("y", -ry); // Invert Y for game-style coordinates
+                }
+                
+                // Read trigger values (0 to 1 range)
+                float leftTrigger = gamepadEvent.getAxisValue(MotionEvent.AXIS_LTRIGGER);
+                float rightTrigger = gamepadEvent.getAxisValue(MotionEvent.AXIS_RTRIGGER);
+                // Some controllers use BRAKE/GAS instead of LTRIGGER/RTRIGGER
+                if (leftTrigger == 0) {
+                    leftTrigger = gamepadEvent.getAxisValue(MotionEvent.AXIS_BRAKE);
+                }
+                if (rightTrigger == 0) {
+                    rightTrigger = gamepadEvent.getAxisValue(MotionEvent.AXIS_GAS);
+                }
+                triggers.put("left", leftTrigger);
+                triggers.put("right", rightTrigger);
+            } catch (Exception e) {
+                Log.w(TAG, "Error reading gamepad input", e);
             }
         }
 
@@ -295,6 +335,7 @@ public class StrataPlugin extends Plugin {
                 touchData.put("position", entry.getValue().get("position"));
                 touchData.put("phase", entry.getValue().getString("phase"));
             } catch (JSONException e) {
+                Log.w(TAG, "Error reading touch data", e);
             }
             touchesArray.put(touchData);
         }
@@ -347,6 +388,7 @@ public class StrataPlugin extends Plugin {
                 inputMapping.put("cancel", jsArrayToStringList(cancel));
             }
         } catch (JSONException e) {
+            Log.w(TAG, "Error setting input mapping", e);
         }
         
         call.resolve();
@@ -389,6 +431,7 @@ public class StrataPlugin extends Plugin {
                 call.resolve();
                 return;
             } catch (JSONException e) {
+                Log.w(TAG, "Error parsing haptic pattern array, falling back to intensity-based haptics", e);
                 // Fall through to standard intensity-based haptics
             }
         }
@@ -549,5 +592,35 @@ public class StrataPlugin extends Plugin {
         JSObject data = new JSObject();
         data.put("index", index);
         notifyListeners("gamepadDisconnected", data);
+    }
+
+    /**
+     * Handle gamepad motion events to capture stick and trigger values.
+     * This should be called from the Activity's onGenericMotionEvent.
+     */
+    public void handleGamepadMotionEvent(MotionEvent event) {
+        if (event == null) return;
+        
+        int source = event.getSource();
+        if ((source & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||
+            (source & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK) {
+            // Recycle the old event before storing the new one to prevent memory leaks
+            MotionEvent oldEvent = lastGamepadEvent;
+            lastGamepadEvent = MotionEvent.obtain(event);
+            if (oldEvent != null) {
+                oldEvent.recycle();
+            }
+        }
+    }
+
+    @Override
+    protected void handleOnDestroy() {
+        super.handleOnDestroy();
+        // Clean up the stored motion event to prevent memory leaks
+        MotionEvent event = lastGamepadEvent;
+        if (event != null) {
+            lastGamepadEvent = null;
+            event.recycle();
+        }
     }
 }

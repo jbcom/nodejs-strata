@@ -129,9 +129,17 @@
         }
     },
     "dependencies": {
+        "howler": "^2.2.4",
         "immer": "^11.0.1",
         "leva": "^0.10.1",
+        "maath": "^0.10.7",
+        "miniplex": "^2.0.0",
+        "miniplex-react": "^2.0.0",
+        "ngraph.graph": "^20.0.1",
+        "ngraph.path": "^1.5.0",
+        "simplex-noise": "^4.0.1",
         "tunnel-rat": "^0.1.2",
+        "xstate": "^5.13.0",
         "zundo": "^2.3.0",
         "zustand": "^5.0.9"
     },
@@ -139,6 +147,9 @@
         "@playwright/test": "^1.40.0",
         "@react-three/drei": "^9.114.0",
         "@react-three/fiber": "^8.15.0",
+        "@react-three/postprocessing": "^2.16.0",
+        "@types/howler": "^2.2.11",
+        "@xstate/react": "^4.1.0",
         "@semantic-release/changelog": "^6.0.3",
         "@semantic-release/git": "^10.0.1",
         "@testing-library/react": "^14.0.0",

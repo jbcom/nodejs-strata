@@ -100,8 +100,10 @@ function Game() {
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `intensity` | `'light' \| 'medium' \| 'heavy'` | Vibration strength |
+| `intensity` | `'light' \| 'medium' \| 'heavy'` | Vibration strength preset |
+| `customIntensity` | `number?` | Custom intensity from 0.0 to 1.0 (overrides `intensity`) |
 | `duration` | `number?` | Duration in milliseconds |
+| `pattern` | `number[]?` | Vibration pattern array (alternating on/off durations in ms) |
 
 ## Platform Support
 

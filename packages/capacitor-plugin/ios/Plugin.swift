@@ -78,7 +78,8 @@ public class StrataPlugin: CAPPlugin, CAPBridgedPlugin {
     
     @objc func controllerDidDisconnect(_ notification: Notification) {
         guard let controller = notification.object as? GCController else { return }
-        let index = GCController.controllers().firstIndex(of: controller) ?? 0
+        // Use playerIndex since controller is already removed from controllers() array by the time this fires
+        let index = controller.playerIndex.rawValue >= 0 ? controller.playerIndex.rawValue : 0
         notifyListeners("gamepadDisconnected", data: ["index": index])
         notifyDeviceChange()
     }
@@ -134,7 +135,8 @@ public class StrataPlugin: CAPPlugin, CAPBridgedPlugin {
     private func getSafeAreaInsets() -> [String: CGFloat] {
         var insets: [String: CGFloat] = ["top": 0, "right": 0, "bottom": 0, "left": 0]
         
-        DispatchQueue.main.sync {
+        // Check if already on main thread to prevent deadlock
+        let getSafeArea = {
             if let window = UIApplication.shared.connectedScenes
                 .compactMap({ $0 as? UIWindowScene })
                 .flatMap({ $0.windows })
@@ -146,6 +148,14 @@ public class StrataPlugin: CAPPlugin, CAPBridgedPlugin {
                     "bottom": safeArea.bottom,
                     "left": safeArea.left
                 ]
+            }
+        }
+        
+        if Thread.isMainThread {
+            getSafeArea()
+        } else {
+            DispatchQueue.main.sync {
+                getSafeArea()
             }
         }
         

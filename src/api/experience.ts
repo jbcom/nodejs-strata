@@ -159,8 +159,6 @@ export type {
 
 // Audio System - Core utilities
 export {
-    Howl,
-    Howler,
     SoundManager,
     SpatialAudio,
     createSoundManager,
@@ -174,6 +172,9 @@ export {
     suspendAudioContext,
     resumeAudioContext,
 } from '../core';
+
+// Howler.js re-exports - import directly from howler if needed
+export { Howl, Howler } from 'howler';
 
 export type {
     AudioConfig,
@@ -227,9 +228,10 @@ export {
     calculateFade,
     formatProgressText,
     clampProgress,
-    uiLerp,
-    uiEaseOutCubic,
-    uiEaseOutElastic,
+    // UI easing functions - aliased from camera utilities for API consistency
+    lerp as uiLerp,
+    easeOutCubic as uiEaseOutCubic,
+    easeOutElastic as uiEaseOutElastic,
     getTextDirection,
     createDefaultProgressBar,
     createDefaultInventory,

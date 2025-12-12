@@ -91,7 +91,8 @@ export {
     ProceduralGait,
     createBoneChain,
     createBoneChainFromLengths,
-    clampAngle,
+    // clampAngle is exported as animationClampAngle from core to avoid collision with camera utilities
+    animationClampAngle as clampAngle,
     dampedSpring,
     dampedSpringVector3,
     hermiteInterpolate,

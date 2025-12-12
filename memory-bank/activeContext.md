@@ -94,3 +94,16 @@ pnpm run docs:build   # TypeDoc
 ---
 
 *Last updated: 2025-12-11*
+## Session: 2025-12-12
+
+### Completed
+- Address critical PR #36 feedback
+- Remove generated docs from repo and add to .gitignore
+- Fix CI security issue with NPM_TOKEN
+- Fix hardcoded paths in environments.ts and .replit
+- Fix package.json dependency versions (remove carets, fix husky/typescript)
+- Fix memory leak in Capacitor web plugin
+- Fix race conditions in React hooks
+- Fix Android plugin input validation
+- Fix iOS plugin deprecated API
+- Pushed fixes to feature/replit-expansion

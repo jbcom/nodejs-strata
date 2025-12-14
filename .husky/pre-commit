@@ -8,4 +8,4 @@ elif command -v uvx >/dev/null 2>&1; then
 fi
 
 # Always run lint-staged for TypeScript/JavaScript
-npx lint-staged
+pnpm exec lint-staged

@@ -163,6 +163,7 @@
     "jsdom": "^27.3.0",
     "lint-staged": "^16.2.7",
     "maath": "^0.10.8",
+    "markdownlint-cli": "^0.47.0",
     "miniplex": "^2.0.0",
     "miniplex-react": "^2.0.1",
     "ngraph.graph": "^20.1.1",

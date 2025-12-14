@@ -35,6 +35,8 @@ permissions:
 env:
   GH_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
   OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+  OLLAMA_HOST: https://ollama.com
+  OLLAMA_MODEL: llama3.1:70b
 
 jobs:
   # ============================================

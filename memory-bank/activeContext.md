@@ -45,15 +45,18 @@ pnpm run format:check  # Biome format check
 
 - **Migration completed**: All references updated from jbdevprimary/strata to jbcom/nodejs-strata
 - **17 PRs merged**: Dependency updates and infrastructure sync
+- **Documentation system**: Using TypeDoc for API documentation
 - **Issues addressed**:
   - #7: Fixed Coveralls coverage configuration (reportsDirectory added)
   - #21: Added `demo` script to serve demo files
   - #22: Created examples directory with basic-terrain example
-  - #23: Fixed Sphinx docs configuration (project name)
 - **GAPS.md updates**:
   - Seeded random implemented (optional seed parameter)
   - Input validation added to instancing functions
   - GPU wind/LOD props documented with JSDoc
+- **CI/CD improvements**:
+  - All GitHub Actions pinned to exact SHAs for security
+  - Documentation workflow fixed to use TypeDoc instead of Sphinx
 
 ---
 *Last updated: 2025-12-18*

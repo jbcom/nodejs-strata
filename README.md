@@ -64,11 +64,22 @@ All organized into **presets** that you can drop into your game.
 
 ## 📚 Documentation
 
+### Core Documentation
 - **[Public API Contract](./PUBLIC_API.md)** - Stable, versioned API reference
-- **[API Reference](./API.md)** - Complete API documentation with examples
+- **[API Reference](./API.md)** - Complete API documentation
 - **[Developer Contract](./CONTRACT.md)** - Stability guarantees and versioning
-- **[Examples](./examples/)** - Working examples for all features
+
+### Examples & Tutorials
+- **[Examples → API Map](./EXAMPLES_API_MAP.md)** ⭐ **NEW** - Direct mapping from every example to API source
+- **[API Showcase](./examples/api-showcase/)** ⭐ **NEW** - JSDoc-linked examples for 100% API coverage
+- **[Interactive Examples](./examples/)** - Working examples for all features
 - **[Tests](./tests/)** - Test suite documentation
+
+### Features
+- **26+ Complete Examples** with direct links to API source code
+- **JSDoc Annotations** linking examples to implementations
+- **Progressive Complexity** from basic to advanced to complete
+- **Copy-Paste Ready** production-quality code snippets
 
 ## 🚀 Quick Start
 

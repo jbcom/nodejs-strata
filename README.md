@@ -10,28 +10,40 @@ Strata provides everything you need to build high-quality 3D games and experienc
 
 ---
 
-## 🎨 Visual Showcase
+## 🎨 Visual Showcase & Interactive Demos
 
-> **See Strata in action!** Run `pnpm demo` to serve interactive demos locally.
+> **Experience Strata in action!** See live, interactive demos showcasing every feature.
 
-| Feature | Description |
-|---------|-------------|
-| **Procedural Terrain** | SDF-based terrain generation with marching cubes |
-| **Advanced Water** | Realistic water with reflections, caustics, and foam |
-| **GPU Instancing** | Thousands of vegetation instances with seeded placement |
-| **Volumetric Effects** | Fog, god rays, and atmospheric scattering |
-| **Procedural Sky** | Dynamic day/night cycle with weather effects |
-| **Character Animation** | IK chains, procedural walk, and ragdoll physics |
+### 🌐 Online Demo Gallery
 
-### Live Demos
+Visit our [**Interactive Demo Gallery**](https://jbcom.github.io/nodejs-strata/) to explore:
+
+- 🏔️ **Procedural Terrain** - SDF-based terrain generation with marching cubes
+- 🌊 **Advanced Water** - Realistic water with reflections, caustics, and foam  
+- 🌿 **GPU Vegetation** - Thousands of instances with biome-based placement
+- ☁️ **Volumetric Effects** - Fog, atmospheric scattering, and weather
+- 🌅 **Procedural Sky** - Dynamic day/night cycle with stars and sun positioning
+- 🎮 **Character Animation** - IK chains, procedural walk, and physics
+- 🎬 **Full Scene** - Complete integration of all features
+
+### 🚀 Run Demos Locally
 
 ```bash
-# Serve interactive HTML demos
+# Serve the demo gallery
 pnpm demo
 
-# Run the basic-terrain React example
-cd examples/basic-terrain && pnpm install && pnpm dev
+# Run comprehensive React examples
+cd examples/vegetation-showcase && pnpm install && pnpm dev   # Port 3002
+cd examples/sky-volumetrics && pnpm install && pnpm dev       # Port 3003
+cd examples/basic-terrain && pnpm install && pnpm dev         # Port 3000
+cd examples/water-scene && pnpm install && pnpm dev           # Port 3001
 ```
+
+Each example includes:
+- ✅ Interactive controls with real-time adjustments
+- ✅ Copy-paste ready code snippets
+- ✅ Comprehensive documentation
+- ✅ Performance stats and optimization tips
 
 ---
 

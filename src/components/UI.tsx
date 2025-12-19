@@ -50,6 +50,7 @@ export interface HealthBarProps extends Partial<ProgressBarConfig> {
     distanceFade?: { start: number; end: number };
     className?: string;
     style?: CSSProperties;
+    ariaLabel?: string;
 }
 
 export interface HealthBarRef {
@@ -82,6 +83,7 @@ export const HealthBar = forwardRef<HealthBarRef, HealthBarProps>(
             distanceFade,
             className,
             style,
+            ariaLabel = 'Health Bar',
         },
         ref
     ) => {
@@ -184,7 +186,14 @@ export const HealthBar = forwardRef<HealthBarRef, HealthBarProps>(
                     style={{ transform: `translate(${offset[0]}px, ${offset[1]}px)` }}
                     className={className}
                 >
-                    <div style={containerStyle}>
+                    <div
+                        style={containerStyle}
+                        role="progressbar"
+                        aria-label={ariaLabel}
+                        aria-valuenow={displayValue}
+                        aria-valuemin={0}
+                        aria-valuemax={maxValue}
+                    >
                         {segments ? (
                             <div style={{ display: 'flex', height: '100%', gap: 1 }}>
                                 {Array.from({ length: segments }).map((_, i) => {
@@ -889,7 +898,21 @@ export const DialogBox = forwardRef<DialogBoxRef, DialogBoxProps>(
         };
 
         return (
-            <div style={containerStyle} onClick={advance} className={className}>
+            <div
+                style={containerStyle}
+                onClick={advance}
+                className={className}
+                tabIndex={0}
+                role="dialog"
+                aria-label="Dialogue"
+                onKeyDown={(e) => {
+                    if (e.target !== e.currentTarget) return;
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        advance();
+                    }
+                }}
+            >
                 <div
                     style={{
                         display: 'flex',

@@ -108,14 +108,19 @@ export class SoundManager {
     /**
      * Plays a loaded sound.
      *
+     * Each call creates a new sound instance, allowing multiple instances of the same
+     * sound to play simultaneously. Returns a unique sound ID that can be used to
+     * control that specific instance (e.g., for volume, fade, stop operations).
+     *
      * @param id - Sound identifier
      * @param sprite - Optional sprite name to play
-     * @returns The Howl sound ID or undefined if not found
+     * @returns The Howl sound ID for this specific instance, or undefined if sound not found
      *
      * @example
      * ```typescript
-     * manager.play('explosion');
-     * manager.play('footsteps', 'step1');
+     * const id1 = manager.play('explosion'); // First instance
+     * const id2 = manager.play('explosion'); // Second instance plays simultaneously
+     * manager.play('footsteps', 'step1');    // Play specific sprite
      * ```
      */
     play(id: string, sprite?: string): number | undefined {
@@ -130,12 +135,17 @@ export class SoundManager {
     /**
      * Stops a sound.
      *
+     * If soundId is provided, stops only that specific sound instance.
+     * If soundId is omitted, stops all instances of the sound.
+     *
      * @param id - Sound identifier
-     * @param soundId - Optional specific sound instance ID
+     * @param soundId - Optional specific sound instance ID (returned from play())
      *
      * @example
      * ```typescript
-     * manager.stop('bgm');
+     * manager.stop('bgm');           // Stops all instances
+     * const id = manager.play('bgm');
+     * manager.stop('bgm', id);       // Stops specific instance
      * ```
      */
     stop(id: string, soundId?: number): void {
@@ -148,8 +158,11 @@ export class SoundManager {
     /**
      * Pauses a sound.
      *
+     * If soundId is provided, pauses only that specific sound instance.
+     * If soundId is omitted, pauses all instances of the sound.
+     *
      * @param id - Sound identifier
-     * @param soundId - Optional specific sound instance ID
+     * @param soundId - Optional specific sound instance ID (returned from play())
      */
     pause(id: string, soundId?: number): void {
         const howl = this.sounds.get(id);
@@ -161,13 +174,19 @@ export class SoundManager {
     /**
      * Sets volume for a specific sound.
      *
+     * If soundId is provided, sets volume for that specific sound instance only.
+     * If soundId is omitted, sets the base volume for the sound, affecting all
+     * current and future instances.
+     *
      * @param id - Sound identifier
      * @param volume - Volume level (0.0 to 1.0)
-     * @param soundId - Optional specific sound instance ID
+     * @param soundId - Optional specific sound instance ID (returned from play())
      *
      * @example
      * ```typescript
-     * manager.setVolume('bgm', 0.5);
+     * manager.setVolume('bgm', 0.5);           // Sets base volume for all instances
+     * const id = manager.play('bgm');
+     * manager.setVolume('bgm', 0.8, id);       // Sets volume for specific instance
      * ```
      */
     setVolume(id: string, volume: number, soundId?: number): void {
@@ -185,15 +204,20 @@ export class SoundManager {
     /**
      * Fades the volume of a sound.
      *
+     * If soundId is provided, fades only that specific sound instance.
+     * If soundId is omitted, fades all currently playing instances of the sound.
+     *
      * @param id - Sound identifier
      * @param from - Start volume (0.0 to 1.0)
      * @param to - End volume (0.0 to 1.0)
      * @param duration - Fade duration in milliseconds
-     * @param soundId - Optional specific sound instance ID
+     * @param soundId - Optional specific sound instance ID (returned from play())
      *
      * @example
      * ```typescript
-     * manager.fade('bgm', 0, 1, 2000);
+     * manager.fade('bgm', 0, 1, 2000);         // Fade all instances
+     * const id = manager.play('bgm');
+     * manager.fade('bgm', 0, 1, 2000, id);     // Fade specific instance
      * ```
      */
     fade(id: string, from: number, to: number, duration: number, soundId?: number): void {
@@ -206,7 +230,11 @@ export class SoundManager {
     }
 
     /**
-     * Gets the volume of a sound.
+     * Gets the base volume of a sound.
+     *
+     * Returns the sound's base volume level, not the volume of any specific instance.
+     * To get instance-specific volume, you would need to track it separately or use
+     * Howler's direct API.
      *
      * @param id - Sound identifier
      * @returns Volume level or undefined if not found
@@ -330,8 +358,18 @@ export class SoundManager {
     /**
      * Checks if a sound is currently playing.
      *
+     * Returns true if ANY instance of this sound is currently playing.
+     * Does not check for a specific sound instance.
+     *
      * @param id - Sound identifier
-     * @returns True if playing
+     * @returns True if any instance is playing
+     *
+     * @example
+     * ```typescript
+     * const id1 = manager.play('bgm');
+     * const id2 = manager.play('bgm');
+     * manager.isPlaying('bgm');  // true (either id1 or id2 is playing)
+     * ```
      */
     isPlaying(id: string): boolean {
         const howl = this.sounds.get(id);

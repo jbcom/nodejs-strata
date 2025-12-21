@@ -9,6 +9,9 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'rea
 import { useAudioManager } from './context';
 import type { AmbientAudioProps, AmbientAudioRef } from './types';
 
+// Global counter for generating unique audio instance IDs
+let ambientInstanceCount = 0;
+
 /**
  * Non-positional ambient audio for background music and atmosphere.
  *
@@ -30,8 +33,11 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
         const targetVolumeRef = useRef(volume);
 
         // Generate a unique ID for this sound instance to avoid conflicts.
-        // We use the URL in the ID to make it descriptive, but add a random suffix.
-        const soundResourceId = useMemo(() => `ambient-${url}-${Math.random().toString(36).substr(2, 9)}`, [url]);
+        // We use the URL in the ID combined with a global counter to ensure uniqueness.
+        const soundResourceId = useMemo(() => {
+            ambientInstanceCount += 1;
+            return `ambient-${url}-${ambientInstanceCount}`;
+        }, [url]);
 
         useEffect(() => {
             if (!soundManager) return;

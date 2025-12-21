@@ -279,33 +279,37 @@ function createGame(definition: GameDefinition): Game {
     ? definition.world 
     : createWorldGraph(definition.world);
   
-  // 4. Create state store
+  // 4. Create ECS world for entity management
+  const world = createWorld<GameEntity>();
+  
+  // 5. Create state store
   const store = createGameStore(definition.statePreset, {
     initialState: definition.initialState,
     persist: true,
   });
   
-  // 5. Create managers
+  // 6. Create managers
   const sceneManager = createSceneManager({ initialScene: definition.initialScene });
   const modeManager = createModeManager(definition.defaultMode);
   const inputManager = createInputManager(definition.controls);
   const audioManager = createAudioManager(definition.audio);
   
-  // 6. Register scenes (Layer 1 orchestration - see RFC-001)
+  // 7. Register scenes (Layer 1 orchestration - see RFC-001)
   for (const [id, scene] of Object.entries(definition.scenes)) {
     sceneManager.register({ ...scene, id });
   }
   
-  // 7. Register modes
+  // 8. Register modes
   for (const [id, mode] of Object.entries(definition.modes)) {
     modeManager.register({ ...mode, id });
   }
   
-  // 8. Create game instance
+  // 9. Create game instance
   return {
     definition,
     registries,
     worldGraph,
+    world,
     store,
     sceneManager,
     modeManager,
@@ -334,7 +338,7 @@ function createGame(definition: GameDefinition): Game {
       });
     },
     stop: () => {
-      // Cleanup
+      world.clear();
     },
   };
 }

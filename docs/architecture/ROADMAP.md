@@ -10,10 +10,10 @@ This roadmap outlines the evolution of Strata from a rendering toolkit to a comp
 
 ### Deliverables
 - [x] Epic #50: Master tracking issue
-- [x] RFC #51: Game Orchestration Architecture
-- [x] RFC #52: Compositional Object System
-- [x] RFC #53: World Topology System
-- [x] RFC #54: Declarative Game Definition
+- [ ] RFC #51: Game Orchestration Architecture
+- [ ] RFC #52: Compositional Object System
+- [ ] RFC #53: World Topology System
+- [ ] RFC #54: Declarative Game Definition
 - [ ] Architecture documentation
 - [ ] Agent instructions update
 - [ ] Initial PR for peer review

@@ -216,13 +216,32 @@ function createTriggerSystem(): SystemFn {
   return (world, delta) => {
     const triggers = world.query('trigger', 'transform');
     const triggerables = world.query('triggerable', 'transform');
+    const now = performance.now() / 1000; // Current time in seconds
     
     for (const trigger of triggers) {
-      if (!trigger.trigger.enabled) continue;
+      const t = trigger.trigger;
+      
+      // Skip disabled triggers
+      if (t.enabled === false) continue;
+      
+      // Skip triggers that have already fired (once behavior)
+      if (t.once && (t.triggerCount ?? 0) > 0) continue;
+      
+      // Skip triggers still on cooldown
+      if (t.cooldown !== undefined && t.lastTriggered !== undefined) {
+        if (now - t.lastTriggered < t.cooldown) continue;
+      }
       
       for (const target of triggerables) {
         if (isInRange(trigger, target) && meetsCondition(trigger, target)) {
+          // Update trigger state before executing action
+          t.lastTriggered = now;
+          t.triggerCount = (t.triggerCount ?? 0) + 1;
+          
           executeTrigger(trigger, target);
+          
+          // Break after first target if once behavior (already triggered)
+          if (t.once) break;
         }
       }
     }

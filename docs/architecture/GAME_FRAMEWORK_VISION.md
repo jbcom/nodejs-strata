@@ -14,7 +14,7 @@ Strata currently provides excellent **primitives**:
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
 │  │   RENDERING     │  │   SIMULATION    │  │     STATE       │             │
 │  │   ───────────   │  │   ───────────   │  │   ───────────   │             │
-│  │ • Water         │  │ • ECS           │  │ • createGame-   │             │
+│  │ • createGameStore │             │
 │  │ • Sky           │  │ • Physics       │  │   Store         │             │
 │  │ • Terrain       │  │ • AI (Yuka)     │  │ • useSaveLoad   │             │
 │  │ • Vegetation    │  │ • Animation     │  │ • useCheckpoint │             │

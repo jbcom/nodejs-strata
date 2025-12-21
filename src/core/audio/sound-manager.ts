@@ -199,7 +199,9 @@ export class SoundManager {
     fade(id: string, from: number, to: number, duration: number, soundId?: number): void {
         const howl = this.sounds.get(id);
         if (howl) {
-            howl.fade(from, to, duration, soundId);
+            const clampedFrom = Math.max(0, Math.min(1, from));
+            const clampedTo = Math.max(0, Math.min(1, to));
+            howl.fade(clampedFrom, clampedTo, duration, soundId);
         }
     }
 

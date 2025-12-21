@@ -29,16 +29,15 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
         const soundIdRef = useRef<number | undefined>(undefined);
         const targetVolumeRef = useRef(volume);
 
-        /** Unique ID for this sound instance (URL + random suffix for descriptiveness) */
-        const soundResourceId = useMemo(
-            () => `ambient-${url}-${Math.random().toString(36).substr(2, 9)}`,
-            [url]
-        );
+        // Generate a unique ID for this sound instance to avoid conflicts.
+        // We use the URL in the ID to make it descriptive, but add a random suffix.
+        const soundResourceId = useMemo(() => `ambient-${url}-${Math.random().toString(36).substr(2, 9)}`, [url]);
 
         useEffect(() => {
             if (!soundManager) return;
 
             let isMounted = true;
+            let aborted = false;
 
             const loadSound = async () => {
                 try {
@@ -49,12 +48,13 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
                             loop,
                             volume: fadeTime > 0 && autoplay ? 0 : volume,
                             preload: true,
-                            autoplay: false, // Autoplay handled manually to support fade-in
+                            autoplay: false, // We handle autoplay manually to support fade
                         },
                         'ambient'
                     );
 
-                    if (!isMounted) {
+                    // Prevent setup if component unmounted or effect invalidated
+                    if (!isMounted || aborted) {
                         soundManager.unload(soundResourceId);
                         return;
                     }
@@ -84,6 +84,7 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
 
             return () => {
                 isMounted = false;
+                aborted = true;
                 soundManager.unload(soundResourceId);
                 soundIdRef.current = undefined;
             };
@@ -101,7 +102,14 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
             () => ({
                 play: () => {
                     if (soundManager) {
-                        soundIdRef.current = soundManager.play(soundResourceId);
+                        // Check if currently playing to avoid overlapping tracks
+                        const isPlaying = soundManager.isPlaying(soundResourceId);
+                        if (!isPlaying) {
+                             soundIdRef.current = soundManager.play(soundResourceId);
+                        } else if (soundIdRef.current !== undefined && !soundManager.isPlaying(soundResourceId)) {
+                             // Fallback: if isPlaying returns false but we have an ID, try playing new instance
+                             soundIdRef.current = soundManager.play(soundResourceId);
+                        }
                     }
                 },
                 stop: () => {
@@ -111,18 +119,23 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
                 },
                 fadeIn: (duration: number) => {
                     if (soundManager) {
-                        const id = soundIdRef.current;
+                        const isPlaying = soundManager.isPlaying(soundResourceId);
 
-                        // Start playback if not already playing
-                        if (!soundManager.isPlaying(soundResourceId)) {
-                            if (id !== undefined) {
-                                soundManager.setVolume(soundResourceId, 0, id);
-                            }
+                        if (!isPlaying) {
+                            // Ensure volume starts at 0 for the fade
+                            // We set volume on the resource ID if no specific instance ID is available,
+                            // but ideally we play then set.
                             soundIdRef.current = soundManager.play(soundResourceId);
+                             if (soundIdRef.current !== undefined) {
+                                soundManager.setVolume(soundResourceId, 0, soundIdRef.current);
+                             }
                         }
 
                         const newId = soundIdRef.current;
                         if (newId !== undefined) {
+                             // If already playing, we still want to ensure volume is 0 before fading?
+                             // Or maybe we fade from current volume?
+                             // Usually fadeIn implies starting from silence.
                             soundManager.setVolume(soundResourceId, 0, newId);
                             soundManager.fade(
                                 soundResourceId,
@@ -136,7 +149,7 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
                 },
                 fadeOut: (duration: number) => {
                     if (soundManager && soundIdRef.current !== undefined) {
-                        // Fade from target volume to 0
+                        // Fade from current volume to 0
                         soundManager.fade(
                             soundResourceId,
                             targetVolumeRef.current,
@@ -151,6 +164,7 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
                     if (soundManager) {
                         const id = soundIdRef.current;
                         if (fadeTime && fadeTime > 0 && id !== undefined) {
+                            // Fade from current known volume
                             soundManager.fade(
                                 soundResourceId,
                                 soundManager.getVolume(soundResourceId) ?? 1,
@@ -164,7 +178,8 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
                     }
                 },
                 isPlaying: () => {
-                    return soundManager ? soundManager.isPlaying(soundResourceId) : false;
+                     // Check if this component's sound is currently playing
+                     return soundManager ? soundManager.isPlaying(soundResourceId) : false;
                 },
             }),
             [soundManager, soundResourceId]

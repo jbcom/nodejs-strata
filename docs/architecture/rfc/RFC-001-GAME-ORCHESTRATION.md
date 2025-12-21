@@ -99,14 +99,21 @@ interface ModeConfig {
   // Mode-specific input mapping
   inputMap: InputMapping;
   
-  // Mode-specific UI overlay
-  ui?: React.ComponentType<{ mode: ModeConfig }>;
+  // Mode-specific UI overlay (receives full instance with runtime props)
+  ui?: React.ComponentType<{ instance: ModeInstance }>;
   
-  // Lifecycle hooks
+  // Lifecycle hooks (all receive runtime props for contextual operations)
   onEnter?: (props?: object) => void;
-  onExit?: () => void;
-  onPause?: () => void;   // When another mode is pushed on top
-  onResume?: () => void;  // When returning from a pushed mode
+  onExit?: (props?: object) => void;
+  onPause?: (props?: object) => void;   // When another mode is pushed on top
+  onResume?: (props?: object) => void;  // When returning from a pushed mode
+}
+
+// Runtime instance of a mode, combining static config with dynamic props
+interface ModeInstance {
+  config: ModeConfig;           // The static mode configuration
+  props: object;                // Runtime props passed during push()
+  pushedAt: number;             // Timestamp when mode was activated
 }
 
 interface ModeManager {
@@ -118,9 +125,12 @@ interface ModeManager {
   pop(): void;
   replace(modeId: GameMode, props?: object): void;
   
-  // State
-  current: ModeConfig;
-  stack: ModeConfig[];
+  // State (uses ModeInstance to preserve runtime props)
+  current: ModeInstance;
+  stack: ModeInstance[];
+  
+  // Access registered configs
+  getConfig(modeId: GameMode): ModeConfig | undefined;
   
   // Check mode
   isActive(modeId: GameMode): boolean;
@@ -146,13 +156,31 @@ modes.register({
   id: 'racing',
   systems: [racingMovementSystem, obstacleSystem, scoreSystem],
   inputMap: racingInputs,
-  ui: RacingHUD,
-  onEnter: ({ waterway }) => initRace(waterway),
-  onExit: () => cleanupRace(),
+  ui: RacingHUD,  // Receives { instance: ModeInstance } with props.waterway
+  onEnter: (props) => initRace(props?.waterway),
+  onExit: (props) => cleanupRace(props?.waterway),  // Now has access to props!
 });
 
 // Trigger racing mode
 modes.push('racing', { waterway: 'marsh_to_forest' });
+
+// Access current mode's runtime props
+const currentWaterway = modes.current.props.waterway;
+```
+
+**UI Component with Props**:
+```typescript
+// RacingHUD can access runtime props via the instance
+function RacingHUD({ instance }: { instance: ModeInstance }) {
+  const { waterway, onComplete } = instance.props as RacingProps;
+  
+  return (
+    <div>
+      <h2>Racing: {waterway}</h2>
+      <Timer onComplete={() => onComplete?.(false)} />
+    </div>
+  );
+}
 ```
 
 ### TriggerSystem
@@ -204,7 +232,7 @@ function createTriggerSystem(): SystemFn {
 
 **Usage Example**:
 ```typescript
-// River crossing trigger
+// River crossing trigger - props are preserved in ModeInstance
 world.add({
   transform: { position: new Vector3(25, 0, 0) },
   trigger: {
@@ -217,10 +245,14 @@ world.add({
       return !gameState.unlockedWaterways.includes('marsh_to_forest');
     },
     action: (player) => {
+      // Props are stored in ModeInstance, accessible to UI and lifecycle hooks
       modeManager.push('racing', { 
         waterway: 'marsh_to_forest',
-        onComplete: () => {
-          useGameStore.getState().unlockWaterway('marsh_to_forest');
+        difficulty: 'normal',
+        onComplete: (success: boolean) => {
+          if (success) {
+            useGameStore.getState().unlockWaterway('marsh_to_forest');
+          }
         }
       });
     },
@@ -290,12 +322,15 @@ useFrame((_, delta) => {
 
 ### With State Management
 ```typescript
-// Modes affect game state
+// Modes affect game state - access config via instance
 const modeManager = createModeManager('exploration');
-useGameStore.setState({ currentMode: modeManager.current.id });
+useGameStore.setState({ currentMode: modeManager.current.config.id });
 
-modeManager.on('modeChange', (mode) => {
-  useGameStore.setState({ currentMode: mode.id });
+modeManager.on('modeChange', (instance: ModeInstance) => {
+  useGameStore.setState({ 
+    currentMode: instance.config.id,
+    modeProps: instance.props,  // Runtime props now accessible!
+  });
 });
 ```
 

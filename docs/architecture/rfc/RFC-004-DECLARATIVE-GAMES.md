@@ -202,8 +202,8 @@ interface ModeDefinition {
   // Input mapping for this mode
   inputMap: InputMapping;
   
-  // UI overlay
-  ui?: React.ComponentType<ModeUIProps>;
+  // UI overlay (receives full instance with runtime props)
+  ui?: React.ComponentType<{ instance: ModeInstance }>;
   
   // Camera configuration
   camera?: CameraConfig;
@@ -211,13 +211,20 @@ interface ModeDefinition {
   // Physics configuration
   physics?: PhysicsConfig;
   
-  // Lifecycle
+  // Lifecycle (all hooks receive context with props for consistency)
   setup?: (context: ModeContext) => Promise<void>;
   teardown?: (context: ModeContext) => Promise<void>;
-  onEnter?: (context: ModeContext, props?: object) => void;
+  onEnter?: (context: ModeContext) => void;
   onExit?: (context: ModeContext) => void;
   onPause?: (context: ModeContext) => void;
   onResume?: (context: ModeContext) => void;
+}
+
+// Runtime instance of a mode, combining static definition with dynamic props
+interface ModeInstance {
+  config: ModeDefinition;       // The static mode definition
+  props: object;                // Runtime props passed during push()
+  pushedAt: number;             // Timestamp when mode was activated
 }
 
 interface ModeContext {
@@ -225,7 +232,7 @@ interface ModeContext {
   world: World;
   modeManager: ModeManager;
   sceneManager: SceneManager;
-  props?: object;  // Props passed to mode
+  instance: ModeInstance;       // Full instance with props (always available)
 }
 ```
 
@@ -287,11 +294,19 @@ function createGame(definition: GameDefinition): Game {
     },
     pause: () => {
       definition.hooks?.onPause?.();
-      modeManager.current?.onPause?.();
+      // Access config via instance, pass props to lifecycle hook
+      const current = modeManager.current;
+      current?.config.onPause?.({ 
+        game: this, world, modeManager, sceneManager, instance: current 
+      });
     },
     resume: () => {
       definition.hooks?.onResume?.();
-      modeManager.current?.onResume?.();
+      // Props are preserved in instance, available on resume
+      const current = modeManager.current;
+      current?.config.onResume?.({ 
+        game: this, world, modeManager, sceneManager, instance: current 
+      });
     },
     stop: () => {
       // Cleanup
@@ -477,6 +492,27 @@ export const exploration: ModeDefinition = {
   ui: ExplorationHUD,
 };
 
+// Example: UI component accessing runtime props via ModeInstance
+interface RacingProps {
+  waterway: string;
+  difficulty: 'easy' | 'normal' | 'hard';
+  onComplete?: (success: boolean) => void;
+}
+
+function RacingHUD({ instance }: { instance: ModeInstance }) {
+  // Type-safe access to runtime props passed during modeManager.push()
+  const { waterway, difficulty } = instance.props as RacingProps;
+  
+  return (
+    <div className="racing-hud">
+      <h2>Racing: {waterway}</h2>
+      <span className="difficulty">{difficulty}</span>
+      <Timer />
+      <SpeedMeter />
+    </div>
+  );
+}
+
 // rivermarsh/modes/racing.ts
 export const racing: ModeDefinition = {
   id: 'racing',
@@ -499,16 +535,26 @@ export const racing: ModeDefinition = {
     height: 8,
   },
   
-  ui: RacingHUD,
+  ui: RacingHUD,  // Receives { instance: ModeInstance } with props.waterway
   
-  onEnter: ({ props }) => {
-    initializeRace(props.waterway);
+  onEnter: ({ instance }) => {
+    // Runtime props accessible via instance.props
+    const { waterway } = instance.props as RacingProps;
+    initializeRace(waterway);
   },
   
-  onExit: ({ props, game }) => {
-    if (props.onComplete) {
-      props.onComplete(game.store.getState().racing.success);
+  onExit: ({ instance, game }) => {
+    // Props still available in onExit - fixes the architectural flaw!
+    const { onComplete } = instance.props as RacingProps;
+    if (onComplete) {
+      onComplete(game.store.getState().racing.success);
     }
+  },
+  
+  onResume: ({ instance }) => {
+    // Props available when returning from pause menu overlay
+    const { waterway } = instance.props as RacingProps;
+    resumeRace(waterway);
   },
 };
 ```

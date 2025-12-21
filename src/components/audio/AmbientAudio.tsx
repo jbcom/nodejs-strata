@@ -171,36 +171,9 @@ export const AmbientAudio = forwardRef<AmbientAudioRef, AmbientAudioProps>(
                     if (soundManager) {
                         const id = soundIdRef.current;
                         if (fadeTime && fadeTime > 0 && id !== undefined) {
-                             // We need to know where we are fading from.
-                             // Assume we are at previous target volume or similar?
-                             // We don't track current volume during fade perfectly.
-                             // Just use Howl's volume if possible, but we can't access it via SoundManager easily.
-                             // Let's assume we fade from whatever the last set volume was?
-                             // If we just use current volume, we might jump?
-                             // Howl.volume() returns the volume of the sound.
-
-                             // Let's rely on SoundManager.fade logic.
-                             // Ideally we should get the current volume from the sound instance.
-                             // But SoundManager.getVolume(id) gets the group volume.
-                             // We can't get instance volume easily without extending SoundManager further.
-
-                             // However, if we assume the sound is at 'volume' or 'targetVolumeRef' level.
-                             // Let's just use current known target.
-
                             soundManager.fade(
                                 soundResourceId,
-                                // This is tricky. If we are already fading, this might be wrong.
-                                // But replacing direct howl access means we lose some direct control unless we expose it.
-                                // Let's use the last known target volume as 'from'.
-                                // Or maybe we can update SoundManager to support getVolume(id, soundId).
-                                // But for now, let's use the simpler approach used in previous code which was:
-                                // howlRef.current.volume() as number
-
-                                // Since we don't have direct access, and `SoundManager.getVolume` is `howl.volume()`.
-                                // We can try using `soundManager.getVolume(soundResourceId)` but that might not be instance specific.
-                                // BUT since we have a UNIQUE resource ID per component, `soundResourceId` maps to exactly one Howl instance that is exclusively ours.
-                                // So `soundManager.getVolume(soundResourceId)` SHOULD be correct!
-
+                                // Use current volume from SoundManager as fade starting point
                                 soundManager.getVolume(soundResourceId) ?? 1,
                                 vol,
                                 fadeTime * 1000,

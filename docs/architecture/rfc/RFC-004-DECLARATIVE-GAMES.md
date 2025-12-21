@@ -21,8 +21,14 @@ const rivermarsh = createGame({
   
   content: { creatures, props, materials, items },
   world: rivermarshWorld,
-  modes: { exploration, racing, combat, dialogue },
   
+  scenes: { title, gameplay, credits },
+  initialScene: 'title',
+  
+  modes: { exploration, racing, combat, dialogue },
+  defaultMode: 'exploration',
+  
+  statePreset: 'rpg',
   initialState: createRPGState({ currentRegion: 'marsh' }),
   controls: { desktop, mobile, gamepad },
 });
@@ -49,6 +55,7 @@ function App() {
 Everything is data, not code:
 - Creatures are JSON-serializable definitions
 - Props are compositions of shapes and materials
+- Scenes are top-level game states with render trees (see RFC-001)
 - Modes are configuration objects with hooks
 - World structure is a graph definition
 
@@ -56,7 +63,7 @@ Everything is data, not code:
 Change a definition, see it update:
 - Creature colors update in real-time
 - Region boundaries adjust instantly
-- Mode transitions work immediately
+- Scene and mode transitions work immediately
 
 ### 4. Type Safety
 Full TypeScript support:
@@ -93,6 +100,10 @@ interface GameDefinition {
   
   // === WORLD ===
   world: WorldGraphDefinition | WorldGraph;
+  
+  // === SCENES (Layer 1 Orchestration - see RFC-001) ===
+  scenes: Record<string, SceneDefinition>;
+  initialScene: string;
   
   // === MODES ===
   modes: Record<string, ModeDefinition>;
@@ -141,6 +152,15 @@ interface GameDefinition {
     onSave?: (state: GameState) => void;
     onLoad?: (state: GameState) => void;
   };
+}
+
+// Scene definition for declarative registration (matches RFC-001 Scene interface)
+interface SceneDefinition {
+  id: string;
+  setup?: () => Promise<void>;      // Called before scene loads
+  teardown?: () => Promise<void>;   // Called after scene unloads
+  render: () => JSX.Element;        // Scene's 3D content
+  ui?: () => JSX.Element;           // Scene's 2D overlay
 }
 ```
 
@@ -266,17 +286,22 @@ function createGame(definition: GameDefinition): Game {
   });
   
   // 5. Create managers
-  const sceneManager = createSceneManager({ initialScene: 'game' });
+  const sceneManager = createSceneManager({ initialScene: definition.initialScene });
   const modeManager = createModeManager(definition.defaultMode);
   const inputManager = createInputManager(definition.controls);
   const audioManager = createAudioManager(definition.audio);
   
-  // 6. Register modes
+  // 6. Register scenes (Layer 1 orchestration - see RFC-001)
+  for (const [id, scene] of Object.entries(definition.scenes)) {
+    sceneManager.register({ ...scene, id });
+  }
+  
+  // 7. Register modes
   for (const [id, mode] of Object.entries(definition.modes)) {
     modeManager.register({ ...mode, id });
   }
   
-  // 7. Create game instance
+  // 8. Create game instance
   return {
     definition,
     registries,
@@ -385,6 +410,7 @@ import { props } from './props';
 import { materials } from './materials';
 import { items } from './items';
 import { world } from './world';
+import { scenes } from './scenes';
 import { modes } from './modes';
 import { controls } from './controls';
 
@@ -401,6 +427,14 @@ export const rivermarsh = createGame({
   },
   
   world,
+  
+  // Scenes (Layer 1 orchestration - see RFC-001)
+  scenes: {
+    title: scenes.title,
+    gameplay: scenes.gameplay,
+    credits: scenes.credits,
+  },
+  initialScene: 'title',
   
   modes: {
     exploration: modes.exploration,
@@ -455,6 +489,48 @@ function App() {
     />
   );
 }
+```
+
+### Scene Definitions
+
+```typescript
+// rivermarsh/scenes/index.ts
+import { SceneDefinition } from '@jbcom/strata/game';
+
+export const title: SceneDefinition = {
+  id: 'title',
+  setup: async () => {
+    // Load title screen assets
+    await loadAssets(['title_bg', 'logo']);
+  },
+  teardown: async () => {
+    // Cleanup title assets
+  },
+  render: () => <TitleBackground />,
+  ui: () => <TitleMenu onStart={() => sceneManager.load('gameplay')} />,
+};
+
+export const gameplay: SceneDefinition = {
+  id: 'gameplay',
+  setup: async () => {
+    // Load world, creatures, props
+    await loadWorld();
+  },
+  teardown: async () => {
+    // Save progress before leaving
+    await saveProgress();
+  },
+  render: () => <GameWorld />,
+  ui: () => <GameHUD />,
+};
+
+export const credits: SceneDefinition = {
+  id: 'credits',
+  render: () => <CreditsBackground />,
+  ui: () => <CreditsScroll onComplete={() => sceneManager.load('title')} />,
+};
+
+export const scenes = { title, gameplay, credits };
 ```
 
 ### Mode Definitions

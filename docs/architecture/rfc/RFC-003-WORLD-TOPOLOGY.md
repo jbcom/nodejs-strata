@@ -383,7 +383,7 @@ worldGraph.on('regionChange', (from, to) => {
 });
 
 // Connection traversal uses mode manager
-connectionSystem uses modeManager.push()
+// Connection system uses modeManager.push()
 ```
 
 ### With State Management

@@ -2,7 +2,22 @@
 
 ## Overview
 
-Procedural 3D graphics library for React Three Fiber providing terrain, water, sky, vegetation, and effects.
+**@jbcom/strata** is evolving from a procedural 3D graphics library into a **complete game framework** for React Three Fiber.
+
+### Current Capabilities (Toolkit)
+- Terrain, water, sky, vegetation, volumetrics
+- ECS, physics, AI, animation, pathfinding
+- State management with save/load
+
+### In Development (Framework)
+- Game orchestration (scenes, modes, triggers)
+- World topology (regions, connections)
+- Compositional objects (materials, skeletons, props)
+- Declarative game definition (`createGame()`)
+
+**See:** [Architecture Documentation](docs/architecture/README.md)
+
+**Epic Tracking:** [#50 - Strata Game Framework](https://github.com/jbcom/nodejs-strata/issues/50)
 
 ## Quick Start
 
@@ -57,6 +72,7 @@ pnpm run docs
 
 ## Architecture
 
+### Current Structure
 ```
 src/
 ├── core/           # Pure TypeScript (NO React imports!)
@@ -72,6 +88,34 @@ src/
 ├── hooks/          # React hooks
 └── api/            # High-level API
 ```
+
+### Planned Framework Layers (Epic #50)
+```
+src/
+├── game/           # Layer 1: Orchestration (NEW)
+│   ├── SceneManager.ts
+│   ├── ModeManager.ts
+│   └── TriggerSystem.ts
+├── world/          # Layer 2: Topology (NEW)
+│   ├── WorldGraph.ts
+│   └── RegionSystem.ts
+├── compose/        # Layer 3: Composition (NEW)
+│   ├── materials/
+│   ├── skeletons/
+│   ├── props/
+│   └── creatures/
+└── framework/      # Layer 4: Definition (NEW)
+    ├── createGame.ts
+    └── StrataGame.tsx
+```
+
+### Key RFCs
+| RFC | Status | Focus |
+|-----|--------|-------|
+| [#51](https://github.com/jbcom/nodejs-strata/issues/51) | Proposed | Game Orchestration |
+| [#52](https://github.com/jbcom/nodejs-strata/issues/52) | Proposed | Compositional Objects |
+| [#53](https://github.com/jbcom/nodejs-strata/issues/53) | Proposed | World Topology |
+| [#54](https://github.com/jbcom/nodejs-strata/issues/54) | Proposed | Declarative Games |
 
 ## Testing
 
@@ -187,8 +231,18 @@ useEffect(() => {
 
 ## Current EPICs
 
+- **#50** - Strata Game Framework (Active - Phase 1)
 - **#74** - Archive Triage & Extraction Map
 - **#35** - Main Integration
+
+## Architecture Documentation
+
+Full documentation for the game framework evolution:
+- [Architecture README](docs/architecture/README.md)
+- [Game Framework Vision](docs/architecture/GAME_FRAMEWORK_VISION.md)
+- [Roadmap](docs/architecture/ROADMAP.md)
+- [Agent Instructions](docs/architecture/guides/AGENTS.md)
+- [Migration Guide](docs/architecture/guides/MIGRATION.md)
 
 ## Merge Priority
 

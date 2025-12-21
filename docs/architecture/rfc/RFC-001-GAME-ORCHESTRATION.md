@@ -266,9 +266,9 @@ function createTransitionManager(): TransitionManager;
 ```typescript
 // Scene load with transition
 async function loadWithTransition(sceneId: string) {
-  await transitions.start({ type: 'fade', duration: 0.5, color: 'black' });
+  await transitions.start({ type: 'fade', duration: 0.5, color: 'black' }); // Fade out
   await scenes.load(sceneId);
-  await transitions.start({ type: 'fade', duration: 0.5, color: 'black' });
+  await transitions.start({ type: 'fade', duration: 0.5, color: 'black', reverse: true }); // Fade in
 }
 ```
 

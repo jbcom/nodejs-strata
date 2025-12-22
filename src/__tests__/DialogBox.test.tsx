@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import React from 'react';
-import { DialogBox } from '../components/UI';
+import { DialogBox } from '../components/ui';
 
 describe('DialogBox UX', () => {
     // No fake timers to avoid waitFor issues

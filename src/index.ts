@@ -4,16 +4,97 @@
  * The complete solution for foreground, midground, and background layer
  * 3D gaming in Node.js. Provides terrain, water, vegetation, characters,
  * fur, shells, molecular rendering, and more.
- *
- * Organized into submodules for easy integration into your game.
- *
- * @packageDocumentation
- * @module strata
  */
 
-export * from './components';
-export * from './core';
-export * from './hooks';
-export * from './presets';
-export * from './shaders';
-export * from './utils';
+export * from './components/index';
+export * from './hooks/index';
+export * from './presets/index';
+export * from './shaders/index';
+export * from './utils/index';
+
+// Re-export core without duplicates that are already in components/presets
+export {
+    type BoneChain,
+    type BoneConstraint,
+    type IKSolverResult,
+    type SpringConfig,
+    type SpringState,
+    type GaitConfig,
+    type GaitState,
+    type LookAtConfig,
+    type LookAtState,
+    createBoneChain,
+    createBoneChainFromLengths,
+    FABRIKSolver,
+    CCDSolver,
+    TwoBoneIKSolver,
+    LookAtController,
+    SpringDynamics,
+    SpringChain,
+    ProceduralGait,
+    clampAngle,
+    dampedSpring,
+    dampedSpringVector3,
+    hermiteInterpolate,
+    sampleCurve,
+    calculateBoneRotation,
+    lerp,
+    inverseLerp,
+    clamp,
+    clamp01,
+    degToRad,
+    deltaAngle,
+    distanceSquared2D,
+    distanceSquared3D,
+    lerpAngle,
+    moveTowards,
+    pingPong,
+    radToDeg,
+    remap,
+    remapRange,
+    smoothDamp,
+    smootherstep,
+    smoothstep,
+    wrapAngle,
+    approximately,
+    easeInCubic,
+    easeInOutCubic,
+    easeOutCubic,
+    easeOutElastic,
+    createNoise2D,
+    createNoise3D,
+    createNoise4D,
+    createTerrainNoise,
+    fbm2D,
+    fbm3D,
+    ridgedNoise2D,
+    TERRAIN_PRESETS,
+    warpedNoise2D,
+    warpedNoise3D,
+    type EasingFn,
+    type FBMConfig,
+    type LerpFn,
+    type Noise2D,
+    type Noise3D,
+    type Noise4D,
+    type RandomFn,
+    type Range,
+    type TerrainNoisePreset,
+    type Vec2Like,
+    type Vec3Like,
+    type Vec4Like,
+    DEFAULT_FBM_CONFIG,
+    lerpVector3,
+    slerp,
+    smoothDampVector3,
+    evaluateCatmullRom,
+    calculateLookAhead,
+    calculateHeadBob,
+    calculateScreenShakeIntensity,
+    worldToScreen,
+    screenToWorld,
+    calculateFade,
+    formatProgressText,
+    clampProgress,
+    getTextDirection,
+} from './core/index';

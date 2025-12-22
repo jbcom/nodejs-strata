@@ -6,22 +6,11 @@
  *
  * Visual effects that bring your world to life - from rain and snow
  * to explosions and god rays.
- *
- * @example
- * ```tsx
- * import { ParticleEmitter, Rain, GodRays } from '@jbcom/strata/api/effects';
- *
- * function WeatherScene() {
- *   return (
- *     <>
- *       <Rain intensity={0.5} />
- *       <GodRays lightPosition={[10, 20, 0]} />
- *       <ParticleEmitter preset="fire" position={[0, 0, 0]} />
- *     </>
- *   );
- * }
- * ```
  */
+
+// Import core types directly to avoid circular dependency or missing re-exports
+import * as Core from '../core';
+import * as Components from '../components';
 
 // Weather state from components
 export type {
@@ -56,11 +45,7 @@ export type {
     WeatherState,
     WeatherSystemProps,
 } from '../components';
-// Particle Systems - React components
-// Weather Effects - React components
-// Decals & Billboards - React components
-// LOD System - React components
-// God Rays & Volumetric Lighting - React components
+
 export {
     AnimatedBillboard,
     Billboard,
@@ -69,7 +54,6 @@ export {
     GodRays,
     Impostor,
     Lightning,
-    LightShafts,
     LODGroup,
     LODMesh,
     LODVegetation,
@@ -79,92 +63,32 @@ export {
     Snow,
     VolumetricPointLight,
     VolumetricSpotlight,
-    WeatherEffects,
 } from '../components';
+
 export type {
-    BillboardConfig,
-    DecalInstance,
-    DecalProjectorConfig,
-    EmissionShape,
-    EmitterShapeParams,
     GodRaysMaterialOptions,
-    ImpostorConfig,
-    LODConfig,
-    LODLevel,
-    LODState,
     OcclusionResult,
-    ParticleBehavior,
-    ParticleEmitterConfig,
-    ParticleForces,
     RadialBlurOptions,
     ScatteringParams,
-    SimplificationOptions,
-    SpriteAnimationState,
-    SpriteSheetConfig,
-    TemperatureConfig,
-    VegetationLODConfig,
     VolumetricPointLightMaterialOptions,
     VolumetricSpotlightMaterialOptions,
-    WeatherStateConfig,
-    WeatherTransition,
     WeatherType,
-    WindConfig,
+    WeatherTransition,
 } from '../core';
-// Particle Systems - Core utilities
-// Weather Effects - Core utilities
-// Decals & Billboards - Core utilities
-// LOD System - Core utilities
-// God Rays & Volumetric Lighting - Core utilities
+
 export {
-    applySpriteSheetFrame,
-    batchLODObjects,
     blendGodRayColors,
     calculateGodRayIntensityFromAngle,
-    calculateImpostorAngle,
-    calculateLODLevel,
     calculateRadialBlur,
     calculateScatteringIntensity,
-    calculateScreenSpaceSize,
     calculateSunOcclusion,
-    calculateTemperature,
-    calculateVegetationDensity,
-    createBillboardMatrix,
-    createBloodSplatterTexture,
-    createBulletHoleTexture,
-    createDecalTexture,
-    createDitherPattern,
-    createFootprintTexture,
     createGodRaysMaterial,
-    createImpostorGeometry,
-    createImpostorTexture,
-    createLODLevels,
-    createParticleEmitter,
     createPointLightSphereGeometry,
-    createScorchMarkTexture,
     createSpotlightConeGeometry,
-    createSpriteSheetAnimation,
-    createSpriteSheetMaterial,
-    createVegetationLODLevels,
     createVolumetricPointLightMaterial,
     createVolumetricSpotlightMaterial,
-    createWaterPuddleTexture,
-    createWeatherSystem,
-    createWindSimulation,
-    DecalProjector,
-    generateLODGeometries,
     getLightScreenPosition,
-    getPrecipitationType,
-    getSpriteSheetUVs,
-    interpolateLODMaterials,
-    LODManager,
-    ParticleEmitter as CoreParticleEmitter,
-    shouldUseLOD,
-    simplifyGeometry,
-    sortBillboardsByDepth,
-    updateBillboardRotation,
     updateGodRaysLightPosition,
-    updateImpostorUV,
-    updateSpriteSheetAnimation,
-    WeatherSystem as CoreWeatherSystem,
-    WindSimulation,
+    createWeatherSystem,
+    getPrecipitationType,
 } from '../core';

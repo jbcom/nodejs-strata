@@ -6,26 +6,11 @@
  *
  * Everything that connects the player to your game - how they see it,
  * how they control it, what they hear, and what information they receive.
- *
- * @example
- * ```tsx
- * import { FollowCamera, AudioProvider, HealthBar } from '@jbcom/strata/api/experience';
- *
- * function Game() {
- *   return (
- *     <AudioProvider>
- *       <FollowCamera target={playerRef} distance={5} />
- *       <HealthBar current={75} max={100} />
- *     </AudioProvider>
- *   );
- * }
- * ```
  */
 
 export type {
     AmbientAudioProps,
     AmbientAudioRef,
-    AudioContextValue,
     AudioEmitterProps,
     AudioEmitterRef,
     AudioEnvironmentProps,
@@ -35,7 +20,6 @@ export type {
     AudioZoneRef,
     CameraShakeProps,
     CameraShakeRef,
-    CameraTransitionProps,
     CinematicCameraProps,
     CinematicCameraRef,
     CrosshairProps,
@@ -52,8 +36,6 @@ export type {
     GroundSwitchRef,
     HealthBarProps,
     HealthBarRef,
-    InputControlEvents,
-    InputControlRef,
     InventoryProps,
     InventoryRef,
     Joystick3DProps,
@@ -70,21 +52,13 @@ export type {
     PressurePlateRef,
     ProgressBar3DProps,
     TooltipProps,
-    TriggerBehavior,
-    TriggerBehaviorConfig,
     TriggerComposerProps,
     TriggerComposerRef,
-    TriggerConfig,
-    TriggerMaterialConfig,
-    TriggerShape,
     WallButtonProps,
     WallButtonRef,
     WeatherAudioProps,
 } from '../components';
-// Camera Systems - React components
-// Input Handling - React components
-// Audio System - React components
-// Game UI - React components
+
 export {
     AmbientAudio,
     AudioEmitter,
@@ -119,6 +93,7 @@ export {
     WallButton,
     WeatherAudio,
 } from '../components';
+
 export type {
     AudioBus,
     AudioConfig,
@@ -133,22 +108,15 @@ export type {
     DialogConfig,
     DialogLine,
     DistanceModel,
-    DragState,
     EnvironmentEffectConfig,
     EnvironmentPreset,
     FOVTransitionConfig,
-    GamepadState,
-    HapticPattern,
-    InputAxis,
-    InputEvent,
-    InputManagerConfig,
     InventoryConfig,
     InventorySlot,
     MinimapConfig,
     MinimapMarker,
     NameplateConfig,
     NotificationConfig,
-    PointerState,
     ProgressBarConfig,
     ScreenPosition,
     ScreenShakeIntensity,
@@ -158,21 +126,9 @@ export type {
     TooltipConfig,
     UIAnchor,
 } from '../core';
-// Camera Systems - Core utilities
-// Input Handling - Core utilities
-// Audio System - Core utilities
-// Game UI - Core utilities
+
 export {
-    angleToAxis,
-    axisToAngle,
-    axisToMagnitude,
     CameraShake as CoreCameraShake,
-    calculateFade,
-    calculateHeadBob,
-    calculateLookAhead,
-    calculateScreenShakeIntensity,
-    clampAxis,
-    clampProgress,
     createDefaultCrosshair,
     createDefaultDamageNumber,
     createDefaultDialog,
@@ -182,7 +138,6 @@ export {
     createDefaultNotification,
     createDefaultProgressBar,
     createDefaultTooltip,
-    createInputManager,
     createSoundManager,
     createSpatialAudio,
     DEFAULT_SPATIAL_CONFIG,
@@ -194,22 +149,17 @@ export {
     evaluateCatmullRom,
     FOVTransition,
     formatNumber,
-    formatProgressText,
     getAnchorOffset,
     getAudioContext,
     getDamageNumberColor,
     getNotificationColor,
     getNotificationIcon,
     getTextDirection,
-    HapticFeedback,
     Howl,
     Howler,
-    InputManager,
-    InputStateMachine,
     isAudioContextUnlocked,
     lerp,
     lerpVector3,
-    normalizeAxisValue,
     resumeAudioContext,
     SoundManager,
     SpatialAudio,
@@ -219,9 +169,12 @@ export {
     smoothDamp,
     smoothDampVector3,
     suspendAudioContext,
-    uiEaseOutCubic,
-    uiEaseOutElastic,
-    uiLerp,
     unlockAudioContext,
     worldToScreen,
+    calculateFade,
+    calculateHeadBob,
+    calculateLookAhead,
+    calculateScreenShakeIntensity,
+    clampProgress,
+    formatProgressText,
 } from '../core';

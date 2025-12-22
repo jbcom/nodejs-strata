@@ -8,12 +8,14 @@ import type {
     GroundSwitchProps,
     Joystick3DProps,
     PressurePlateProps,
+} from '../../components/input';
+import type {
     TriggerBehaviorConfig,
     TriggerComposerProps,
     TriggerConfig,
     TriggerMaterialConfig,
-    WallButtonProps,
-} from '../components/Input';
+} from '../../components/input';
+import type { WallButtonProps } from '../../components/ui';
 
 export interface InputPreset<T> {
     name: string;

@@ -1,7 +1,25 @@
 /**
- * Procedural Sky component
+ * High-performance Sky system for realistic day/night cycles and atmosphere.
  *
- * Lifted from Otterfall biome selector diorama.
+ * @packageDocumentation
+ * @module components/Sky
+ * @category World Building
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Demo](http://jonbogaty.com/nodejs-strata/demos/sky.html)
+ * - 📦 [Example Source](https://github.com/jbcom/nodejs-strata/tree/main/examples/sky-volumetrics)
+ *
+ * @example
+ * ```tsx
+ * <ProceduralSky
+ *   timeOfDay={{
+ *     sunAngle: 45,
+ *     sunIntensity: 1
+ *   }}
+ * />
+ * ```
+ *
+ * @see {@link createTimeOfDay} for generating states based on hour.
  */
 
 import { useFrame } from '@react-three/fiber';
@@ -27,6 +45,10 @@ export interface WeatherState {
     intensity: number;
 }
 
+/**
+ * Props for the ProceduralSky component.
+ * @category World Building
+ */
 interface ProceduralSkyProps {
     /** Time of day settings */
     timeOfDay?: Partial<TimeOfDayState>;
@@ -52,6 +74,8 @@ const defaultWeather: WeatherState = {
 
 /**
  * Procedural sky with day/night cycle, stars, clouds, and weather effects
+ *
+ * @category World Building
  */
 export function ProceduralSky({
     timeOfDay: timeOfDayProp = {},
@@ -106,7 +130,17 @@ export function ProceduralSky({
 }
 
 /**
- * Convenience function to create time of day state from hour
+ * Convenience function to create time of day state from hour.
+ *
+ * @category World Building
+ * @param hour - Hour of the day (0-24)
+ * @returns TimeOfDayState configuration
+ *
+ * @example
+ * ```typescript
+ * const noon = createTimeOfDay(12);
+ * const midnight = createTimeOfDay(0);
+ * ```
  */
 export function createTimeOfDay(hour: number): TimeOfDayState {
     // Normalize to 0-24

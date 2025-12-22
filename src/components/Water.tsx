@@ -1,18 +1,22 @@
 /**
- * Procedural Water components for React Three Fiber
- *
- * Provides realistic water surfaces with wave animation, reflections, caustics, and foam effects.
+ * High-performance Water system for realistic oceans, lakes, and rivers.
  *
  * @packageDocumentation
  * @module components/Water
+ * @category World Building
  *
  * ## Interactive Demos
- * - 🎮 [Live Water Demo](http://jonbogaty.com/nodejs-strata/demos/water.html)
- * - 📦 [Water Scene Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/water-scene)
+ * - 🎮 [Live Demo](http://jonbogaty.com/nodejs-strata/demos/water.html)
+ * - 📦 [Example Source](https://github.com/jbcom/nodejs-strata/tree/main/examples/water-scene)
  *
- * ## API Documentation
- * - [Full API Reference](http://jonbogaty.com/nodejs-strata/api)
- * - [Examples → API Mapping](https://github.com/jbcom/nodejs-strata/blob/main/EXAMPLES_API_MAP.md#water-system-apis)
+ * @example
+ * ```tsx
+ * <Water
+ *   position={[0, -1, 0]}
+ *   size={1000}
+ *   color={0x004488}
+ * />
+ * ```
  */
 
 import { useFrame } from '@react-three/fiber';
@@ -22,9 +26,8 @@ import * as THREE from 'three';
 import { createAdvancedWaterMaterial, createWaterMaterial } from '../core/water';
 
 /**
- * Props for the Water component
- *
- * @interface WaterProps
+ * Props for the Water component.
+ * @category World Building
  */
 interface WaterProps {
     /** Position of the water surface in 3D space. Default: [0, -0.2, 0] */
@@ -44,37 +47,9 @@ interface WaterProps {
 }
 
 /**
- * Simple procedural water surface with animated waves
+ * Simple procedural water surface with animated waves.
  *
- * Creates a realistic water plane with procedural wave animation. Ideal for lakes, rivers,
- * and ocean surfaces. Uses GPU shaders for performant wave simulation.
- *
- * @component
- * @example
- * ```tsx
- * // Basic water surface
- * <Water
- *   position={[0, 0, 0]}
- *   size={100}
- *   color={0x006994}
- *   opacity={0.8}
- * />
- * ```
- *
- * @example
- * ```tsx
- * // Rough ocean water
- * <Water
- *   size={200}
- *   waveSpeed={2.0}
- *   waveHeight={1.5}
- *   segments={64}
- * />
- * ```
- *
- * @see {@link http://jonbogaty.com/nodejs-strata/demos/water.html | Live Demo}
- * @see {@link https://github.com/jbcom/nodejs-strata/tree/main/examples/water-scene | Full Example}
- * @see {@link AdvancedWater} for caustics, reflections, and foam effects
+ * @category World Building
  */
 export const Water = forwardRef<THREE.Mesh, WaterProps>(
     (
@@ -133,20 +108,43 @@ export const Water = forwardRef<THREE.Mesh, WaterProps>(
 
 Water.displayName = 'Water';
 
+/**
+ * Props for the AdvancedWater component.
+ * @category World Building
+ */
 interface AdvancedWaterProps {
+    /** Position of the water surface. */
     position?: [number, number, number];
+    /** Size of the water plane. Can be a number or [width, height]. */
     size?: number | [number, number];
+    /** Number of segments for the plane geometry. */
     segments?: number;
+    /** Shallow water color. */
     color?: THREE.ColorRepresentation;
+    /** Deep water color. */
     deepColor?: THREE.ColorRepresentation;
+    /** Foam color. */
     foamColor?: THREE.ColorRepresentation;
+    /** Intensity of caustics (0-1). */
     causticIntensity?: number;
+    /** Height of waves. */
     waveHeight?: number;
+    /** Speed of wave animation. */
     waveSpeed?: number;
 }
 
 /**
- * Advanced water with caustics and foam effects
+ * Advanced water with caustics and foam effects.
+ *
+ * @category World Building
+ * @example
+ * ```tsx
+ * <AdvancedWater
+ *   size={500}
+ *   color={0x00aaff}
+ *   causticIntensity={0.8}
+ * />
+ * ```
  */
 export const AdvancedWater = forwardRef<THREE.Mesh, AdvancedWaterProps>(
     (

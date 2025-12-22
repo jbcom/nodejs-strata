@@ -1,9 +1,24 @@
 /**
  * Physics Components for Strata
  *
- * Higher-level physics components built on @react-three/rapier.
+ * High-performance physics components built on @react-three/rapier.
  * Provides character controllers, vehicles, destructibles, and more.
+ *
+ * @packageDocumentation
  * @module components/Physics
+ * @category Entities & Simulation
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Demo](http://jonbogaty.com/nodejs-strata/demos/physics.html)
+ * - 📦 [Example Source](https://github.com/jbcom/nodejs-strata/tree/main/examples/physics)
+ *
+ * @example
+ * ```tsx
+ * <CharacterController
+ *   position={[0, 2, 0]}
+ *   config={{ jumpForce: 10 }}
+ * />
+ * ```
  */
 
 import { useFrame } from '@react-three/fiber';
@@ -51,7 +66,8 @@ import {
 } from '../core/physics';
 
 /**
- * Props for the CharacterController component
+ * Props for the CharacterController component.
+ * @category Entities & Simulation
  */
 export interface CharacterControllerProps {
     position?: [number, number, number];
@@ -73,7 +89,8 @@ export interface CharacterControllerProps {
 }
 
 /**
- * Ref interface for CharacterController
+ * Ref interface for CharacterController.
+ * @category Entities & Simulation
  */
 export interface CharacterControllerRef {
     getRigidBody: () => RapierRigidBody | null;
@@ -89,6 +106,7 @@ export interface CharacterControllerRef {
  * Character controller with ground detection, jumping, and WASD movement.
  * Ideal for FPS and third-person character controllers.
  *
+ * @category Entities & Simulation
  * @example
  * ```tsx
  * <CharacterController position={[0, 2, 0]} enableInput>
@@ -384,7 +402,8 @@ export const CharacterController = forwardRef<CharacterControllerRef, CharacterC
 CharacterController.displayName = 'CharacterController';
 
 /**
- * Props for the VehicleBody component
+ * Props for the VehicleBody component.
+ * @category Entities & Simulation
  */
 export interface VehicleBodyProps {
     position?: [number, number, number];
@@ -403,7 +422,8 @@ export interface VehicleBodyProps {
 }
 
 /**
- * Ref interface for VehicleBody
+ * Ref interface for VehicleBody.
+ * @category Entities & Simulation
  */
 export interface VehicleBodyRef {
     getRigidBody: () => RapierRigidBody | null;
@@ -415,6 +435,7 @@ export interface VehicleBodyRef {
  * Car-like physics body with simplified wheel simulation.
  * Uses force-based driving rather than ray-cast wheels for simplicity.
  *
+ * @category Entities & Simulation
  * @example
  * ```tsx
  * <VehicleBody position={[0, 1, 0]} enableInput>
@@ -586,7 +607,8 @@ export const VehicleBody = forwardRef<VehicleBodyRef, VehicleBodyProps>(
 VehicleBody.displayName = 'VehicleBody';
 
 /**
- * Props for the Destructible component
+ * Props for the Destructible component.
+ * @category Entities & Simulation
  */
 export interface DestructibleProps {
     position?: [number, number, number];
@@ -598,7 +620,8 @@ export interface DestructibleProps {
 }
 
 /**
- * Ref interface for Destructible
+ * Ref interface for Destructible.
+ * @category Entities & Simulation
  */
 export interface DestructibleRef {
     getRigidBody: () => RapierRigidBody | null;
@@ -610,6 +633,7 @@ export interface DestructibleRef {
 /**
  * Breakable physics object that shatters into debris when destroyed.
  *
+ * @category Entities & Simulation
  * @example
  * ```tsx
  * <Destructible
@@ -769,7 +793,8 @@ export const Destructible = forwardRef<DestructibleRef, DestructibleProps>(
 Destructible.displayName = 'Destructible';
 
 /**
- * Props for the Buoyancy component
+ * Props for the Buoyancy component.
+ * @category Entities & Simulation
  */
 export interface BuoyancyProps extends Omit<RigidBodyProps, 'ref'> {
     config?: Partial<BuoyancyConfig>;
@@ -779,7 +804,8 @@ export interface BuoyancyProps extends Omit<RigidBodyProps, 'ref'> {
 }
 
 /**
- * Ref interface for Buoyancy
+ * Ref interface for Buoyancy.
+ * @category Entities & Simulation
  */
 export interface BuoyancyRef {
     getRigidBody: () => RapierRigidBody | null;
@@ -789,6 +815,7 @@ export interface BuoyancyRef {
 /**
  * Physics body with buoyancy simulation for floating objects.
  *
+ * @category Entities & Simulation
  * @example
  * ```tsx
  * <Buoyancy
@@ -936,7 +963,8 @@ export const Buoyancy = forwardRef<BuoyancyRef, BuoyancyProps>(
 Buoyancy.displayName = 'Buoyancy';
 
 /**
- * Props for the Ragdoll component
+ * Props for the Ragdoll component.
+ * @category Entities & Simulation
  */
 export interface RagdollProps {
     position?: [number, number, number];
@@ -949,7 +977,8 @@ export interface RagdollProps {
 }
 
 /**
- * Ref interface for Ragdoll
+ * Ref interface for Ragdoll.
+ * @category Entities & Simulation
  */
 export interface RagdollRef {
     activate: () => void;
@@ -1001,6 +1030,7 @@ const RagdollRevoluteJoint = ({
  * Creates body parts connected with spherical and revolute joints
  * for realistic physics simulation.
  *
+ * @category Entities & Simulation
  * @example
  * ```tsx
  * <Ragdoll

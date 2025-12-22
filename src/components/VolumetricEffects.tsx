@@ -1,10 +1,21 @@
 /**
- * Volumetric Effects Component
+ * Post-processing Volumetric Effects.
  *
- * Provides raymarched volumetric fog, underwater effects, and atmospheric scattering
- * using shader-based post-processing.
+ * @packageDocumentation
+ * @module components/VolumetricEffects
+ * @category Effects & Atmosphere
  *
- * Lifted from Otterfall procedural rendering system.
+ * ## Interactive Demos
+ * - 🎮 [Live Demo](http://jonbogaty.com/nodejs-strata/demos/volumetrics.html)
+ * - 📦 [Example Source](https://github.com/jbcom/nodejs-strata/tree/main/examples/sky-volumetrics)
+ *
+ * @example
+ * ```tsx
+ * <VolumetricEffects
+ *   enableFog={true}
+ *   fogSettings={{ density: 0.05, color: 0xaaaaaa }}
+ * />
+ * ```
  */
 
 import { useFrame, useThree } from '@react-three/fiber';
@@ -28,6 +39,7 @@ interface EnhancedFogProps {
 
 /**
  * Simple fog implementation using Three.js built-in fog with enhanced visuals
+ * @category Effects & Atmosphere
  */
 export function EnhancedFog({ color = 0xb3c8d9, density = 0.02, near, far }: EnhancedFogProps) {
     const { scene } = useThree();
@@ -58,6 +70,10 @@ interface UnderwaterOverlayProps {
     waterSurface?: number;
 }
 
+/**
+ * Screen-space underwater effect with fog and caustics.
+ * @category Effects & Atmosphere
+ */
 export function UnderwaterOverlay({
     color = 0x004d66,
     density = 0.1,
@@ -108,6 +124,10 @@ interface VolumetricFogMeshProps {
     size?: number;
 }
 
+/**
+ * Localized volumetric fog volume.
+ * @category Effects & Atmosphere
+ */
 export function VolumetricFogMesh({
     color = 0xb3c8d9,
     density = 0.02,
@@ -174,6 +194,11 @@ interface VolumetricEffectsProps {
     underwaterSettings?: UnderwaterSettings;
 }
 
+/**
+ * Combined component for managing volumetric fog and underwater effects.
+ *
+ * @category Effects & Atmosphere
+ */
 export function VolumetricEffects({
     enableFog = true,
     enableUnderwater = true,

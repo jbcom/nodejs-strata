@@ -1,7 +1,11 @@
 /**
- * Cloud System - Core TypeScript (no React)
+ * Core Cloud System
  *
- * Pure TypeScript functions for creating procedural cloud materials and geometries
+ * Pure TypeScript functions for creating procedural cloud materials,
+ * geometries, and volumetric cloud simulation.
+ *
+ * @category World Building
+ * @module core/clouds
  */
 
 import * as THREE from 'three';
@@ -14,47 +18,97 @@ import {
     volumetricCloudVertexShader,
 } from '../shaders/clouds';
 
+/**
+ * Configuration for a single cloud layer.
+ * @category World Building
+ */
 export interface CloudLayerConfig {
+    /** Altitude of the cloud layer in units. */
     altitude: number;
+    /** Density of the clouds (0-1). */
     density: number;
+    /** Cloud coverage (0-1). 0 = clear, 1 = overcast. */
     coverage: number;
+    /** Base color of the clouds. */
     cloudColor: THREE.Color;
+    /** Color of the cloud shadows. */
     shadowColor: THREE.Color;
+    /** Scale of the cloud noise pattern. Default: 5.0 */
     scale?: number;
 }
 
+/**
+ * Configuration for wind simulation.
+ * @category World Building
+ */
 export interface WindConfig {
+    /** Wind direction vector (normalized). */
     direction: THREE.Vector2;
+    /** Wind speed multiplier. */
     speed: number;
 }
 
+/**
+ * Configuration for day/night cycle integration.
+ * @category World Building
+ */
 export interface DayNightConfig {
+    /** Sun intensity (0-1). */
     sunIntensity: number;
+    /** Sun elevation angle in degrees. */
     sunAngle: number;
+    /** Sun light color. */
     sunColor: THREE.Color;
 }
 
+/**
+ * Options for creating a cloud layer material.
+ * @category World Building
+ */
 export interface CloudMaterialOptions {
+    /** Layer configuration. */
     layer: Partial<CloudLayerConfig>;
+    /** Wind configuration. */
     wind?: Partial<WindConfig>;
+    /** Day/night configuration. */
     dayNight?: Partial<DayNightConfig>;
+    /** Animation time. */
     time?: number;
 }
 
+/**
+ * Options for creating a volumetric cloud material.
+ * @category World Building
+ */
 export interface VolumetricCloudOptions {
+    /** Base altitude of the cloud volume. */
     cloudBase?: number;
+    /** Height/thickness of the cloud volume. */
     cloudHeight?: number;
+    /** Cloud coverage (0-1). */
     coverage?: number;
+    /** Cloud density (0-1). */
     density?: number;
+    /** Base cloud color. */
     cloudColor?: THREE.Color;
+    /** Cloud shadow color. */
     shadowColor?: THREE.Color;
+    /** Wind configuration. */
     wind?: Partial<WindConfig>;
+    /** Day/night configuration. */
     dayNight?: Partial<DayNightConfig>;
+    /** Raymarching steps. Higher = better quality but slower. */
     steps?: number;
+    /** Light sampling steps. Higher = better shadows. */
     lightSteps?: number;
+    /** Animation time. */
     time?: number;
 }
 
+/**
+ * Complete cloud sky configuration.
+ * @category World Building
+ */
 export interface CloudSkyConfig {
     layers: CloudLayerConfig[];
     wind: WindConfig;
@@ -81,6 +135,13 @@ const defaultDayNight: DayNightConfig = {
     sunColor: new THREE.Color(1, 0.95, 0.8),
 };
 
+/**
+ * Create a shader material for a 2D cloud layer.
+ *
+ * @category World Building
+ * @param options - Cloud layer options
+ * @returns Configured shader material
+ */
 export function createCloudLayerMaterial(options: CloudMaterialOptions): THREE.ShaderMaterial {
     const { layer, wind = {}, dayNight = {}, time = 0 } = options;
 
@@ -120,6 +181,15 @@ export function createCloudLayerMaterial(options: CloudMaterialOptions): THREE.S
     });
 }
 
+/**
+ * Create a shader material for volumetric clouds.
+ *
+ * Uses raymarching to render 3D clouds with internal scattering and shadows.
+ *
+ * @category World Building
+ * @param options - Volumetric cloud options
+ * @returns Configured shader material
+ */
 export function createVolumetricCloudMaterial(
     options: VolumetricCloudOptions = {}
 ): THREE.ShaderMaterial {
@@ -174,6 +244,10 @@ export function createVolumetricCloudMaterial(
     });
 }
 
+/**
+ * Create geometry for a cloud layer.
+ * @category World Building
+ */
 export function createCloudLayerGeometry(
     size: [number, number] = [200, 200],
     segments: [number, number] = [1, 1]
@@ -181,6 +255,10 @@ export function createCloudLayerGeometry(
     return new THREE.PlaneGeometry(size[0], size[1], segments[0], segments[1]);
 }
 
+/**
+ * Create geometry for volumetric clouds (a sphere surrounding the viewer).
+ * @category World Building
+ */
 export function createVolumetricCloudGeometry(
     radius: number = 500,
     widthSegments: number = 32,
@@ -189,6 +267,13 @@ export function createVolumetricCloudGeometry(
     return new THREE.SphereGeometry(radius, widthSegments, heightSegments);
 }
 
+/**
+ * Adapt cloud colors based on time of day (sun angle).
+ *
+ * Automatically shifts cloud colors to orange/red during sunset.
+ *
+ * @category World Building
+ */
 export function adaptCloudColorsForTimeOfDay(
     baseCloudColor: THREE.Color,
     baseShadowColor: THREE.Color,
@@ -241,6 +326,11 @@ export function calculateWindOffset(
     return target.set(windDirection.x * windSpeed * time, windDirection.y * windSpeed * time);
 }
 
+/**
+ * Generate Fractional Brownian Motion (FBM) noise.
+ * Useful for CPU-side cloud density sampling.
+ * @internal
+ */
 export function fbmNoise2D(x: number, y: number, octaves: number = 6): number {
     let value = 0;
     let amplitude = 0.5;
@@ -278,6 +368,10 @@ export function fbmNoise2D(x: number, y: number, octaves: number = 6): number {
     return value / maxValue;
 }
 
+/**
+ * Sample cloud density at a 3D point.
+ * @category World Building
+ */
 export function sampleCloudDensity(
     x: number,
     y: number,
@@ -304,6 +398,10 @@ export function sampleCloudDensity(
     return cloud * heightShape;
 }
 
+/**
+ * Create a default configuration for a cloud sky.
+ * @category World Building
+ */
 export function createDefaultCloudSkyConfig(): CloudSkyConfig {
     return {
         layers: [

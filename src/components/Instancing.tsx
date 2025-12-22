@@ -1,13 +1,21 @@
 /**
- * GPU-Driven Instancing System
+ * High-performance GPU Instancing system for vegetation and debris.
  *
- * Uses drei's Instances component for true GPU-driven instancing
- * with wind animation and LOD calculations performed on the GPU.
+ * @packageDocumentation
+ * @module components/Instancing
+ * @category World Building
  *
- * Optimized for mobile, web, and desktop with support for thousands
- * of instances with minimal CPU overhead.
+ * ## Interactive Demos
+ * - 🎮 [Live Demo](http://jonbogaty.com/nodejs-strata/demos/vegetation.html)
+ * - 📦 [Example Source](https://github.com/jbcom/nodejs-strata/tree/main/examples/vegetation-showcase)
  *
- * Lifted from Otterfall procedural rendering system.
+ * @example
+ * ```tsx
+ * <GrassInstances
+ *   count={10000}
+ *   areaSize={200}
+ * />
+ * ```
  */
 
 import { Instance, Instances } from '@react-three/drei';
@@ -19,7 +27,8 @@ import {
     generateInstanceData as coreGenerateInstanceData,
     type InstanceData,
 } from '../core/instancing';
-import { getBiomeAt as sdfGetBiomeAt } from '../core/sdf';
+// Import noise functions from core for use in component
+import { fbm, getBiomeAt as sdfGetBiomeAt, noise3D } from '../core/sdf';
 
 // =============================================================================
 // TYPES
@@ -31,9 +40,19 @@ export type { BiomeData, InstanceData } from '../core/instancing';
 // =============================================================================
 // INSTANCE GENERATION
 // =============================================================================
-// Core logic moved to core/instancing.ts
 
-// Re-export core function with proper name
+/**
+ * Generate instance data (positions, rotations, scales) based on biomes.
+ *
+ * @category World Building
+ * @param count - Number of instances to generate.
+ * @param areaSize - Size of the square area to scatter instances.
+ * @param heightFunc - Function to determine terrain height at x,z.
+ * @param biomes - Array of biome data for distribution.
+ * @param allowedBiomes - List of biome types this instance can spawn in.
+ * @param seed - Random seed.
+ * @returns Array of InstanceData objects.
+ */
 export function generateInstanceData(
     count: number,
     areaSize: number,
@@ -49,19 +68,20 @@ export function generateInstanceData(
         biomes,
         allowedBiomes,
         seed,
-        getBiomeAt as any,
+        sdfGetBiomeAt as any,
         noise3D,
         fbm
     );
 }
 
-// Import noise functions from core for use in component
-import { fbm, getBiomeAt, noise3D } from '../core/sdf';
-
 // =============================================================================
 // INSTANCED MESH COMPONENT
 // =============================================================================
 
+/**
+ * Props for the GPUInstancedMesh component.
+ * @category World Building
+ */
 interface GPUInstancedMeshProps {
     /** The geometry to use for each instance */
     geometry: THREE.BufferGeometry;
@@ -94,6 +114,12 @@ interface GPUInstancedMeshProps {
     receiveShadow?: boolean;
 }
 
+/**
+ * Generic component for rendering large numbers of instances.
+ *
+ * @category World Building
+ * @internal
+ */
 export function GPUInstancedMesh({
     geometry,
     material,
@@ -123,11 +149,6 @@ export function GPUInstancedMesh({
         throw new Error('GPUInstancedMesh: instances array cannot be empty');
     }
 
-    // Use drei's Instances component for GPU-optimized instancing
-    // NOTE: Wind and LOD are not yet implemented on GPU - these props are reserved for future implementation
-    // Current implementation uses drei's Instances which provides efficient GPU instancing
-    // but wind/LOD would require custom vertex shader integration
-    // Reserved for future use: enableWind, windStrength, lodDistance, _meshRef, _camera
     const instanceCount = Math.min(instances.length, count);
     return (
         <Instances
@@ -156,12 +177,22 @@ export function GPUInstancedMesh({
 // VEGETATION COMPONENTS
 // =============================================================================
 
+/**
+ * Configuration props for vegetation components.
+ * @category World Building
+ */
 interface VegetationProps {
+    /** Number of instances to generate. */
     count?: number;
+    /** Size of the area to scatter instances in. */
     areaSize?: number;
+    /** Biome data for placement logic. */
     biomes?: BiomeData[];
+    /** Function to sample terrain height. */
     heightFunc?: (x: number, z: number) => number;
+    /** Base height of the instances (for scaling geometry). */
     height?: number;
+    /** Color of the instances. */
     color?: THREE.ColorRepresentation;
 }
 
@@ -172,7 +203,19 @@ const DEFAULT_BIOMES: BiomeData[] = [
 ];
 
 /**
- * Instanced grass blades
+ * Instanced grass system.
+ *
+ * Spawns grass blades primarily in marsh, forest, and savanna biomes.
+ *
+ * @category World Building
+ * @example
+ * ```tsx
+ * <GrassInstances
+ *   count={10000}
+ *   areaSize={200}
+ *   color={0x4a7c23}
+ * />
+ * ```
  */
 export function GrassInstances({
     count = 10000,
@@ -262,7 +305,15 @@ export function GrassInstances({
 }
 
 /**
- * Instanced trees
+ * Instanced tree system.
+ *
+ * Spawns simple pine-like trees primarily in forest and tundra biomes.
+ *
+ * @category World Building
+ * @example
+ * ```tsx
+ * <TreeInstances count={500} />
+ * ```
  */
 export function TreeInstances({
     count = 500,
@@ -321,7 +372,15 @@ export function TreeInstances({
 }
 
 /**
- * Instanced rocks
+ * Instanced rock system.
+ *
+ * Spawns rocks in mountain, tundra, and desert biomes.
+ *
+ * @category World Building
+ * @example
+ * ```tsx
+ * <RockInstances count={200} />
+ * ```
  */
 export function RockInstances({
     count = 200,

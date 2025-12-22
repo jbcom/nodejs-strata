@@ -11,7 +11,7 @@
     "entryPointStrategy": "expand",
     "out": "docs/api",
     "name": "Strata",
-    "readme": "docs/GETTING_STARTED.md",
+    "readme": "README.md",
     "includeVersion": true,
     "excludePrivate": true,
     "excludeProtected": true,
@@ -28,8 +28,8 @@
         "*"
     ],
     "navigationLinks": {
-        "GitHub": "https://github.com/jbcom/nodejs-strata",
-        "Examples": "/examples/"
+        "Showcase": "/index.html",
+        "GitHub": "https://github.com/jbcom/nodejs-strata"
     },
     "customCss": "docs/_static/typedoc-styles.css",
     "validation": {

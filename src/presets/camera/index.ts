@@ -1,5 +1,7 @@
 /**
- * Camera presets for common game styles
+ * Camera Presets - Pre-configured viewpoint behaviors.
+ * @packageDocumentation
+ * @module presets/camera
  */
 
 import * as THREE from 'three';
@@ -7,26 +9,50 @@ import type {
     CinematicCameraProps,
     FollowCameraProps,
     OrbitCameraProps,
-} from '../components/Camera';
+} from '../../components/camera';
 
+/**
+ * Third-person camera configuration.
+ * @category Player Experience
+ */
 export interface ThirdPersonPreset extends Omit<FollowCameraProps, 'target'> {
     type: 'third-person';
 }
 
+/**
+ * Top-down camera configuration.
+ * @category Player Experience
+ */
 export interface TopDownPreset extends Omit<OrbitCameraProps, 'target'> {
     type: 'top-down';
 }
 
+/**
+ * Side-scroller camera configuration.
+ * @category Player Experience
+ */
 export interface SideScrollerPreset extends Omit<FollowCameraProps, 'target'> {
     type: 'side-scroller';
 }
 
+/**
+ * Cinematic camera path configuration.
+ * @category Player Experience
+ */
 export interface CinematicPreset extends Omit<CinematicCameraProps, 'path'> {
     type: 'cinematic';
 }
 
+/**
+ * Combined Camera Preset type.
+ * @category Player Experience
+ */
 export type CameraPreset = ThirdPersonPreset | TopDownPreset | SideScrollerPreset | CinematicPreset;
 
+/**
+ * Third-person action preset.
+ * @category Player Experience
+ */
 export const thirdPersonActionPreset: ThirdPersonPreset = {
     type: 'third-person',
     offset: [0, 3, 8],
@@ -38,6 +64,10 @@ export const thirdPersonActionPreset: ThirdPersonPreset = {
     makeDefault: true,
 };
 
+/**
+ * Third-person exploration preset.
+ * @category Player Experience
+ */
 export const thirdPersonExplorationPreset: ThirdPersonPreset = {
     type: 'third-person',
     offset: [0, 4, 12],
@@ -49,6 +79,10 @@ export const thirdPersonExplorationPreset: ThirdPersonPreset = {
     makeDefault: true,
 };
 
+/**
+ * Third-person combat preset.
+ * @category Player Experience
+ */
 export const thirdPersonCombatPreset: ThirdPersonPreset = {
     type: 'third-person',
     offset: [1.5, 2, 5],
@@ -60,6 +94,10 @@ export const thirdPersonCombatPreset: ThirdPersonPreset = {
     makeDefault: true,
 };
 
+/**
+ * Top-down RTS preset.
+ * @category Player Experience
+ */
 export const topDownRTSPreset: TopDownPreset = {
     type: 'top-down',
     minDistance: 10,
@@ -75,6 +113,10 @@ export const topDownRTSPreset: TopDownPreset = {
     makeDefault: true,
 };
 
+/**
+ * Top-down tactical preset.
+ * @category Player Experience
+ */
 export const topDownTacticalPreset: TopDownPreset = {
     type: 'top-down',
     minDistance: 5,
@@ -90,6 +132,10 @@ export const topDownTacticalPreset: TopDownPreset = {
     makeDefault: true,
 };
 
+/**
+ * Top-down isometric preset.
+ * @category Player Experience
+ */
 export const topDownIsometricPreset: TopDownPreset = {
     type: 'top-down',
     minDistance: 15,
@@ -105,6 +151,10 @@ export const topDownIsometricPreset: TopDownPreset = {
     makeDefault: true,
 };
 
+/**
+ * Standard side-scroller preset.
+ * @category Player Experience
+ */
 export const sideScrollerPreset: SideScrollerPreset = {
     type: 'side-scroller',
     offset: [0, 2, 15],
@@ -116,6 +166,10 @@ export const sideScrollerPreset: SideScrollerPreset = {
     makeDefault: true,
 };
 
+/**
+ * Tight side-scroller preset.
+ * @category Player Experience
+ */
 export const sideScrollerTightPreset: SideScrollerPreset = {
     type: 'side-scroller',
     offset: [0, 1, 8],
@@ -127,6 +181,10 @@ export const sideScrollerTightPreset: SideScrollerPreset = {
     makeDefault: true,
 };
 
+/**
+ * Cinematic side-scroller preset.
+ * @category Player Experience
+ */
 export const sideScrollerCinematicPreset: SideScrollerPreset = {
     type: 'side-scroller',
     offset: [0, 3, 20],
@@ -138,6 +196,10 @@ export const sideScrollerCinematicPreset: SideScrollerPreset = {
     makeDefault: true,
 };
 
+/**
+ * Basic cinematic cutscene preset.
+ * @category Player Experience
+ */
 export const cinematicCutscenePreset: CinematicPreset = {
     type: 'cinematic',
     duration: 8,
@@ -149,6 +211,10 @@ export const cinematicCutscenePreset: CinematicPreset = {
     makeDefault: true,
 };
 
+/**
+ * Cinematic dolly preset.
+ * @category Player Experience
+ */
 export const cinematicDollyPreset: CinematicPreset = {
     type: 'cinematic',
     duration: 5,

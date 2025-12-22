@@ -1,3 +1,9 @@
+/**
+ * Procedural Animation Components.
+ * @packageDocumentation
+ * @module components/animation
+ */
+
 export * from './types';
 export * from './IKChain';
 export * from './IKLimb';

@@ -1,10 +1,11 @@
 /**
- * GPU-Driven Instancing - Core TypeScript (no React)
+ * GPU-Driven Instancing - Core TypeScript (no React).
  *
  * Pure TypeScript functions for instancing that work with any framework.
  *
- * @category Rendering Pipeline
+ * @packageDocumentation
  * @module core/instancing
+ * @category Rendering Pipeline
  */
 
 import * as THREE from 'three';
@@ -14,14 +15,17 @@ import * as THREE from 'three';
  * @category Rendering Pipeline
  */
 export interface InstanceData {
+    /** World position vector. */
     position: THREE.Vector3;
+    /** Local rotation euler. */
     rotation: THREE.Euler;
+    /** Local scale vector. */
     scale: THREE.Vector3;
 }
 
 /**
- * Biome data for instancing
- * Compatible with SDF BiomeData but used for instance placement
+ * Biome data for instancing.
+ * Compatible with SDF BiomeData but used for instance placement.
  */
 import type { BiomeData as SDFBiomeData } from './sdf';
 
@@ -44,17 +48,17 @@ export interface InstancingOptions {
     count: number;
     /** Array of instance transform data. */
     instances: InstanceData[];
-    /** Enable GPU wind animation (requires compatible shader). Default: true */
+    /** Whether to enable GPU wind animation (requires compatible shader). Default: true. */
     enableWind?: boolean;
-    /** Strength of wind animation. Default: 0.5 */
+    /** Strength of wind animation. Default: 0.5. */
     windStrength?: number;
-    /** Distance at which LOD transitions occur. */
+    /** Distance at which LOD transitions occur in world units. */
     lodDistance?: number;
-    /** Enable frustum culling. Default: true */
+    /** Whether to enable frustum culling. Default: true. */
     frustumCulled?: boolean;
-    /** Enable shadow casting. Default: true */
+    /** Whether instances cast shadows. Default: true. */
     castShadow?: boolean;
-    /** Enable shadow receiving. Default: true */
+    /** Whether instances receive shadows. Default: true. */
     receiveShadow?: boolean;
 }
 

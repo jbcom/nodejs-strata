@@ -30,13 +30,24 @@ import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { createRaymarchingGeometry, createRaymarchingMaterial } from '../core/raymarching';
 
-interface RaymarchingProps {
-    sdfFunction: string; // GLSL code for sceneSDF function
+/**
+ * Props for the Raymarching component.
+ * @category Rendering Pipeline
+ */
+export interface RaymarchingProps {
+    /** GLSL code for the sceneSDF function. */
+    sdfFunction: string;
+    /** Maximum number of raymarching steps. Default: 100. */
     maxSteps?: number;
+    /** Maximum distance for raymarching. Default: 20.0. */
     maxDistance?: number;
+    /** Minimum distance for hit detection. Default: 0.001. */
     minDistance?: number;
+    /** Background color for the scene. Default: 0x000000. */
     backgroundColor?: THREE.ColorRepresentation;
+    /** Strength of scene fog. Default: 0.1. */
     fogStrength?: number;
+    /** Color of the scene fog. Default: 0x000000. */
     fogColor?: THREE.ColorRepresentation;
 }
 

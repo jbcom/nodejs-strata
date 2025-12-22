@@ -503,6 +503,10 @@ export function createDefaultNameplate(): NameplateConfig {
     };
 }
 
+/**
+ * Gets the standard color for a damage number type.
+ * @category UI & Interaction
+ */
 export function getDamageNumberColor(type: DamageNumberConfig['type']): string {
     switch (type) {
         case 'critical':
@@ -518,6 +522,10 @@ export function getDamageNumberColor(type: DamageNumberConfig['type']): string {
     }
 }
 
+/**
+ * Formats a number with commas and human-readable suffixes.
+ * @category UI & Interaction
+ */
 export function formatNumber(value: number): string {
     if (value >= 1000000) {
         return `${(value / 1000000).toFixed(1)}M`;
@@ -528,6 +536,10 @@ export function formatNumber(value: number): string {
     return Math.round(value).toString();
 }
 
+/**
+ * Gets the standard icon for a notification type.
+ * @category UI & Interaction
+ */
 export function getNotificationIcon(type: NotificationConfig['type']): string {
     switch (type) {
         case 'success':
@@ -541,6 +553,10 @@ export function getNotificationIcon(type: NotificationConfig['type']): string {
     }
 }
 
+/**
+ * Gets the standard color for a notification type.
+ * @category UI & Interaction
+ */
 export function getNotificationColor(type: NotificationConfig['type']): string {
     switch (type) {
         case 'success':

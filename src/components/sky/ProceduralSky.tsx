@@ -6,7 +6,7 @@
  * Optimized for performance across mobile and desktop.
  *
  * @packageDocumentation
- * @module components/Sky
+ * @module components/sky
  * @category World Building
  *
  * ## Interactive Demos
@@ -65,9 +65,8 @@ export interface WeatherState {
 /**
  * Props for the ProceduralSky component.
  * @category World Building
- * @interface ProceduralSkyProps
  */
-interface ProceduralSkyProps {
+export interface ProceduralSkyProps {
     /** Time of day settings (sun angle, intensity, etc.). */
     timeOfDay?: Partial<TimeOfDayState>;
     /** Weather settings (intensity, cloud coverage). */

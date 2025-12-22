@@ -1,8 +1,7 @@
 /**
- * Math utilities re-exporting maath functions with game-specific helpers
- *
+ * Core Mathematical Utilities and Game Helpers.
+ * @packageDocumentation
  * @module core/math/utils
- * @public
  */
 
 import * as maathMisc from 'maath/misc';
@@ -10,14 +9,16 @@ import * as maathRandom from 'maath/random';
 import type { Range, Vec2Like, Vec3Like } from './types';
 
 /**
- * Re-export maath misc utilities
+ * Re-export maath misc utilities.
  * Includes: clamp, lerp, remap, smoothstep, etc.
+ * @category World Building
  */
 export { maathMisc as misc };
 
 /**
- * Re-export maath random utilities
- * Includes: random distributions, vector randomization
+ * Re-export maath random utilities.
+ * Includes: random distributions, vector randomization.
+ * @category World Building
  */
 export { maathRandom as random };
 

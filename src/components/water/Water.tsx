@@ -5,7 +5,7 @@
  * Optimized for React Three Fiber with GPU-accelerated wave simulation.
  *
  * @packageDocumentation
- * @module components/Water
+ * @module components/water
  * @category World Building
  *
  * ## Interactive Demos
@@ -51,7 +51,7 @@ import { createAdvancedWaterMaterial, createWaterMaterial } from '../core/water'
  * Props for the Water component.
  * @category World Building
  */
-interface WaterProps {
+export interface WaterProps {
     /** Position of the water surface in 3D space. Default: [0, -0.2, 0] */
     position?: [number, number, number];
     /** Size of the water plane (width and height). Default: 100 */
@@ -134,7 +134,7 @@ Water.displayName = 'Water';
  * Props for the AdvancedWater component.
  * @category World Building
  */
-interface AdvancedWaterProps {
+export interface AdvancedWaterProps {
     /** Position of the water surface. */
     position?: [number, number, number];
     /** Size of the water plane. Can be a number or [width, height]. */

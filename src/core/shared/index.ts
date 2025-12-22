@@ -1,5 +1,6 @@
 /**
- * Shared Utilities & Types
+ * Core Shared Utilities and Platform Helpers.
+ * @packageDocumentation
  * @module core/shared
  */
 

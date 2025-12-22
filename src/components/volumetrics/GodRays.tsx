@@ -34,34 +34,34 @@ import {
 } from '../core/godRays';
 
 /**
- * Props for the GodRays component
- *
- * @property lightPosition - Position of the light source (sun/moon)
- * @property color - Base color of the rays
- * @property intensity - Overall ray intensity
- * @property decay - How quickly rays fade with distance
- * @property density - Ray density/thickness
- * @property samples - Quality (number of raymarching samples)
- * @property exposure - Final exposure adjustment
- * @property scattering - Atmospheric scattering amount
- * @property noiseFactor - Amount of noise variation
- * @property enabled - Toggle the effect
- * @property sunAltitude - Sun angle for auto color/intensity
- * @property atmosphereColor - Color for sunset/sunrise blending
+ * Props for the GodRays component.
  * @category Effects & Atmosphere
+ * @interface GodRaysProps
  */
 export interface GodRaysProps {
+    /** World position of the light source (sun/moon). Default: [100, 50, 0]. */
     lightPosition?: THREE.Vector3 | [number, number, number];
+    /** Base color of the light rays. Default: 0xffffee. */
     color?: THREE.ColorRepresentation;
+    /** Overall intensity multiplier. Default: 1.0. */
     intensity?: number;
+    /** How quickly rays fade with screen distance from the source. Default: 0.95. */
     decay?: number;
+    /** Density/thickness of the light shafts. Default: 1.0. */
     density?: number;
+    /** Number of raymarching samples. Higher = better quality. Default: 50. */
     samples?: number;
+    /** Final exposure adjustment. Default: 1.0. */
     exposure?: number;
+    /** Atmospheric scattering coefficient. Default: 2.0. */
     scattering?: number;
+    /** Amount of noise variation in the shafts. Default: 0.3. */
     noiseFactor?: number;
+    /** Whether the effect is currently enabled. Default: true. */
     enabled?: boolean;
+    /** Sun altitude in degrees for automatic color/intensity shifting. */
     sunAltitude?: number;
+    /** Color used for sunset/sunrise atmosphere blending. Default: 0xff9944. */
     atmosphereColor?: THREE.ColorRepresentation;
 }
 

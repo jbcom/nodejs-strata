@@ -1,3 +1,9 @@
+/**
+ * Intelligent Camera and Viewpoint Components.
+ * @packageDocumentation
+ * @module components/camera
+ */
+
 export * from './types';
 export * from './FollowCamera';
 export * from './OrbitCamera';

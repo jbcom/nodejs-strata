@@ -1,9 +1,12 @@
 /**
- * Audio Component Types
+ * Audio Component Type Definitions.
  *
- * Shared type definitions for audio components.
+ * Provides TypeScript interfaces for the spatial audio system, including context
+ * providers, positional emitters, environmental effects, and automated footstep logic.
+ *
+ * @packageDocumentation
+ * @module components/audio/types
  * @category Player Experience
- * @module components/audio
  */
 
 import type * as THREE from 'three';
@@ -15,13 +18,17 @@ import type {
 } from '../../core/audio';
 
 /**
- * Context value provided by AudioProvider.
+ * Context value provided by the AudioProvider.
  * @category Player Experience
  */
 export interface AudioContextValue {
+    /** The core SoundManager instance. */
     soundManager: SoundManager | null;
+    /** The core SpatialAudio instance for 3D processing. */
     spatialAudio: SpatialAudio | null;
+    /** The active Three.js AudioListener attached to the camera. */
     listener: THREE.AudioListener | null;
+    /** Whether the audio system has successfully initialized. */
     isReady: boolean;
 }
 
@@ -30,7 +37,9 @@ export interface AudioContextValue {
  * @category Player Experience
  */
 export interface AudioProviderProps {
+    /** Child components. */
     children: React.ReactNode;
+    /** Global volume multiplier (0-1). Default: 1.0. */
     masterVolume?: number;
 }
 
@@ -39,6 +48,7 @@ export interface AudioProviderProps {
  * @category Player Experience
  */
 export interface AudioListenerProps {
+    /** Optional camera override. Defaults to the main scene camera. */
     camera?: THREE.Camera;
 }
 
@@ -47,29 +57,29 @@ export interface AudioListenerProps {
  * @category Player Experience
  */
 export interface PositionalAudioProps {
-    /** URL of the audio file */
+    /** URL of the audio resource to load. */
     url: string;
-    /** Position in 3D space */
+    /** World position [x, y, z]. Default: [0, 0, 0]. */
     position?: [number, number, number];
-    /** Loop playback */
+    /** Whether to loop playback indefinitely. Default: false. */
     loop?: boolean;
-    /** Autoplay on load */
+    /** Whether to start playing immediately on load. Default: false. */
     autoplay?: boolean;
-    /** Volume (0-1) */
+    /** Local volume multiplier (0-1). Default: 1.0. */
     volume?: number;
-    /** Reference distance for attenuation */
+    /** Distance at which volume starts to decrease. Default: 1. */
     refDistance?: number;
-    /** Maximum distance for attenuation */
+    /** Maximum distance after which sound is no longer heard. Default: 10000. */
     maxDistance?: number;
-    /** Rolloff factor */
+    /** Rate of volume falloff with distance. Default: 1.0. */
     rolloffFactor?: number;
-    /** Distance model for attenuation */
+    /** Algorithm used for volume attenuation ('linear', 'inverse', 'exponential'). */
     distanceModel?: DistanceModel;
-    /** Playback rate */
+    /** Playback speed multiplier. Default: 1.0. */
     playbackRate?: number;
-    /** Callback when audio loads */
+    /** Callback fired when the audio file is fully loaded. */
     onLoad?: () => void;
-    /** Callback when audio ends */
+    /** Callback fired when playback reaches the end. */
     onEnd?: () => void;
 }
 
@@ -78,11 +88,17 @@ export interface PositionalAudioProps {
  * @category Player Experience
  */
 export interface PositionalAudioRef {
+    /** Start or resume playback. */
     play: () => void;
+    /** Pause playback. */
     pause: () => void;
+    /** Stop playback and reset to start. */
     stop: () => void;
+    /** Dynamically update the local volume. */
     setVolume: (volume: number) => void;
+    /** Teleport the sound source to a new world position. */
     setPosition: (x: number, y: number, z: number) => void;
+    /** Whether the sound is currently playing. */
     isPlaying: () => boolean;
 }
 
@@ -91,17 +107,17 @@ export interface PositionalAudioRef {
  * @category Player Experience
  */
 export interface AmbientAudioProps {
-    /** URL of the audio file */
+    /** URL of the non-positional audio resource. */
     url: string;
-    /** Volume (0-1). Default: 1 */
+    /** Volume multiplier (0-1). Default: 1.0. */
     volume?: number;
-    /** Loop playback. Default: true */
+    /** Whether to loop the track. Default: true. */
     loop?: boolean;
-    /** Autoplay on load. Default: true */
+    /** Whether to start playback on mount. Default: true. */
     autoplay?: boolean;
-    /** Duration of fade in/out in seconds. Default: 2 */
+    /** Duration in seconds for initial fade-in. Default: 2.0. */
     fadeTime?: number;
-    /** Callback when audio loads */
+    /** Callback fired when the resource is loaded. */
     onLoad?: () => void;
 }
 
@@ -110,11 +126,17 @@ export interface AmbientAudioProps {
  * @category Player Experience
  */
 export interface AmbientAudioRef {
+    /** Trigger playback. */
     play: () => void;
+    /** Instantly stop playback. */
     stop: () => void;
+    /** Smoothly fade volume up from zero over duration. */
     fadeIn: (duration: number) => void;
+    /** Smoothly fade volume down to zero over duration. */
     fadeOut: (duration: number) => void;
+    /** Update volume with optional fade transition. */
     setVolume: (volume: number, fadeTime?: number) => void;
+    /** Whether the ambient track is active. */
     isPlaying: () => boolean;
 }
 
@@ -123,28 +145,29 @@ export interface AmbientAudioRef {
  * @category Player Experience
  */
 export interface AudioZoneProps {
-    /** Position of the zone center in 3D space */
+    /** Center position of the trigger volume. Default: [0, 0, 0]. */
     position?: [number, number, number];
-    /** Shape of the detection zone */
+    /** Geometric primitive for the zone ('box' or 'sphere'). */
     geometry: 'box' | 'sphere';
-    /** Size of the box zone [width, height, depth] */
+    /** Dimensions for 'box' geometry [width, height, depth]. Default: [10, 10, 10]. */
     size?: [number, number, number];
-    /** Radius of the sphere zone */
+    /** Radius for 'sphere' geometry. Default: 5. */
     radius?: number;
-    /** URL of the background audio for this zone */
+    /** URL of the audio to play when inside the zone. */
     audioUrl?: string;
-    /** Volume of the zone audio (0-1) */
+    /** Volume for the zone audio. Default: 1.0. */
     audioVolume?: number;
-    /** Loop the zone audio */
+    /** Whether the zone audio should loop. Default: true. */
     audioLoop?: boolean;
-    /** Crossfade duration when entering/exiting */
+    /** Cross-fade duration when entering or exiting the zone. Default: 0.5. */
     fadeTime?: number;
-    /** Callback when player enters zone */
+    /** Callback fired when the listener enters the zone. */
     onEnter?: () => void;
-    /** Callback when player exits zone */
+    /** Callback fired when the listener exits the zone. */
     onExit?: () => void;
-    /** Show debug visualizer for the zone */
+    /** Whether to show a wireframe gizmo for the zone. Default: false. */
     debug?: boolean;
+    /** Optional child components. */
     children?: React.ReactNode;
 }
 
@@ -153,7 +176,9 @@ export interface AudioZoneProps {
  * @category Player Experience
  */
 export interface AudioZoneRef {
+    /** Whether the listener is currently inside the zone boundaries. */
     isInside: () => boolean;
+    /** Access the underlying AmbientAudio controller for the zone. */
     getAudio: () => AmbientAudioRef | null;
 }
 
@@ -162,27 +187,27 @@ export interface AudioZoneRef {
  * @category Player Experience
  */
 export interface AudioEmitterProps {
-    /** URL of the audio file */
+    /** URL of the positional audio resource. */
     url: string;
-    /** Initial position in 3D space */
+    /** Initial world position. Default: [0, 0, 0]. */
     position?: [number, number, number];
-    /** Object to follow automatically */
+    /** Reference to an Object3D to track automatically. */
     follow?: React.RefObject<THREE.Object3D>;
-    /** Loop playback */
+    /** Whether to loop the sound. Default: false. */
     loop?: boolean;
-    /** Autoplay on load */
+    /** Whether to autoplay on load. Default: false. */
     autoplay?: boolean;
-    /** Volume (0-1) */
+    /** Local volume multiplier. Default: 1.0. */
     volume?: number;
-    /** Reference distance for attenuation */
+    /** Minimum distance for falloff. Default: 1. */
     refDistance?: number;
-    /** Maximum distance for attenuation */
+    /** Maximum hearing distance. Default: 10000. */
     maxDistance?: number;
-    /** Rolloff factor */
+    /** Rolloff rate. Default: 1.0. */
     rolloffFactor?: number;
-    /** Distance model for attenuation */
+    /** Attenuation algorithm. */
     distanceModel?: DistanceModel;
-    /** Callback when audio loads */
+    /** Callback fired when resource is loaded. */
     onLoad?: () => void;
 }
 
@@ -191,11 +216,17 @@ export interface AudioEmitterProps {
  * @category Player Experience
  */
 export interface AudioEmitterRef {
+    /** Start playback. */
     play: () => void;
+    /** Stop playback. */
     stop: () => void;
+    /** Pause playback. */
     pause: () => void;
+    /** Update local volume. */
     setVolume: (volume: number) => void;
+    /** Teleport the emitter. */
     setPosition: (x: number, y: number, z: number) => void;
+    /** Whether currently playing. */
     isPlaying: () => boolean;
 }
 
@@ -204,15 +235,15 @@ export interface AudioEmitterRef {
  * @category Player Experience
  */
 export interface AudioEnvironmentProps {
-    /** Reverb preset type (e.g., 'cave', 'hall') */
+    /** Preset name defining reverb and filtering parameters. */
     type: EnvironmentPreset;
-    /** Reverb decay time in seconds */
+    /** Length of the reverb tail in seconds. */
     reverbDecay?: number;
-    /** Wet/Dry mix (0-1) */
+    /** Mix level between processed and original audio (0-1). */
     reverbWet?: number;
-    /** Lowpass filter frequency */
+    /** High-frequency cutoff level. */
     lowpassFrequency?: number;
-    /** Highpass filter frequency */
+    /** Low-frequency cutoff level. */
     highpassFrequency?: number;
 }
 
@@ -223,17 +254,16 @@ export interface AudioEnvironmentProps {
 export interface FootstepAudioProps {
     /**
      * Map of surface names to audio file URLs or sound IDs.
-     * Keys should match surface names detected by raycasting (e.g., texture names or user data).
-     * Example: { "grass": "/sounds/grass_step.mp3", "concrete": "concrete_step" }
+     * Keys should match detected surface names (e.g., 'grass', 'wood').
      */
     surfaces: Record<string, string>;
-    /** Default surface to use if detection fails or surface is unmapped */
+    /** Fallback surface name if detection fails. Default: 'default'. */
     defaultSurface?: string;
-    /** Playback volume (0-1) */
+    /** Playback volume multiplier. Default: 1.0. */
     volume?: number;
-    /** Number of audio sources to pool for polyphony. Default: 5 */
+    /** Maximum number of concurrent step sounds. Default: 5. */
     poolSize?: number;
-    /** Minimum time between footstep sounds in milliseconds. Default: 50 */
+    /** Minimum interval between steps in milliseconds. Default: 50. */
     throttleMs?: number;
 }
 
@@ -242,6 +272,7 @@ export interface FootstepAudioProps {
  * @category Player Experience
  */
 export interface FootstepAudioRef {
+    /** Trigger a footstep sound for a specific surface. */
     playFootstep: (surface?: string, position?: THREE.Vector3) => void;
 }
 
@@ -250,18 +281,18 @@ export interface FootstepAudioRef {
  * @category Player Experience
  */
 export interface WeatherAudioProps {
-    /** URL for rain loop sound */
+    /** URL for looping rain ambience. */
     rainUrl?: string;
-    /** URL for thunder sound (randomly triggered) */
+    /** URL for one-shot thunder sound effect. */
     thunderUrl?: string;
-    /** URL for wind loop sound */
+    /** URL for looping wind ambience. */
     windUrl?: string;
-    /** Intensity of rain sound (0-1) */
+    /** Volume intensity for rain (0-1). Default: 0. */
     rainIntensity?: number;
-    /** Intensity of wind sound (0-1) */
+    /** Volume intensity for wind (0-1). Default: 0. */
     windIntensity?: number;
-    /** Whether thunder is active */
+    /** Whether thunder events are enabled. Default: false. */
     thunderActive?: boolean;
-    /** Fade duration for intensity changes */
+    /** Duration for volume transition fades. Default: 1.0. */
     fadeTime?: number;
 }

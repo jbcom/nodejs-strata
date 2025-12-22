@@ -11,6 +11,7 @@
 The Strata project is at a critical inflection point. PR #55 proposes transforming Strata from a **procedural 3D graphics rendering library** into a **complete game framework** with declarative APIs, targeting **10x code reduction** for game development.
 
 ### Current State
+
 - ✅ **Production-ready rendering library** with 26+ complete features
 - ✅ **73.41% test coverage** (1,033 passing tests)
 - ✅ **Comprehensive documentation** and examples
@@ -18,10 +19,11 @@ The Strata project is at a critical inflection point. PR #55 proposes transformi
 - ✅ **Strong architectural foundation** (core/components/shaders separation)
 
 ### Proposed Direction
+
 - 🎯 **Game Framework Evolution**: Four-layer architecture for complete game development
 - 🎯 **Declarative APIs**: `createGame()` API for configuration-driven games
 - 🎯 **Code Reduction Target**: <1,000 lines for complete games (from ~10,000)
-- 🎯 **7-week implementation roadmap** across 5 phases
+- 🎯 **8-week implementation roadmap** across 6 phases
 
 ---
 
@@ -41,12 +43,14 @@ The Strata project is at a critical inflection point. PR #55 proposes transformi
 ### Recent Achievements (Dec 2025)
 
 **PR Cleanup Session** (7 PRs merged):
+
 - ✅ Performance optimizations (noise functions, marching cubes)
 - ✅ Security fix (state integrity checksum verification)
 - ✅ Dependency updates (all current)
 - ✅ UI accessibility improvements (DialogBox)
 
 **Feature Completeness**:
+
 - All 9 core presets fully implemented (no TODOs/stubs)
 - Background layer: Sky, Volumetrics, Terrain, Marching Cubes
 - Midground layer: Water, Vegetation, Ray Marching
@@ -54,6 +58,7 @@ The Strata project is at a critical inflection point. PR #55 proposes transformi
 - Effects: Particles, Decals, Billboards, Shadows, Post-processing, Reflections
 
 **Remaining Gaps** (from GAPS.md):
+
 - 🟡 Medium priority: Integration tests (end-to-end workflows)
 - 🟢 Low priority: Combined SDF + marching cubes + instancing example
 - 🟢 Low priority: Performance optimization documentation
@@ -92,14 +97,14 @@ The Strata project is at a critical inflection point. PR #55 proposes transformi
 
 ```
 ┌─────────────────────────────────────────────┐
-│  Declarative Game Definition (Layer 4)     │
+│  Layer 1: Declarative Game Definition      │
 │  @jbcom/strata                              │
 │  • createGame() API                         │
 │  • Configuration-driven setup               │
 └─────────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────────┐
-│  Game Orchestration (Layer 1)              │
+│  Layer 2: Game Orchestration               │
 │  @jbcom/strata/game                         │
 │  • SceneManager                             │
 │  • ModeManager (exploration/combat/etc)     │
@@ -108,7 +113,7 @@ The Strata project is at a critical inflection point. PR #55 proposes transformi
 └─────────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────────┐
-│  World Topology (Layer 2)                  │
+│  Layer 3: World Topology                   │
 │  @jbcom/strata/world                        │
 │  • WorldGraph (regions + connections)       │
 │  • RegionSystem (discovery, fast travel)    │
@@ -116,7 +121,7 @@ The Strata project is at a critical inflection point. PR #55 proposes transformi
 └─────────────────────────────────────────────┘
                     ↓
 ┌─────────────────────────────────────────────┐
-│  Compositional Objects (Layer 3)           │
+│  Layer 4: Compositional Objects            │
 │  @jbcom/strata/compose                      │
 │  • Materials (fur, metal, wood, etc)        │
 │  • Skeletons (biped, quadruped, etc)        │
@@ -134,6 +139,7 @@ The Strata project is at a critical inflection point. PR #55 proposes transformi
 > **"Wooden boards bound by metal banding form a panel; enough panels in 3D space form an ammo crate."**
 
 Games decompose into:
+
 - **Rigid shapes**: boxes, cylinders, spheres, capsules
 - **Materials**: fur, metal, wood, stone, crystal, shell, flesh
 - **Composition rules**: how shapes + materials = game objects
@@ -141,6 +147,7 @@ Games decompose into:
 ### Code Reduction Example
 
 **Before** (manual approach):
+
 ```typescript
 // ~10,000 lines of setup, scene management, state handling
 // Manual ECS setup, Three.js scene construction
@@ -148,6 +155,7 @@ Games decompose into:
 ```
 
 **After** (declarative):
+
 ```typescript
 const rivermarsh = createGame({
   name: 'Rivermarsh',
@@ -174,6 +182,7 @@ const rivermarsh = createGame({
 ## 3. Open PRs Status
 
 ### PR #49: Fix Type Safety in ECS World Functions
+
 - **Status**: ✅ Ready to merge
 - **Changes**: Removes unnecessary `as any` casts from ECS functions
 - **Impact**: Improves type safety, -14 lines
@@ -181,6 +190,7 @@ const rivermarsh = createGame({
 - **Recommendation**: **MERGE IMMEDIATELY**
 
 ### PR #48: Fix Type Safety in ECS removeComponent
+
 - **Status**: ✅ Ready to merge
 - **Changes**: Removes `as any` cast from removeComponent
 - **Impact**: Better TypeScript validation, +1/-4 lines
@@ -188,6 +198,7 @@ const rivermarsh = createGame({
 - **Recommendation**: **MERGE IMMEDIATELY**
 
 ### PR #47: Refactor AmbientAudio to use SoundManager
+
 - **Status**: ✅ Approved by maintainer
 - **Changes**: Centralizes audio through SoundManager
 - **Impact**: Global audio bus control, consistent volume management
@@ -196,6 +207,7 @@ const rivermarsh = createGame({
 - **Recommendation**: **MERGE IMMEDIATELY**
 
 ### Summary
+
 All 3 open PRs are **production-ready** and should be merged before implementing PR #55.
 
 ---
@@ -205,13 +217,15 @@ All 3 open PRs are **production-ready** and should be merged before implementing
 All 5 open issues are related to PR #55's game framework initiative:
 
 ### Issue #50: EPIC - Strata Game Framework
+
 - **Type**: EPIC (parent issue)
 - **Labels**: architecture, game-framework, priority: critical
 - **Scope**: Complete game orchestration layer
-- **Timeline**: 7 weeks across 5 phases
+- **Timeline**: 8 weeks across 6 phases
 - **Status**: Phase 1 (RFCs) in progress
 
 ### Issue #51: RFC - Game Orchestration Architecture
+
 - **Focus**: SceneManager, ModeManager, TriggerSystem, TransitionManager
 - **Key Decision**: ECS-integrated vs. separate systems
 - **Open Questions**:
@@ -220,6 +234,7 @@ All 5 open issues are related to PR #55's game framework initiative:
   - Triggers as ECS entities or independent systems?
 
 ### Issue #52: RFC - Compositional Object System
+
 - **Focus**: Materials, Skeletons, Coverings, Props, Creatures
 - **Benefits**: Massive reuse, procedural variation, performance via instancing
 - **Example**: `wood + box skeleton + metal bands = ammo crate`
@@ -229,6 +244,7 @@ All 5 open issues are related to PR #55's game framework initiative:
   - Procedural variation (weathering, rust, damage)
 
 ### Issue #53: RFC - World Topology System
+
 - **Focus**: WorldGraph, Regions, Connections, Progression
 - **Purpose**: High-level spatial structure above coordinate-based navigation
 - **Example**: "Marsh → Forest via River, Dungeon rooms via corridors"
@@ -238,6 +254,7 @@ All 5 open issues are related to PR #55's game framework initiative:
   - Minimap visualization approach
 
 ### Issue #54: RFC - Declarative Game Definition
+
 - **Focus**: `createGame()` top-level API
 - **Target**: <1,000 lines for complete games
 - **Rollout**: 3-phase adoption (opt-in → gradual → full)
@@ -256,16 +273,19 @@ All 5 open issues are related to PR #55's game framework initiative:
 The proposed game framework evolution **aligns well** with Strata's existing strengths:
 
 ✅ **Complements Current Architecture**
+
 - Existing rendering library becomes foundation (no breaking changes)
 - New layers add orchestration without replacing core features
 - Clear separation: `@jbcom/strata` (rendering) vs. `@jbcom/strata/game` (orchestration)
 
 ✅ **Leverages Existing Assets**
+
 - ECS system ready for mode/trigger integration
 - State management in place for save/load
 - Component architecture supports declarative wrapping
 
 ✅ **Addresses Real Pain Points**
+
 - Every game needs scene management → SceneManager
 - Every game needs modes → ModeManager
 - Every game needs spatial triggers → TriggerSystem
@@ -274,11 +294,13 @@ The proposed game framework evolution **aligns well** with Strata's existing str
 ### Market Positioning
 
 **Current**: "Procedural 3D graphics library for React Three Fiber"
+
 - Competes with: drei, leva, postprocessing
 - Audience: React Three Fiber developers
 - Differentiation: Integrated presets (terrain, water, characters)
 
 **Proposed**: "Complete game framework for React Three Fiber"
+
 - Competes with: Phaser, PixiJS, raw Three.js
 - Audience: Game developers using React
 - Differentiation: Only declarative game framework for R3F ecosystem
@@ -286,24 +308,28 @@ The proposed game framework evolution **aligns well** with Strata's existing str
 ### Risk Assessment
 
 #### High-Value, Low-Risk ✅
+
 - **Compositional Object System** (RFC #52)
   - Clear value: massive reuse, performance
   - Low risk: builds on existing material/mesh systems
   - Example validation straightforward
 
 #### Medium-Value, Medium-Risk ⚠️
+
 - **Game Orchestration** (RFC #51)
   - Clear value: eliminates boilerplate
   - Medium risk: mode stacking complexity, ECS integration
   - Needs careful design to avoid over-engineering
 
 #### High-Value, High-Risk ⚠️
+
 - **World Topology** (RFC #53)
   - Clear value: spatial structure abstraction
   - Medium risk: procedural generation integration unclear
   - May be too opinionated for some use cases
 
 #### Highest-Risk 🔴
+
 - **Declarative API** (RFC #54)
   - Clear value: 10x code reduction
   - **High risk**:
@@ -320,6 +346,7 @@ The proposed game framework evolution **aligns well** with Strata's existing str
 ### Recommended Phased Approach
 
 #### Phase 0: Foundation Cleanup (Week 1) ✅
+
 **Status**: Should complete BEFORE merging PR #55
 
 1. ✅ Merge open PRs #47, #48, #49 (type safety, audio refactor)
@@ -330,12 +357,14 @@ The proposed game framework evolution **aligns well** with Strata's existing str
 #### Phase 1: RFC Refinement & Merge PR #55 (Week 2)
 
 **Tasks**:
+
 1. Address open questions in each RFC
 2. Community feedback period (if applicable)
 3. Finalize architectural decisions
 4. Merge PR #55 (documentation only, no breaking changes)
 
 **Deliverables**:
+
 - ✅ Approved RFC documents
 - ✅ Clear implementation specifications
 - ✅ Updated roadmap with concrete milestones
@@ -343,12 +372,14 @@ The proposed game framework evolution **aligns well** with Strata's existing str
 #### Phase 2: Compositional Object System (Weeks 3-4)
 
 **Why First?**
+
 - Highest value-to-risk ratio
 - Clear requirements, well-scoped
 - Immediate benefits for existing users
 - Foundation for other layers
 
 **Implementation**:
+
 ```
 src/compose/
 ├── materials.ts      # Material definitions
@@ -360,6 +391,7 @@ src/compose/
 ```
 
 **Validation**:
+
 - Create 10+ example creatures (biped, quadruped, etc.)
 - Build 20+ props (furniture, containers, weapons)
 - Demonstrate instancing performance (1000+ objects)
@@ -368,6 +400,7 @@ src/compose/
 #### Phase 3: Game Orchestration (Weeks 5-6)
 
 **Implementation**:
+
 ```
 src/game/
 ├── scene-manager.ts     # Scene lifecycle
@@ -378,6 +411,7 @@ src/game/
 ```
 
 **Validation**:
+
 - Scene switching with transitions
 - Mode stacking (exploration + inventory overlay)
 - Trigger activation (proximity, collision, interaction)
@@ -386,6 +420,7 @@ src/game/
 #### Phase 4: World Topology (Weeks 7-8)
 
 **Implementation**:
+
 ```
 src/world/
 ├── world-graph.ts    # Graph data structure
@@ -395,6 +430,7 @@ src/world/
 ```
 
 **Validation**:
+
 - Multi-region world with connections
 - Fast travel system
 - Progression/unlock gates
@@ -405,6 +441,7 @@ src/world/
 **CRITICAL**: Only proceed if Phases 2-4 prove the value
 
 **Implementation**:
+
 ```
 src/api/
 ├── create-game.ts       # Main API
@@ -417,6 +454,7 @@ src/api/
 ```
 
 **Validation**:
+
 - Rivermarsh rebuild (<1,000 lines)
 - 3+ example games (RPG, platformer, racing)
 - Documentation with migration guides
@@ -425,6 +463,7 @@ src/api/
 #### Phase 6: Polish & Release (Weeks 11-12)
 
 **Tasks**:
+
 1. Comprehensive integration tests
 2. Performance benchmarks
 3. Documentation refinement
@@ -441,15 +480,18 @@ src/api/
 #### 1. Package Structure
 
 **Option A: Monorepo**
+
 ```
 @jbcom/strata             # Rendering (current)
 @jbcom/strata-game        # Game framework
 @jbcom/strata-compose     # Compositional system
 ```
+
 ✅ Clear separation, independent versioning
 ❌ More complex publishing, dependency management
 
 **Option B: Single Package**
+
 ```
 @jbcom/strata
 ├── /presets       # Current rendering
@@ -457,6 +499,7 @@ src/api/
 ├── /compose       # Compositional
 └── /world         # Topology
 ```
+
 ✅ Simpler for users, single install
 ❌ Larger bundle, all-or-nothing updates
 
@@ -465,6 +508,7 @@ src/api/
 #### 2. ECS Integration Depth
 
 **Option A: Deep Integration**
+
 - Modes as ECS systems
 - Triggers as ECS components
 - Scenes as ECS worlds
@@ -473,6 +517,7 @@ src/api/
 ❌ Tight coupling, harder to use standalone
 
 **Option B: Loose Integration**
+
 - Game layer wraps ECS
 - ECS available but not required
 - Can swap ECS implementation
@@ -485,6 +530,7 @@ src/api/
 #### 3. Configuration vs. Code
 
 **Spectrum**:
+
 ```
 Pure Config ←────────────────→ Pure Code
 (YAML/JSON)                    (TypeScript)
@@ -495,6 +541,7 @@ Pure Config ←────────────────→ Pure Code
 **Recommendation**: Aim for "config for common cases, code for custom"
 
 Example:
+
 ```typescript
 // Config for standard cases
 const game = createGame({
@@ -535,6 +582,7 @@ const game = createGame({
 #### Migration Support
 
 Must provide:
+
 - ✅ Migration guide (v1.x → v2.x)
 - ✅ Codemod tools for automatic migration
 - ✅ Compatibility layer (temporary)
@@ -669,6 +717,7 @@ Define **concrete, measurable** targets:
 **Risk**: Game framework scope expands indefinitely (networking, multiplayer, monetization, etc.)
 
 **Mitigation**:
+
 - Define **hard boundaries** in CONTRACT.md
 - "Strata is NOT a backend/networking/analytics framework"
 - Focus on single-player, local-first games
@@ -679,6 +728,7 @@ Define **concrete, measurable** targets:
 **Risk**: Declarative API becomes too complex ("YAML programming")
 
 **Mitigation**:
+
 - Imperative APIs always available as escape hatch
 - Code-first philosophy (config is sugar, not requirement)
 - Limit configuration depth (max 3 levels)
@@ -689,6 +739,7 @@ Define **concrete, measurable** targets:
 **Risk**: Massive API surface area becomes unmaintainable
 
 **Mitigation**:
+
 - Strict semver adherence
 - Deprecation policy (12-month minimum)
 - Automated migration tools (codemods)
@@ -699,6 +750,7 @@ Define **concrete, measurable** targets:
 **Risk**: v1.x users don't migrate to v2.x
 
 **Mitigation**:
+
 - v2.x includes ALL v1.x functionality
 - No forced migration (v1.x remains valid)
 - Clear upgrade path with benefits
@@ -709,6 +761,7 @@ Define **concrete, measurable** targets:
 **Risk**: Abstraction layers slow down rendering
 
 **Mitigation**:
+
 - Benchmark suite in CI
 - Performance budgets enforced
 - Optimization before features
@@ -719,6 +772,7 @@ Define **concrete, measurable** targets:
 **Risk**: Framework opinions don't match real game needs
 
 **Mitigation**:
+
 - **Validate with real games** (Rivermarsh + 2-3 community projects)
 - Early alpha releases for feedback
 - Breaking changes OK during alpha
@@ -733,11 +787,13 @@ Define **concrete, measurable** targets:
 **Approach**: Reject PR #55, keep Strata as pure rendering library
 
 **Pros**:
+
 - ✅ Clear, focused scope
 - ✅ Low maintenance burden
 - ✅ No risk of over-engineering
 
 **Cons**:
+
 - ❌ Limited differentiation vs. drei
 - ❌ Misses opportunity for ecosystem leadership
 - ❌ Every game still needs boilerplate
@@ -749,11 +805,13 @@ Define **concrete, measurable** targets:
 **Approach**: Core rendering + optional game framework plugins
 
 **Pros**:
+
 - ✅ Modular, pay-for-what-you-use
 - ✅ Community can build custom orchestration
 - ✅ Lower core maintenance burden
 
 **Cons**:
+
 - ❌ Fragmentation risk
 - ❌ Integration burden on users
 - ❌ Harder to deliver cohesive DX
@@ -765,11 +823,13 @@ Define **concrete, measurable** targets:
 **Approach**: Partner with existing frameworks (Phaser, Bevy, etc.)
 
 **Pros**:
+
 - ✅ Leverage proven orchestration
 - ✅ Focus on rendering expertise
 - ✅ Faster to market
 
 **Cons**:
+
 - ❌ None integrate well with R3F
 - ❌ Lose control over DX
 - ❌ Dependency risk
@@ -902,6 +962,19 @@ Define **concrete, measurable** targets:
 - [ ] Example game with 3+ scenes, 4+ modes
 - [ ] 90%+ test coverage
 - [ ] Performance: <1ms overhead per frame
+
+### Phase 4 (World Topology) Completion Criteria
+
+- [ ] WorldGraph with regions and connections
+- [ ] RegionSystem with region detection and events
+- [ ] ConnectionSystem with traversal logic
+- [ ] SpawnSystem with entity pooling
+- [ ] Multi-region world demo working
+- [ ] Fast travel system functional
+- [ ] Progression/unlock gates implemented
+- [ ] Integration with existing pathfinding
+- [ ] 85%+ test coverage
+- [ ] Example: River connections triggering racing mode
 
 ### Phase 5 (Declarative) Completion Criteria
 

@@ -160,15 +160,7 @@ export type {
 } from './Input';
 // Input Controls
 export { GroundSwitch, Joystick3D, PressurePlate, TriggerComposer, WallButton } from './Input';
-export type { BiomeData, InstanceData } from './Instancing';
-// Instancing
-export {
-    GPUInstancedMesh,
-    GrassInstances,
-    generateInstanceData,
-    RockInstances,
-    TreeInstances,
-} from './Instancing';
+export * from './instancing';
 export type {
     ImpostorProps,
     ImpostorRef,

@@ -1,4 +1,4 @@
-import type * as THREE from 'three';
+import * as THREE from 'three';
 import type { BiomeData as CoreBiomeData, InstanceData as CoreInstanceData } from '../../core/instancing';
 
 /**
@@ -32,3 +32,9 @@ export interface VegetationProps {
     /** Base color of the instances. Default depends on component. */
     color?: THREE.ColorRepresentation;
 }
+
+export const DEFAULT_BIOMES: BiomeData[] = [
+    { type: 'marsh', center: new THREE.Vector2(0, 0), radius: 30 },
+    { type: 'forest', center: new THREE.Vector2(50, 0), radius: 40 },
+    { type: 'savanna', center: new THREE.Vector2(60, 60), radius: 50 },
+];

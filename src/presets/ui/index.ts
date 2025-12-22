@@ -325,7 +325,7 @@ export const crosshairPresets: Record<CrosshairPresetName, CrosshairPreset> = {
     dot: {
         name: 'dot',
         description: 'Simple dot crosshair',
-        type: 'dot',
+        type: 'custom',
         size: 4,
         color: '#ff0000',
         outlineColor: '#000000',

@@ -28,6 +28,7 @@ export interface InstanceData {
  * Compatible with SDF BiomeData but used for instance placement.
  */
 import type { BiomeData } from './sdf';
+export type { BiomeData };
 
 /**
  * Options for creating an instanced mesh.

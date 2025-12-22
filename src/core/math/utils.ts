@@ -363,3 +363,67 @@ export function radToDeg(radians: number): number {
 export function approximately(a: number, b: number, epsilon: number = 0.00001): boolean {
     return Math.abs(a - b) < epsilon;
 }
+
+/**
+ * Spherical linear interpolation between two values
+ * Interpolates along the shortest arc on a unit sphere
+ *
+ * @param a - Start value (normalized)
+ * @param b - End value (normalized)
+ * @param t - Interpolation factor (0-1)
+ * @returns Interpolated value
+ */
+export function slerp(a: number, b: number, t: number): number {
+    const dot = clamp(a * b, -1, 1);
+    const theta = Math.acos(dot) * t;
+    const relative = b - a * dot;
+    const norm = Math.sqrt(Math.max(0, 1 - dot * dot));
+    if (norm < 0.001) return lerp(a, b, t);
+    return a * Math.cos(theta) + (relative / norm) * Math.sin(theta);
+}
+
+/**
+ * Cubic ease-in function
+ * Starts slow and accelerates
+ *
+ * @param t - Input value (0-1)
+ * @returns Eased value
+ */
+export function easeInCubic(t: number): number {
+    return t * t * t;
+}
+
+/**
+ * Cubic ease-out function
+ * Starts fast and decelerates
+ *
+ * @param t - Input value (0-1)
+ * @returns Eased value
+ */
+export function easeOutCubic(t: number): number {
+    const f = t - 1;
+    return f * f * f + 1;
+}
+
+/**
+ * Cubic ease-in-out function
+ * Smooth acceleration and deceleration
+ *
+ * @param t - Input value (0-1)
+ * @returns Eased value
+ */
+export function easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+}
+
+/**
+ * Elastic ease-out function
+ * Creates a spring-like bouncing effect
+ *
+ * @param t - Input value (0-1)
+ * @returns Eased value
+ */
+export function easeOutElastic(t: number): number {
+    const c4 = (2 * Math.PI) / 3;
+    return t === 0 ? 0 : t === 1 ? 1 : 2 ** (-10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+}

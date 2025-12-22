@@ -173,14 +173,7 @@ export function createSpotlightConeGeometry(
     const height = distance;
     const segments = 32;
 
-    const geometry = new THREE.CylinderGeometry(
-        radiusTop,
-        radiusBottom,
-        height,
-        segments,
-        1,
-        true
-    );
+    const geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, segments, 1, true);
     geometry.translate(0, -height / 2, 0);
     geometry.rotateX(-Math.PI / 2);
 
@@ -217,10 +210,7 @@ export function getLightScreenPosition(
  * Calculate light intensity based on sun angle (0-180).
  * @category Effects & Atmosphere
  */
-export function calculateGodRayIntensityFromAngle(
-    sunAngle: number,
-    baseIntensity: number
-): number {
+export function calculateGodRayIntensityFromAngle(sunAngle: number, baseIntensity: number): number {
     // Max intensity near horizon (0 and 180), min at noon (90)
     const factor = Math.abs(Math.cos((sunAngle * Math.PI) / 180));
     return baseIntensity * (0.2 + 0.8 * factor); // Never fully zero
@@ -237,7 +227,7 @@ export function blendGodRayColors(
     target = new THREE.Color()
 ): THREE.Color {
     // Blend towards atmosphere color near horizon
-    const factor = Math.pow(Math.abs(Math.cos((sunAngle * Math.PI) / 180)), 2);
+    const factor = Math.abs(Math.cos((sunAngle * Math.PI) / 180)) ** 2;
     return target.copy(lightColor).lerp(atmosphereColor, factor * 0.8);
 }
 
@@ -248,5 +238,71 @@ export function blendGodRayColors(
 export function calculateScatteringIntensity(viewDir: THREE.Vector3, lightDir: THREE.Vector3) {
     const dot = Math.max(0, viewDir.dot(lightDir));
     // Mie scattering approximation
-    return Math.pow(dot, 4);
+    return dot ** 4;
+}
+
+/**
+ * Types for god rays effects
+ * @category Effects & Atmosphere
+ */
+export interface RadialBlurOptions {
+    center: THREE.Vector2;
+    samples: number;
+    strength: number;
+}
+
+export interface OcclusionResult {
+    occluded: boolean;
+    intensity: number;
+}
+
+/**
+ * Calculate radial blur intensity for god rays effect
+ * @category Effects & Atmosphere
+ */
+export function calculateRadialBlur(
+    uv: THREE.Vector2,
+    center: THREE.Vector2,
+    options: RadialBlurOptions
+): number {
+    const dx = uv.x - center.x;
+    const dy = uv.y - center.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    return Math.max(0, 1 - distance) * options.strength;
+}
+
+/**
+ * Calculate sun occlusion for god rays
+ * @category Effects & Atmosphere
+ */
+export function calculateSunOcclusion(
+    camera: THREE.Camera,
+    lightPosition: THREE.Vector3,
+    scene: THREE.Scene
+): OcclusionResult {
+    // Simple implementation - can be enhanced with actual raycasting
+    const direction = new THREE.Vector3().subVectors(lightPosition, camera.position).normalize();
+    const raycaster = new THREE.Raycaster(camera.position, direction);
+    const distance = camera.position.distanceTo(lightPosition);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+
+    const occluded = intersects.length > 0 && intersects[0].distance < distance;
+    const intensity = occluded ? 0 : 1;
+
+    return { occluded, intensity };
+}
+
+/**
+ * Update god rays light position
+ * @category Effects & Atmosphere
+ */
+export function updateGodRaysLightPosition(
+    material: THREE.ShaderMaterial,
+    lightPosition: THREE.Vector3,
+    camera: THREE.Camera
+): void {
+    const screenPos = getLightScreenPosition(lightPosition, camera);
+    if (material.uniforms.lightPosition) {
+        material.uniforms.lightPosition.value.copy(screenPos);
+    }
 }

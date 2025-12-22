@@ -55,23 +55,8 @@ export { GodRays, LightShafts, VolumetricPointLight, VolumetricSpotlight } from 
 export * from './input';
 export * from './instancing';
 export * from './lod';
-export type { ParticleBurstProps, ParticleEmitterProps, ParticleEmitterRef } from './Particles';
-// Particles
-export { ParticleBurst, ParticleEmitter } from './Particles';
-export type {
-    BuoyancyProps,
-    BuoyancyRef,
-    CharacterControllerProps,
-    CharacterControllerRef,
-    DestructibleProps,
-    DestructibleRef,
-    RagdollProps,
-    RagdollRef,
-    VehicleBodyProps,
-    VehicleBodyRef,
-} from './Physics';
-// Physics
-export { Buoyancy, CharacterController, Destructible, Ragdoll, VehicleBody } from './Physics';
+export * from './particles';
+export * from './physics';
 export type {
     CinematicEffectsProps,
     DreamyEffectsProps,

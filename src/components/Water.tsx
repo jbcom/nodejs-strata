@@ -1,22 +1,44 @@
 /**
  * High-performance Water system for realistic oceans, lakes, and rivers.
  *
+ * Provides realistic water surfaces with wave animation, reflections, caustics, and foam effects.
+ * Optimized for React Three Fiber with GPU-accelerated wave simulation.
+ *
  * @packageDocumentation
  * @module components/Water
  * @category World Building
  *
  * ## Interactive Demos
- * - 🎮 [Live Demo](http://jonbogaty.com/nodejs-strata/demos/water.html)
- * - 📦 [Example Source](https://github.com/jbcom/nodejs-strata/tree/main/examples/water-scene)
+ * - 🎮 [Live Water Demo](http://jonbogaty.com/nodejs-strata/demos/water.html)
+ * - 📦 [Water Scene Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/water-scene)
+ *
+ * ## API Documentation
+ * - [Full API Reference](http://jonbogaty.com/nodejs-strata/api)
+ * - [Examples → API Mapping](https://github.com/jbcom/nodejs-strata/blob/main/EXAMPLES_API_MAP.md#water-system-apis)
  *
  * @example
  * ```tsx
+ * // Basic water surface
  * <Water
- *   position={[0, -1, 0]}
- *   size={1000}
- *   color={0x004488}
+ *   position={[0, -0.2, 0]}
+ *   size={100}
+ *   color={0x006994}
+ *   opacity={0.8}
  * />
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Rough ocean water
+ * <Water
+ *   size={200}
+ *   waveSpeed={2.0}
+ *   waveHeight={1.5}
+ *   segments={64}
+ * />
+ * ```
+ *
+ * @see {@link AdvancedWater} for caustics, reflections, and foam effects
  */
 
 import { useFrame } from '@react-three/fiber';

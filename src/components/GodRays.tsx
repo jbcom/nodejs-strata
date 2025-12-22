@@ -98,6 +98,10 @@ export interface GodRaysRef {
  * />
  * ```
  */
+const _viewDir = new THREE.Vector3();
+const _lightDir = new THREE.Vector3();
+const _screenPos = new THREE.Vector2();
+
 export const GodRays = forwardRef<GodRaysRef, GodRaysProps>(function GodRays(
     {
         lightPosition = new THREE.Vector3(100, 50, 0),
@@ -176,7 +180,7 @@ export const GodRays = forwardRef<GodRaysRef, GodRaysProps>(function GodRays(
                 }
             },
             setLightPosition: (position: THREE.Vector3) => {
-                const screenPos = getLightScreenPosition(position, camera);
+                const screenPos = getLightScreenPosition(position, camera, _screenPos);
                 if (screenPos && material.uniforms.uLightPosition) {
                     material.uniforms.uLightPosition.value.set(screenPos.x, screenPos.y, 0);
                 }
@@ -190,14 +194,14 @@ export const GodRays = forwardRef<GodRaysRef, GodRaysProps>(function GodRays(
 
         material.uniforms.uTime.value = state.clock.elapsedTime;
 
-        const screenPos = getLightScreenPosition(lightPos, camera);
+        const screenPos = getLightScreenPosition(lightPos, camera, _screenPos);
         if (screenPos) {
             material.uniforms.uLightPosition.value.set(screenPos.x, screenPos.y, 0);
         }
 
-        const viewDir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-        const lightDir = lightPos.clone().normalize();
-        const scatterIntensity = calculateScatteringIntensity(viewDir, lightDir);
+        _viewDir.set(0, 0, -1).applyQuaternion(camera.quaternion);
+        _lightDir.copy(lightPos).normalize();
+        const scatterIntensity = calculateScatteringIntensity(_viewDir, _lightDir);
         material.uniforms.uIntensity.value = effectiveIntensity * scatterIntensity;
     });
 

@@ -275,6 +275,14 @@ export const CharacterController = forwardRef<CharacterControllerRef, CharacterC
             onJump?.();
         }, [config, onJump]);
 
+        const moveDir = useMemo(() => new THREE.Vector3(), []);
+        const cameraDirection = useMemo(() => new THREE.Vector3(), []);
+        const cameraRight = useMemo(() => new THREE.Vector3(), []);
+        const worldMoveDir = useMemo(() => new THREE.Vector3(), []);
+        const upVec = useMemo(() => new THREE.Vector3(0, 1, 0), []);
+        const currentHorizontalVel = useMemo(() => new THREE.Vector2(), []);
+        const targetHorizontalVel = useMemo(() => new THREE.Vector2(), []);
+
         useFrame((state, delta) => {
             if (!rigidBodyRef.current) return;
 
@@ -317,7 +325,7 @@ export const CharacterController = forwardRef<CharacterControllerRef, CharacterC
             }
 
             const input = inputRef.current;
-            const moveDir = new THREE.Vector3();
+            moveDir.set(0, 0, 0);
 
             if (input.forward) moveDir.z -= 1;
             if (input.backward) moveDir.z += 1;
@@ -329,16 +337,14 @@ export const CharacterController = forwardRef<CharacterControllerRef, CharacterC
             }
 
             const camera = state.camera;
-            const cameraDirection = new THREE.Vector3();
             camera.getWorldDirection(cameraDirection);
             cameraDirection.y = 0;
             cameraDirection.normalize();
 
-            const cameraRight = new THREE.Vector3()
-                .crossVectors(new THREE.Vector3(0, 1, 0), cameraDirection)
-                .normalize();
+            cameraRight.crossVectors(upVec, cameraDirection).normalize();
 
-            const worldMoveDir = new THREE.Vector3()
+            worldMoveDir
+                .set(0, 0, 0)
                 .addScaledVector(cameraRight, -moveDir.x)
                 .addScaledVector(cameraDirection, -moveDir.z);
 
@@ -360,8 +366,8 @@ export const CharacterController = forwardRef<CharacterControllerRef, CharacterC
             const targetVelX = worldMoveDir.x * maxSpeed;
             const targetVelZ = worldMoveDir.z * maxSpeed;
 
-            const _currentHorizontalVel = new THREE.Vector2(currentVel.x, currentVel.z);
-            const targetHorizontalVel = new THREE.Vector2(targetVelX, targetVelZ);
+            currentHorizontalVel.set(currentVel.x, currentVel.z);
+            targetHorizontalVel.set(targetVelX, targetVelZ);
 
             let newVelX = currentVel.x;
             let newVelZ = currentVel.z;

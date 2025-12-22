@@ -273,40 +273,52 @@ export function createVolumetricCloudGeometry(
  * Automatically shifts cloud colors to orange/red during sunset.
  *
  * @category World Building
+ * @param baseCloudColor - Base color of clouds
+ * @param baseShadowColor - Base color of shadows
+ * @param sunAngle - Current sun angle in degrees
+ * @param sunIntensity - Current sun intensity (0-1)
+ * @param target - Optional target object to avoid allocations in render loops
+ * @returns Object containing adapted colors
  */
+const _warmCloudColor = new THREE.Color();
+const _warmShadowColor = new THREE.Color();
 export function adaptCloudColorsForTimeOfDay(
     baseCloudColor: THREE.Color,
     baseShadowColor: THREE.Color,
     sunAngle: number,
-    sunIntensity: number
+    sunIntensity: number,
+    target = {
+        cloudColor: new THREE.Color(),
+        shadowColor: new THREE.Color(),
+        sunColor: new THREE.Color(),
+    }
 ): { cloudColor: THREE.Color; shadowColor: THREE.Color; sunColor: THREE.Color } {
     const sunHeight = Math.sin((sunAngle * Math.PI) / 180);
 
-    let sunColor: THREE.Color;
     if (sunHeight < 0.1) {
-        sunColor = new THREE.Color(1.0, 0.4, 0.2);
+        target.sunColor.set(1.0, 0.4, 0.2);
     } else if (sunHeight < 0.3) {
-        sunColor = new THREE.Color(1.0, 0.7, 0.4);
+        target.sunColor.set(1.0, 0.7, 0.4);
     } else {
-        sunColor = new THREE.Color(1.0, 0.95, 0.85);
+        target.sunColor.set(1.0, 0.95, 0.85);
     }
 
-    const cloudColor = baseCloudColor.clone();
-    const shadowColor = baseShadowColor.clone();
+    target.cloudColor.copy(baseCloudColor);
+    target.shadowColor.copy(baseShadowColor);
 
     if (sunHeight < 0.3) {
         const warmth = 1 - sunHeight / 0.3;
-        cloudColor.lerp(new THREE.Color(1.0, 0.85, 0.7), warmth * 0.5);
-        shadowColor.lerp(new THREE.Color(0.6, 0.4, 0.5), warmth * 0.3);
+        target.cloudColor.lerp(_warmCloudColor.set(1.0, 0.85, 0.7), warmth * 0.5);
+        target.shadowColor.lerp(_warmShadowColor.set(0.6, 0.4, 0.5), warmth * 0.3);
     }
 
     if (sunIntensity < 0.3) {
         const darkness = 1 - sunIntensity / 0.3;
-        cloudColor.multiplyScalar(1 - darkness * 0.5);
-        shadowColor.multiplyScalar(1 - darkness * 0.3);
+        target.cloudColor.multiplyScalar(1 - darkness * 0.5);
+        target.shadowColor.multiplyScalar(1 - darkness * 0.3);
     }
 
-    return { cloudColor, shadowColor, sunColor };
+    return target;
 }
 
 /**

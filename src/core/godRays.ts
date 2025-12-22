@@ -199,17 +199,18 @@ export function createPointLightSphereGeometry(radius: number): THREE.SphereGeom
  * Convert world position to screen space coordinates (0-1).
  * @category Effects & Atmosphere
  */
+const _vec3 = new THREE.Vector3();
 export function getLightScreenPosition(
     worldPos: THREE.Vector3,
-    camera: THREE.Camera
+    camera: THREE.Camera,
+    target = new THREE.Vector2()
 ): THREE.Vector2 | null {
-    const pos = worldPos.clone();
-    pos.project(camera);
+    _vec3.copy(worldPos).project(camera);
 
     // Check if behind camera
-    if (pos.z > 1) return null;
+    if (_vec3.z > 1) return null;
 
-    return new THREE.Vector2((pos.x + 1) / 2, (pos.y + 1) / 2);
+    return target.set((_vec3.x + 1) / 2, (_vec3.y + 1) / 2);
 }
 
 /**
@@ -232,11 +233,12 @@ export function calculateGodRayIntensityFromAngle(
 export function blendGodRayColors(
     lightColor: THREE.Color,
     atmosphereColor: THREE.Color,
-    sunAngle: number
+    sunAngle: number,
+    target = new THREE.Color()
 ): THREE.Color {
     // Blend towards atmosphere color near horizon
     const factor = Math.pow(Math.abs(Math.cos((sunAngle * Math.PI) / 180)), 2);
-    return lightColor.clone().lerp(atmosphereColor, factor * 0.8);
+    return target.copy(lightColor).lerp(atmosphereColor, factor * 0.8);
 }
 
 /**

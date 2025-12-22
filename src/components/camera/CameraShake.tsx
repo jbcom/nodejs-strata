@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import * as THREE from 'three';
 import { CameraShake as CameraShakeCore } from '../../core/camera';
 import type { CameraShakeProps, CameraShakeRef } from './types';

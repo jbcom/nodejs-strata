@@ -7,19 +7,8 @@
     <meta name="description" content="Complete solution for foreground, midground, and background 3D gaming - terrain, water, vegetation, characters, and more.">
     <link rel="stylesheet" href="_static/demo-styles.css">
     <style>
-        :root {
-            --jb-deep-slate: #020617;
-            --jb-cyan: #0ea5e9;
-            --jb-teal: #14b8a6;
-            --jb-glass-bg: rgba(15, 23, 42, 0.7);
-            --jb-glass-border: rgba(255, 255, 255, 0.1);
-        }
-        
         body {
-            background: var(--jb-deep-slate);
-            color: #cbd5e1;
             overflow: auto;
-            font-family: var(--jb-font-body);
         }
         
         header {
@@ -327,6 +316,9 @@
         <a href="demos/water.html">Water</a>
         <a href="demos/vegetation.html">Vegetation</a>
         <a href="demos/sky.html">Sky</a>
+        <a href="demos/volumetrics.html">Volumetrics</a>
+        <a href="demos/characters.html">Characters</a>
+        <a href="demos/full-scene.html">Full Scene</a>
     </nav>
     
     <main>
@@ -408,6 +400,22 @@
                         <p>Day/night cycle, atmospheric scattering, stars, and weather effects.</p>
                     </div>
                 </a>
+
+                <a href="demos/volumetrics.html" class="demo-card">
+                    <div class="demo-preview">🌫️</div>
+                    <div class="demo-info">
+                        <h4>Volumetric Effects</h4>
+                        <p>Fog, god rays, dust particles, and underwater overlays.</p>
+                    </div>
+                </a>
+                
+                <a href="demos/characters.html" class="demo-card">
+                    <div class="demo-preview">🦦</div>
+                    <div class="demo-info">
+                        <h4>Characters & Fur</h4>
+                        <p>Articulated characters with shell-based fur and procedural animation.</p>
+                    </div>
+                </a>
             </div>
         </section>
 
@@ -432,6 +440,24 @@
                         <h4>Sky & Volumetrics</h4>
                         <p>Dynamic day/night cycle with atmospheric effects and weather presets.</p>
                         <code style="display: block; margin-top: 1rem; color: var(--jb-cyan);">examples/sky-volumetrics/</code>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-preview">⛰️</div>
+                    <div class="demo-info">
+                        <h4>Basic Terrain</h4>
+                        <p>Simple terrain generation example showing heightmap-based procedural terrain.</p>
+                        <code style="display: block; margin-top: 1rem; color: var(--jb-cyan);">examples/basic-terrain/</code>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-preview">💧</div>
+                    <div class="demo-info">
+                        <h4>Water Scene</h4>
+                        <p>Advanced water rendering with animated waves, fresnel effects, and caustics.</p>
+                        <code style="display: block; margin-top: 1rem; color: var(--jb-cyan);">examples/water-scene/</code>
                     </div>
                 </div>
             </div>

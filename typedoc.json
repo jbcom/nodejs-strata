@@ -28,7 +28,7 @@
         "*"
     ],
     "navigationLinks": {
-        "Showcase": "/index.html",
+        "Showcase": "../index.html",
         "GitHub": "https://github.com/jbcom/nodejs-strata"
     },
     "customCss": "docs/_static/typedoc-styles.css",

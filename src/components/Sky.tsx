@@ -1,25 +1,34 @@
 /**
  * High-performance Sky system for realistic day/night cycles and atmosphere.
  *
+ * Provides a dynamic procedural sky with Rayleigh/Mie scattering simulation,
+ * integrated day/night cycles, star visibility, and weather-aware coloring.
+ * Optimized for performance across mobile and desktop.
+ *
  * @packageDocumentation
  * @module components/Sky
  * @category World Building
  *
  * ## Interactive Demos
- * - 🎮 [Live Demo](http://jonbogaty.com/nodejs-strata/demos/sky.html)
- * - 📦 [Example Source](https://github.com/jbcom/nodejs-strata/tree/main/examples/sky-volumetrics)
+ * - 🎮 [Live Sky Demo](http://jonbogaty.com/nodejs-strata/demos/sky.html)
+ * - 📦 [Sky & Volumetrics Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/sky-volumetrics)
+ *
+ * ## API Documentation
+ * - [Full API Reference](http://jonbogaty.com/nodejs-strata/api)
+ * - [Examples → API Mapping](https://github.com/jbcom/nodejs-strata/blob/main/EXAMPLES_API_MAP.md#sky-and-atmosphere)
  *
  * @example
  * ```tsx
+ * // Morning sky
  * <ProceduralSky
  *   timeOfDay={{
- *     sunAngle: 45,
- *     sunIntensity: 1
+ *     sunAngle: 30,
+ *     sunIntensity: 0.8
  *   }}
  * />
  * ```
  *
- * @see {@link createTimeOfDay} for generating states based on hour.
+ * @see {@link createTimeOfDay} for generating complete sky states based on a 24h clock.
  */
 
 import { useFrame } from '@react-three/fiber';
@@ -27,36 +36,45 @@ import { useEffect, useMemo, useRef } from 'react';
 import type * as THREE from 'three';
 import { createSkyGeometry, createSkyMaterial } from '../core/sky';
 
+/**
+ * State representing the time of day and atmospheric light levels.
+ * @category World Building
+ */
 export interface TimeOfDayState {
-    /** Sun intensity 0-1 */
+    /** Sun intensity (0-1). 0 = night, 1 = maximum brightness. */
     sunIntensity: number;
-    /** Sun angle in degrees (0=horizon, 90=zenith) */
+    /** Sun angle in degrees (0 = horizon, 90 = zenith/noon, 180 = sunset). */
     sunAngle: number;
-    /** Ambient light level 0-1 */
+    /** Ambient light level (0-1). Base light level for the scene. */
     ambientLight: number;
-    /** Star visibility 0-1 */
+    /** Star visibility (0-1). 0 = hidden, 1 = fully visible. */
     starVisibility: number;
-    /** Fog density 0-1 */
+    /** Fog density (0-1). Affects atmospheric scattering depth. */
     fogDensity: number;
 }
 
+/**
+ * State representing current weather intensity.
+ * @category World Building
+ */
 export interface WeatherState {
-    /** Weather intensity 0-1 */
+    /** Weather intensity (0-1). 0 = clear, 1 = stormy/heavy precipitation. */
     intensity: number;
 }
 
 /**
  * Props for the ProceduralSky component.
  * @category World Building
+ * @interface ProceduralSkyProps
  */
 interface ProceduralSkyProps {
-    /** Time of day settings */
+    /** Time of day settings (sun angle, intensity, etc.). */
     timeOfDay?: Partial<TimeOfDayState>;
-    /** Weather settings */
+    /** Weather settings (intensity, cloud coverage). */
     weather?: Partial<WeatherState>;
-    /** Size of the sky plane */
+    /** Size of the sky plane [width, height]. Default: [200, 100]. */
     size?: [number, number];
-    /** Distance from camera */
+    /** Distance of the sky plane from the camera. Default: 50. */
     distance?: number;
 }
 
@@ -73,9 +91,20 @@ const defaultWeather: WeatherState = {
 };
 
 /**
- * Procedural sky with day/night cycle, stars, clouds, and weather effects
+ * Procedural sky component with dynamic day/night cycles and weather integration.
+ *
+ * Renders a large sky plane that simulates atmospheric scattering. Automatically
+ * updates shader uniforms for sun position, star field visibility, and fog density.
  *
  * @category World Building
+ * @example
+ * ```tsx
+ * <ProceduralSky
+ *   timeOfDay={{ sunAngle: 90, sunIntensity: 1.0 }}
+ *   weather={{ intensity: 0.2 }}
+ *   distance={100}
+ * />
+ * ```
  */
 export function ProceduralSky({
     timeOfDay: timeOfDayProp = {},
@@ -108,7 +137,7 @@ export function ProceduralSky({
             material.uniforms.uFogDensity.value = timeOfDay.fogDensity;
             material.uniforms.uWeatherIntensity.value = weather.intensity;
 
-            // Subtle gyroscopic effect
+            // Subtle gyroscopic effect for immersive feel
             const tiltX = Math.sin(state.clock.elapsedTime * 0.1) * 0.02;
             const tiltY = Math.cos(state.clock.elapsedTime * 0.15) * 0.02;
             material.uniforms.uGyroTilt.value.set(tiltX, tiltY);
@@ -130,16 +159,19 @@ export function ProceduralSky({
 }
 
 /**
- * Convenience function to create time of day state from hour.
+ * Convenience utility to generate time of day state from a decimal hour.
+ *
+ * Automatically calculates sun angle, intensity, ambient light, and star visibility
+ * based on a 24-hour cycle.
  *
  * @category World Building
- * @param hour - Hour of the day (0-24)
- * @returns TimeOfDayState configuration
+ * @param hour - Hour of the day (0-24, where 12.0 is noon).
+ * @returns Fully populated TimeOfDayState.
  *
  * @example
  * ```typescript
- * const noon = createTimeOfDay(12);
- * const midnight = createTimeOfDay(0);
+ * const morning = createTimeOfDay(8.5); // 8:30 AM
+ * const midnight = createTimeOfDay(0);   // Midnight
  * ```
  */
 export function createTimeOfDay(hour: number): TimeOfDayState {

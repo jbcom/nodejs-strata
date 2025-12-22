@@ -1,19 +1,27 @@
 /**
- * High-performance Cloud system.
+ * High-performance Cloud system for procedural atmospheres.
+ *
+ * Provides specialized components for rendering both efficient 2D cloud layers
+ * and immersive 3D volumetric clouds using GPU-accelerated raymarching.
  *
  * @packageDocumentation
  * @module components/Clouds
  * @category World Building
  *
  * ## Interactive Demos
- * - 🎮 [Live Demo](http://jonbogaty.com/nodejs-strata/demos/clouds.html)
- * - 📦 [Example Source](https://github.com/jbcom/nodejs-strata/tree/main/examples/sky-volumetrics)
+ * - 🎮 [Live Clouds Demo](http://jonbogaty.com/nodejs-strata/demos/clouds.html)
+ * - 📦 [Sky & Volumetrics Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/sky-volumetrics)
+ *
+ * ## API Documentation
+ * - [Full API Reference](http://jonbogaty.com/nodejs-strata/api)
  *
  * @example
  * ```tsx
+ * // Simple 2D layer
  * <CloudLayer
- *   altitude={100}
+ *   altitude={150}
  *   coverage={0.6}
+ *   density={1.2}
  * />
  * ```
  */
@@ -34,40 +42,70 @@ import {
     createVolumetricCloudMaterial,
 } from '../core/clouds';
 
+/**
+ * Props for the CloudLayer component.
+ * @category World Building
+ * @interface CloudLayerProps
+ */
 export interface CloudLayerProps extends Partial<CloudLayerConfig> {
-    /** Wind configuration */
+    /** Wind configuration for cloud movement animation. */
     wind?: Partial<WindConfig>;
-    /** Day/night cycle configuration */
+    /** Day/night cycle configuration for cloud lighting and color adaptation. */
     dayNight?: Partial<DayNightConfig>;
-    /** Size of the cloud plane */
+    /** Size of the cloud plane [width, height]. Default: [200, 200]. */
     size?: [number, number];
 }
 
+/**
+ * Props for the VolumetricClouds component.
+ * @category World Building
+ * @interface VolumetricCloudsProps
+ */
 export interface VolumetricCloudsProps {
+    /** Base altitude where clouds start. Default: 50. */
     cloudBase?: number;
+    /** Total height/thickness of the cloud volume. Default: 50. */
     cloudHeight?: number;
+    /** Cloud coverage density (0-1). Default: 0.5. */
     coverage?: number;
+    /** Cloud internal density multiplier. Default: 1.0. */
     density?: number;
+    /** Primary cloud color. Default: white. */
     cloudColor?: THREE.Color;
+    /** Cloud shadow color. Default: slate blue. */
     shadowColor?: THREE.Color;
+    /** Wind configuration for movement animation. */
     wind?: Partial<WindConfig>;
+    /** Day/night cycle configuration for light intensity and angle. */
     dayNight?: Partial<DayNightConfig>;
+    /** Raymarching steps. Higher = better quality, lower performance. Default: 32. */
     steps?: number;
+    /** Light sampling steps for internal shadows. Default: 4. */
     lightSteps?: number;
+    /** Radius of the cloud dome sphere. Default: 500. */
     radius?: number;
 }
 
+/**
+ * Props for the CloudSky composite component.
+ * @category World Building
+ * @interface CloudSkyProps
+ */
 export interface CloudSkyProps {
+    /** Preset configuration containing multiple layers and global settings. */
     config?: Partial<CloudSkyConfig>;
-    /** Override for all layers' wind */
+    /** Global wind override for all cloud layers. */
     wind?: Partial<WindConfig>;
-    /** Override for all layers' dayNight */
+    /** Global day/night override for all cloud layers. */
     dayNight?: Partial<DayNightConfig>;
 }
 
 /**
- * A single 2D cloud layer.
- * Efficient for background clouds.
+ * Optimized 2D procedural cloud layer.
+ *
+ * Efficiently renders background clouds using a single textured plane.
+ * Best for performance-constrained environments or background atmosphere.
+ *
  * @category World Building
  */
 export function CloudLayer({
@@ -162,9 +200,21 @@ export function CloudLayer({
 }
 
 /**
- * Volumetric cloud system using raymarching.
- * Renders a dome of clouds around the scene.
+ * Volumetric cloud system using advanced raymarching.
+ *
+ * Renders a full 3D cloud dome surrounding the viewer with internal light scattering,
+ * self-shadowing, and dynamic movement.
+ *
  * @category World Building
+ * @example
+ * ```tsx
+ * <VolumetricClouds
+ *   cloudBase={100}
+ *   cloudHeight={80}
+ *   coverage={0.4}
+ *   steps={64}
+ * />
+ * ```
  */
 export function VolumetricClouds({
     cloudBase = 50,
@@ -254,8 +304,11 @@ export function VolumetricClouds({
 }
 
 /**
- * A composite component that renders multiple cloud layers and handles
- * global wind and day/night settings.
+ * High-level component for rendering a complete multi-layered cloud sky.
+ *
+ * Simplifies the management of complex procedural skies by coordinating multiple
+ * `CloudLayer` instances with unified global wind and lighting parameters.
+ *
  * @category World Building
  */
 export function CloudSky({

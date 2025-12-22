@@ -40,6 +40,7 @@
     "docs:dev": "npx serve docs",
     "docs:build": "echo 'Static docs ready in docs/'",
     "docs:typedoc": "typedoc",
+    "examples:build": "pnpm --filter './examples/*' build",
     "lint": "biome lint src/",
     "lint:fix": "biome lint --write src/",
     "format": "biome format --write src/ tests/",

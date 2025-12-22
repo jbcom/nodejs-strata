@@ -10,6 +10,7 @@
  */
 
 import * as THREE from 'three';
+import { lerp } from './math/index';
 
 export type UIAnchor =
     | 'topLeft'
@@ -169,7 +170,7 @@ export interface MinimapMarker {
 }
 
 export interface CrosshairConfig {
-    type?: 'dot' | 'cross' | 'circle' | 'custom';
+    type?: 'cross' | 'circle' | 'custom';
     size?: number;
     thickness?: number;
     gap?: number;
@@ -324,19 +325,6 @@ export function formatProgressText(
 
 export function clampProgress(value: number, maxValue: number): number {
     return Math.max(0, Math.min(value, maxValue));
-}
-
-export function lerp(start: number, end: number, t: number): number {
-    return start + (end - start) * t;
-}
-
-export function easeOutCubic(t: number): number {
-    return 1 - (1 - t) ** 3;
-}
-
-export function easeOutElastic(t: number): number {
-    const c4 = (2 * Math.PI) / 3;
-    return t === 0 ? 0 : t === 1 ? 1 : 2 ** (-10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
 }
 
 export function getTextDirection(text: string): 'ltr' | 'rtl' {

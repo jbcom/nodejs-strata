@@ -1,7 +1,7 @@
 /**
- * React component exports.
+ * React Three Fiber Components for Strata
  * @packageDocumentation
- * @module components
+ * @module react
  */
 
 export * from './ai';
@@ -23,3 +23,4 @@ export * from './state';
 export * from './ui';
 export * from './water';
 export * from './weather';
+export * from '../hooks/index';

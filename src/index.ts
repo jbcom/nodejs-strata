@@ -1,16 +1,17 @@
 /**
- * @jbcom/strata
+ * @jbcom/strata - Core Procedural Generation & Math Utilities
  * 
- * The complete solution for foreground, midground, and background layer
- * 3D gaming in Node.js. 
+ * This root entry point provides pure TypeScript logic for procedural generation,
+ * math, and foundations. No React or Three.js dependencies in the root module.
  * 
- * This root entry point exports the CORE procedural generation and math utilities.
- * React components and specialized systems are available via subpaths:
- * - @jbcom/strata/react
- * - @jbcom/strata/ai
- * - @jbcom/strata/state
- * - @jbcom/strata/physics
- * - @jbcom/strata/presets
+ * Specialized systems are available via subpaths:
+ * - @jbcom/strata/react   (R3F Components)
+ * - @jbcom/strata/ai      (Yuka AI Systems)
+ * - @jbcom/strata/state   (Game State Store)
+ * - @jbcom/strata/physics (Rapier Wrappers)
+ * - @jbcom/strata/presets (Layer Presets)
  */
 
 export * from './core/index';
+export * from './utils/index';
+export * from './shaders/index';

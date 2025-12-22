@@ -1,15 +1,9 @@
 /**
  * Core Camera and Perspective Utilities.
- *
- * Provides pure TypeScript math functions and controller logic for smooth
- * camera movement, screen shake effects, and perspective transitions.
- *
- * @packageDocumentation
- * @module core/camera
- * @category Player Experience
  */
 
 import * as THREE from 'three';
+import { lerp, slerp } from './math/index';
 
 export interface CameraShakeConfig {
     trauma: number;
@@ -33,10 +27,6 @@ export interface CameraPath {
     closed?: boolean;
 }
 
-export function lerp(a: number, b: number, t: number): number {
-    return a + (b - a) * Math.max(0, Math.min(1, t));
-}
-
 export function lerpVector3(
     a: THREE.Vector3,
     b: THREE.Vector3,
@@ -50,16 +40,6 @@ export function lerpVector3(
         a.y + (b.y - a.y) * clampedT,
         a.z + (b.z - a.z) * clampedT
     );
-}
-
-export function slerp(
-    qa: THREE.Quaternion,
-    qb: THREE.Quaternion,
-    t: number,
-    out?: THREE.Quaternion
-): THREE.Quaternion {
-    const result = out ?? new THREE.Quaternion();
-    return result.copy(qa).slerp(qb, Math.max(0, Math.min(1, t)));
 }
 
 export function smoothDamp(
@@ -156,9 +136,9 @@ export class CameraShake {
         const noiseX = this.perlinNoise(this.seed, this.time * this.frequency);
         const noiseY = this.perlinNoise(this.seed + 1, this.time * this.frequency);
         const noiseZ = this.perlinNoise(this.seed + 2, this.time * this.frequency);
-        const noiseRoll = this.perlinNoise(this.seed + 3, this.time * this.frequency);
         const noisePitch = this.perlinNoise(this.seed + 4, this.time * this.frequency);
         const noiseYaw = this.perlinNoise(this.seed + 5, this.time * this.frequency);
+        const noiseRoll = this.perlinNoise(this.seed + 3, this.time * this.frequency);
 
         const offset = new THREE.Vector3(
             shake * this.maxOffset * noiseX,
@@ -195,7 +175,7 @@ export class FOVTransition {
         this.startFOV = config.startFOV;
         this.endFOV = config.endFOV;
         this.duration = config.duration;
-        this.easing = config.easing ?? easeInOutCubic;
+        this.easing = config.easing ?? ((t: number) => t);
     }
 
     update(deltaTime: number): number {
@@ -223,23 +203,6 @@ export class FOVTransition {
     complete(): boolean {
         return this.isComplete;
     }
-}
-
-export function easeInOutCubic(t: number): number {
-    return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
-}
-
-export function easeOutCubic(t: number): number {
-    return 1 - (1 - t) ** 3;
-}
-
-export function easeInCubic(t: number): number {
-    return t * t * t;
-}
-
-export function easeOutElastic(t: number): number {
-    const c4 = (2 * Math.PI) / 3;
-    return t === 0 ? 0 : t === 1 ? 1 : 2 ** (-10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
 }
 
 export function evaluateCatmullRom(

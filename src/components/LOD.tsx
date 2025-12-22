@@ -1,9 +1,27 @@
 /**
- * LOD (Level of Detail) React Components
+ * Level of Detail (LOD) System for Strata.
  *
- * Provides React components for distance-based level of detail rendering.
- * Supports mesh switching, impostor billboards, and specialized vegetation LOD.
+ * Provides high-performance distance-based rendering optimizations including
+ * automatic mesh switching, impostor billboards, and specialized vegetation LOD.
+ *
+ * @packageDocumentation
  * @module components/LOD
+ * @category Rendering Pipeline
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live LOD Demo](http://jonbogaty.com/nodejs-strata/demos/lod.html)
+ * - 📦 [LOD Optimization Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/lod-optimization)
+ *
+ * @example
+ * ```tsx
+ * <LODMesh
+ *   levels={[
+ *     { distance: 0, geometry: highResGeo },
+ *     { distance: 50, geometry: mediumResGeo },
+ *     { distance: 100, geometry: lowResGeo }
+ *   ]}
+ * />
+ * ```
  */
 
 import { useFrame, useThree } from '@react-three/fiber';

@@ -1,9 +1,25 @@
 /**
- * Weather Components
+ * Dynamic Weather and Precipitation System for Strata.
  *
- * GPU-instanced weather effects including rain, snow, and lightning.
- * Provides realistic precipitation and storm effects for outdoor scenes.
+ * Provides realistic, GPU-accelerated weather effects including rain, snow,
+ * and dynamic lightning, optimized for performance in large outdoor environments.
+ *
+ * @packageDocumentation
  * @module components/Weather
+ * @category World Building
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Weather Demo](http://jonbogaty.com/nodejs-strata/demos/weather.html)
+ * - 📦 [Storm System Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/weather-effects)
+ *
+ * @example
+ * ```tsx
+ * <WeatherSystem
+ *   type="stormy"
+ *   intensity={0.8}
+ *   wind={[1, 0, 0.5]}
+ * />
+ * ```
  */
 
 import { useFrame, useThree } from '@react-three/fiber';

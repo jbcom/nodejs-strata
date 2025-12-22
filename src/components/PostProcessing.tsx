@@ -1,9 +1,24 @@
 /**
- * Post-Processing React Components
+ * Cinema-Quality Post-Processing System for Strata.
  *
- * Higher-level components for applying post-processing effects using
- * @react-three/postprocessing. Provides preset-based effect stacks for
- * common visual styles.
+ * Provides high-level components for applying advanced visual effects like bloom,
+ * depth of field, color grading, and stylized filters to the entire scene.
+ *
+ * @packageDocumentation
+ * @module components/PostProcessing
+ * @category Rendering Pipeline
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Post-Processing Demo](http://jonbogaty.com/nodejs-strata/demos/postprocessing.html)
+ * - 📦 [Visual Moods Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/postprocessing-moods)
+ *
+ * @example
+ * ```tsx
+ * <EffectStack preset="cinematic">
+ *   <Bloom intensity={1.5} />
+ *   <Vignette eskil={false} offset={0.1} darkness={1.1} />
+ * </EffectStack>
+ * ```
  */
 
 import { useFrame, useThree } from '@react-three/fiber';

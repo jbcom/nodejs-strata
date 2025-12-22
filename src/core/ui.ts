@@ -1,8 +1,12 @@
 /**
- * Core UI Utilities
+ * Core User Interface Utilities.
  *
- * Provides types, configurations, and helper functions for game UI elements.
- * Pure TypeScript implementation with no React dependencies.
+ * Provides pure TypeScript logic, configurations, and helper functions for
+ * building immersive in-game UI systems, independent of the rendering framework.
+ *
+ * @packageDocumentation
+ * @module core/ui
+ * @category UI & Interaction
  */
 
 import * as THREE from 'three';

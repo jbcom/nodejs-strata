@@ -1,6 +1,27 @@
 /**
- * React components for shader materials
- * Provides easy-to-use components for common shader effects
+ * Common Shader Effect Components for Strata.
+ *
+ * Provides a collection of ready-to-use React components for common procedural
+ * shader effects like holograms, dissolving meshes, forcefields, and glitch effects.
+ *
+ * @packageDocumentation
+ * @module components/Shaders
+ * @category Rendering Pipeline
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Shader Demo](http://jonbogaty.com/nodejs-strata/demos/shaders.html)
+ * - 📦 [Visual Effects Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/shader-effects)
+ *
+ * @example
+ * ```tsx
+ * <HologramMesh
+ *   color="cyan"
+ *   flicker={0.2}
+ *   scanlines={true}
+ * >
+ *   <sphereGeometry />
+ * </HologramMesh>
+ * ```
  */
 
 import { useFrame } from '@react-three/fiber';

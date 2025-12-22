@@ -1,8 +1,28 @@
 /**
- * GPU-Based Particle System React Components
+ * High-performance GPU-based Particle System for Strata.
  *
- * Provides React components for particle effects using GPU-instanced rendering.
+ * Provides realistic particle effects like fire, smoke, explosions, and magic
+ * using GPU-instanced rendering for maximum performance.
+ *
+ * @packageDocumentation
  * @module components/Particles
+ * @category Effects & Atmosphere
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Particles Demo](http://jonbogaty.com/nodejs-strata/demos/particles.html)
+ * - 📦 [Particle Showcase Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/particles-showcase)
+ *
+ * @example
+ * ```tsx
+ * // Simple fire effect
+ * <ParticleEmitter
+ *   position={[0, 0, 0]}
+ *   velocity={[0, 2, 0]}
+ *   startColor={0xff4400}
+ *   endColor={0xff0000}
+ *   emissionRate={100}
+ * />
+ * ```
  */
 
 import { useFrame } from '@react-three/fiber';

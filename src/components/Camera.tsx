@@ -1,9 +1,25 @@
 /**
- * Camera components for Strata
+ * Advanced Camera System for Strata.
  *
- * React Three Fiber camera components with various behaviors including
- * follow cameras, orbit controls, first-person, cinematic paths, and shake effects.
+ * Provides specialized camera behaviors including follow cameras, orbit controls,
+ * first-person controllers, cinematic paths, and dynamic screen shake.
+ *
+ * @packageDocumentation
  * @module components/Camera
+ * @category Player Experience
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Camera Demo](http://jonbogaty.com/nodejs-strata/demos/camera.html)
+ * - 📦 [Third-Person Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/third-person)
+ *
+ * @example
+ * ```tsx
+ * <FollowCamera
+ *   target={playerRef}
+ *   offset={[0, 5, 10]}
+ *   smoothSpeed={0.1}
+ * />
+ * ```
  */
 
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';

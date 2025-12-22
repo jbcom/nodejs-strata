@@ -1,9 +1,29 @@
 /**
- * YukaJS React Component Wrappers
+ * Advanced Game AI System for Strata.
  *
- * Integrates Yuka game AI library with React Three Fiber.
- * Provides steering behaviors, pathfinding, FSM, and perception.
+ * Integrates the Yuka game AI library with React Three Fiber to provide
+ * steering behaviors, pathfinding, finite state machines, and perception.
+ *
+ * @packageDocumentation
  * @module components/AI
+ * @category Entities & Simulation
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live AI Demo](http://jonbogaty.com/nodejs-strata/demos/ai.html)
+ * - 📦 [AI Navigation Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/ai-navigation)
+ *
+ * @example
+ * ```tsx
+ * <YukaEntityManager>
+ *   <YukaVehicle
+ *     position={[0, 0, 0]}
+ *     steeringBehaviors={[
+ *       { type: 'wander', weight: 1.0 },
+ *       { type: 'obstacle-avoidance', weight: 2.0 }
+ *     ]}
+ *   />
+ * </YukaEntityManager>
+ * ```
  */
 
 import { Line } from '@react-three/drei';

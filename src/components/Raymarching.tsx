@@ -1,7 +1,28 @@
 /**
- * Ray marching component for GPU-based SDF rendering
+ * GPU-Based Ray Marching System for Strata.
  *
- * Uses marching.js patterns for efficient ray marching
+ * Provides specialized components for rendering complex Signed Distance Fields (SDFs)
+ * directly on the GPU using efficient ray marching algorithms.
+ *
+ * @packageDocumentation
+ * @module components/Raymarching
+ * @category Rendering Pipeline
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Raymarching Demo](http://jonbogaty.com/nodejs-strata/demos/raymarching.html)
+ * - 📦 [Fractal World Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/raymarching-fractals)
+ *
+ * @example
+ * ```tsx
+ * <Raymarching
+ *   sdfFunction={`
+ *     float sceneSDF(vec3 p) {
+ *       return sdSphere(p, 1.0);
+ *     }
+ *   `}
+ *   maxSteps={128}
+ * />
+ * ```
  */
 
 import { useFrame, useThree } from '@react-three/fiber';

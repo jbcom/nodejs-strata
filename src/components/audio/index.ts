@@ -1,8 +1,24 @@
 /**
- * Audio Components
+ * Complete Spatial Audio System for Strata.
  *
- * React components for spatial audio in Three.js scenes.
+ * Provides React Three Fiber components for immersive spatial audio including
+ * positional emitters, environmental reverb, background ambience, and footstep systems.
+ *
+ * @packageDocumentation
  * @module components/audio
+ * @category Player Experience
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Audio Demo](http://jonbogaty.com/nodejs-strata/demos/audio.html)
+ * - 📦 [3D Soundscape Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/audio-system)
+ *
+ * @example
+ * ```tsx
+ * <AudioProvider>
+ *   <AmbientAudio url="/music/forest_bg.mp3" volume={0.5} />
+ *   <PositionalAudio url="/sounds/waterfall.wav" position={[10, 0, 0]} />
+ * </AudioProvider>
+ * ```
  */
 
 export { AmbientAudio } from './AmbientAudio';

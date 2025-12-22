@@ -1,8 +1,26 @@
 /**
- * UI React Components
+ * Immersive Game UI System for Strata.
  *
- * Provides React components for game UI elements using @react-three/drei's Html component.
+ * Provides specialized React components for in-game UI elements like health bars,
+ * mini-maps, dialog boxes, and inventory systems, integrated into the 3D scene.
+ *
+ * @packageDocumentation
  * @module components/UI
+ * @category UI & Interaction
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live UI Demo](http://jonbogaty.com/nodejs-strata/demos/ui.html)
+ * - 📦 [HUD Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/game-hud)
+ *
+ * @example
+ * ```tsx
+ * <HealthBar
+ *   value={player.health}
+ *   maxValue={100}
+ *   color="red"
+ *   label="Player Health"
+ * />
+ * ```
  */
 
 import { Html } from '@react-three/drei';

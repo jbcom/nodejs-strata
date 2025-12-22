@@ -1,9 +1,25 @@
 /**
- * 3D Input Components
+ * Revolutionary 3D Input System for Strata.
  *
- * Revolutionary 3D joystick and trigger system with real depth, shadows, and haptics.
- * Replaces flat 2D controls with immersive 3D alternatives.
+ * Replaces flat 2D overlays with immersive 3D joystick and trigger systems
+ * that feature real depth, shadow integration, and physical haptic feedback.
+ *
+ * @packageDocumentation
  * @module components/Input
+ * @category UI & Interaction
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Input Demo](http://jonbogaty.com/nodejs-strata/demos/input.html)
+ * - 📦 [3D Mobile Controls Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/mobile-input)
+ *
+ * @example
+ * ```tsx
+ * <Joystick3D
+ *   onMove={(axis) => console.log('Joystick:', axis)}
+ *   color="cyan"
+ *   haptics
+ * />
+ * ```
  */
 
 import { type ThreeEvent, useFrame, useThree } from '@react-three/fiber';

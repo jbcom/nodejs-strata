@@ -1,11 +1,19 @@
 /**
- * Noise utilities wrapping simplex-noise library
+ * Advanced Noise and Procedural Generation Utilities.
  *
- * Provides thin wrappers around simplex-noise with Strata-specific
- * utilities like FBM and terrain noise presets.
+ * Provides high-performance simplex noise functions, Fractional Brownian Motion (FBM),
+ * and specialized terrain noise presets for procedural world generation.
  *
+ * @packageDocumentation
  * @module core/math/noise
- * @public
+ * @category World Building
+ *
+ * @example
+ * ```typescript
+ * // Generate a mountain heightmap
+ * const noise = createTerrainNoise('mountains');
+ * const height = noise(x, z);
+ * ```
  */
 
 import {

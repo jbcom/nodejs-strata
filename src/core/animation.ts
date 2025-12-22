@@ -1,9 +1,12 @@
 /**
- * Core animation algorithms
+ * Core Animation and Kinematics System.
  *
- * Pure TypeScript animation utilities including IK solvers, spring dynamics,
- * and procedural locomotion for skeletal and object-based animation.
+ * Provides high-performance, pure TypeScript utilities for procedural animation,
+ * including CCD and FABRIK IK solvers, spring dynamics, and complex locomotion logic.
+ *
+ * @packageDocumentation
  * @module core/animation
+ * @category Entities & Simulation
  */
 
 import * as THREE from 'three';

@@ -1,10 +1,24 @@
 /**
- * Marching Cubes implementation for generating meshes from SDFs
+ * High-Performance Marching Cubes Implementation.
  *
- * Marching Cubes is an algorithm for extracting a polygonal mesh of an
- * isosurface from a 3D scalar field (like an SDF).
+ * Extracts optimized polygonal meshes from mathematical isosurfaces (SDFs),
+ * enabling dynamic terrain generation and organic object extraction.
  *
- * Lifted from Otterfall procedural terrain system.
+ * @packageDocumentation
+ * @module core/marching-cubes
+ * @category World Building
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Terrain Demo](http://jonbogaty.com/nodejs-strata/demos/terrain.html)
+ *
+ * @example
+ * ```typescript
+ * const result = marchingCubes(mySDF, {
+ *   resolution: 64,
+ *   bounds: { min: new THREE.Vector3(-10, -10, -10), max: new THREE.Vector3(10, 10, 10) }
+ * });
+ * const geometry = createGeometryFromMarchingCubes(result);
+ * ```
  */
 
 import * as THREE from 'three';

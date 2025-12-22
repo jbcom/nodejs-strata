@@ -1,9 +1,26 @@
 /**
- * Decal and Billboard React Components
+ * Decal and Billboard System for Strata.
  *
- * Provides React components for projecting decals onto surfaces,
- * creating billboards that face the camera, and managing decal pools.
+ * Provides high-performance systems for projecting decals onto complex surfaces,
+ * creating camera-facing billboards, and efficient decal pooling for effects like impacts.
+ *
+ * @packageDocumentation
  * @module components/Decals
+ * @category World Building
+ *
+ * ## Interactive Demos
+ * - 🎮 [Live Decals Demo](http://jonbogaty.com/nodejs-strata/demos/decals.html)
+ * - 📦 [Impact Effects Example](https://github.com/jbcom/nodejs-strata/tree/main/examples/impact-effects)
+ *
+ * @example
+ * ```tsx
+ * <Decal
+ *   position={[0, 1, 0]}
+ *   rotation={[0, 0, 0]}
+ *   scale={[1, 1, 1]}
+ *   map={scorchMarkTexture}
+ * />
+ * ```
  */
 
 import { useFrame, useThree } from '@react-three/fiber';

@@ -1,10 +1,25 @@
 /**
- * State Management React Components and Hooks
+ * Global Game State Management for Strata.
  *
- * Re-exports from src/components/state/ for backward compatibility.
+ * Provides a unified system for managing game state, including persistence,
+ * undo/redo history, automatic saving, and state debugging tools.
  *
+ * @packageDocumentation
  * @module components/State
- * @public
+ * @category Game Systems
+ *
+ * ## API Documentation
+ * - [Full API Reference](http://jonbogaty.com/nodejs-strata/api)
+ *
+ * @example
+ * ```tsx
+ * <GameStateProvider
+ *   initialState={createRPGState({ player })}
+ *   persistence="localstorage"
+ * >
+ *   <App />
+ * </GameStateProvider>
+ * ```
  */
 
 export {

@@ -144,7 +144,7 @@ jobs:
       - uses: actions/setup-node@v4
       - run: pnpm install
       - run: pnpm run docs:build
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v4.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs

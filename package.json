@@ -11,23 +11,23 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "react": {
+    "./react": {
       "types": "./dist/components/index.d.ts",
       "import": "./dist/components/index.js"
     },
-    "ai": {
+    "./ai": {
       "types": "./dist/components/ai/index.d.ts",
       "import": "./dist/components/ai/index.js"
     },
-    "state": {
+    "./state": {
       "types": "./dist/components/state/index.d.ts",
       "import": "./dist/components/state/index.js"
     },
-    "physics": {
+    "./physics": {
       "types": "./dist/components/physics/index.d.ts",
       "import": "./dist/components/physics/index.js"
     },
-    "presets": {
+    "./presets": {
       "types": "./dist/presets/index.d.ts",
       "import": "./dist/presets/index.js"
     }

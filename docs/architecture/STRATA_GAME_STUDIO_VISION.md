@@ -181,21 +181,30 @@ Consolidates:
 
 ---
 
-## Professor Pixel: Brand Mascot
+## Professor Pixel: Education & Workshop Mascot
 
-Professor Pixel evolves from "tutor mascot" to **Strata's official mascot** across all properties:
+Professor Pixel is the mascot for **education and game creation** only - NOT a general Strata brand mascot.
 
-| Context | Personality |
-|---------|-------------|
-| **Learn** | Patient teacher, encouraging, celebrates small wins |
-| **Workshop** | Creative collaborator, enthusiastic about ideas |
-| **Arcade** | Excited host, showcases community achievements |
-| **Docs** | Helpful guide, provides tips and warnings |
+### Two Versions
 
-**Visual Identity:**
-- Pixel art character (retro gaming nostalgia)
-- Strata color palette (terrain browns, water blues, vegetation greens, sky purples, game golds)
-- Animated expressions for different contexts
+| Version | Context | Personality | Visual Style |
+|---------|---------|-------------|--------------|
+| **Kindly Professor** | Learn/Education | Patient teacher, encouraging, celebrates small wins | Classic, warm, approachable |
+| **Cyberpunk Pixel** | Workshop/Game Creation | Creative collaborator, enthusiastic hacker energy | Neon, edgy, futuristic |
+
+### Scope
+
+| Property | Professor Pixel? |
+|----------|-----------------|
+| **Strata Learn** | ✅ Kindly Professor version |
+| **Strata Workshop** | ✅ Cyberpunk version |
+| **Strata Engine docs** | ❌ No mascot - technical documentation |
+| **Strata Arcade** | ❌ Games speak for themselves |
+| **Sub-package docs** | ❌ No mascot - technical documentation |
+
+### Existing Assets
+
+Assets exist for both versions (scattered across repos) - need consolidation into typescript-tutor.
 
 ---
 
@@ -248,19 +257,21 @@ arcade.strata.game/           # Game showcase
 ### Phase 3: Studio Structure
 
 ```
-nodejs-strata-studio/          # Monorepo
-├── packages/
-│   ├── workshop/              # Game wizard (from typescript-tutor flows)
-│   ├── learn/                 # Education (from typescript-tutor lessons)
-│   ├── arcade/                # Showcase gallery
-│   └── ai/                    # AI client (WASM from Rust)
-├── apps/
-│   ├── workshop.strata.game/  # Workshop frontend
-│   ├── learn.strata.game/     # Learn frontend  
-│   └── arcade.strata.game/    # Arcade frontend
-└── .agentic-control/
-    └── flows/                 # Workshop flow configs
+nodejs-strata-typescript-tutor/    # Stays as-is (correct name)
+├── client/
+│   ├── public/
+│   │   ├── lessons/               # Learn content (Kindly Professor)
+│   │   └── *-flow.json            # Workshop flows (Cyberpunk Pixel)
+│   └── src/components/            # React UI
+├── server/                        # Express backend
+├── assets/                        # Game assets, sprites, audio
+├── public/dialogue/               # Yarn dialogue files
+└── .agentic-control/flows/        # Flow configs (to add)
 ```
+
+**Deployments via GitHub Pages:**
+- `learn.strata.game` → Education platform
+- `workshop.strata.game` → Game creation wizard
 
 ---
 
@@ -334,23 +345,30 @@ ai:
 
 ---
 
-## Open Questions
+## Resolved Questions
 
 1. **Monorepo vs Multi-repo?**
-   - Studio as monorepo with packages?
-   - Or keep separate repos with shared dependencies?
+   - ✅ **Multi-repo** - typescript-tutor stays as-is with its correct name
+   - No transformation needed, it IS already the workshop/learn platform
 
-2. **Rust AI Core Distribution**
+2. **Professor Pixel Scope**
+   - ✅ **Education + Workshop ONLY** - NOT a general Strata mascot
+   - Kindly old professor version → Learn/Education content
+   - Cyberpunk version → Workshop/Game creation wizard
+   - Existing assets scattered, need consolidation
+
+3. **Hosting**
+   - ✅ **GitHub Pages** for all properties
+   - Domain registration just needs CNAME pointing to GH Pages
+
+## Open Questions
+
+1. **Rust AI Core Distribution**
    - WASM for browser?
    - Native bindings for Node.js?
    - Keep Python bindings for training/tooling?
 
-3. **Professor Pixel Assets**
-   - Commission professional pixel art?
-   - Animate for different expressions?
-   - Voice synthesis via ElevenLabs?
-
-4. **Community Features**
+2. **Community Features** (Future)
    - User accounts across properties?
    - Game jam infrastructure?
    - Asset marketplace?

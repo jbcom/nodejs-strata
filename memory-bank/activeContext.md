@@ -230,13 +230,18 @@ From "tutor mascot" → Strata's official brand mascot across ALL properties
 - nodejs-rivers-of-reckoning (roguelike)
 
 **Decisions Made**:
-1. npm scope: **@strata** ✅ (DECIDED)
-2. Repository management: control-center ecosystem sync + settings.yml
+1. npm scope: **@strata** ✅
+2. Repository management: control-center ecosystem sync + settings.yml ✅
+3. typescript-tutor: **Stays as-is** (correct repo, correct name) ✅
+4. Professor Pixel scope: **Education + Workshop ONLY** ✅
+   - Kindly Professor → Learn/Education
+   - Cyberpunk version → Workshop/Game creation
+   - NOT a general Strata mascot
+5. Hosting: **GitHub Pages** for all properties ✅
 
 **Open Decisions for Maintainer**:
-1. Monorepo vs multi-repo for Studio?
-2. AI Core distribution (WASM + bindings?)
-3. Professor Pixel assets (commission art?)
+1. AI Core distribution (WASM + napi-rs + PyO3?)
+2. Community features (user accounts, game jams) - Future
 
 ---
 

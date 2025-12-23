@@ -644,9 +644,10 @@ All v2.0 issues should have:
 
 ### Domain Registration
 
-- [ ] Who owns/registers strata.game?
-- [ ] DNS provider for subdomain management?
-- [ ] SSL certificate strategy (Let's Encrypt via GitHub Pages)?
+- [x] Hosting: **GitHub Pages** (RESOLVED)
+- [ ] Register strata.game domain
+- [ ] Configure CNAME records pointing to GitHub Pages
+- [ ] SSL: Automatic via GitHub Pages
 
 ### Package Publishing
 
@@ -669,9 +670,13 @@ All v2.0 issues should have:
 
 ### Professor Pixel Integration
 
-- [ ] Is strata-typescript-tutor the primary Professor Pixel frontend?
-- [ ] Integration with python-agentic-game-development?
-- [ ] Integration with rust-agentic-game-generator?
+- [x] typescript-tutor stays as-is (correct repo, correct name) (RESOLVED)
+- [x] Professor Pixel scope: **Education + Workshop ONLY** (RESOLVED)
+  - Kindly old professor version → Learn/Education
+  - Cyberpunk version → Workshop/Game creation
+  - NOT a general Strata mascot
+- [x] Existing assets available for both versions (scattered, needs consolidation)
+- [ ] Consolidate Professor Pixel assets into typescript-tutor repo
 
 ---
 

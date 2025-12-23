@@ -148,7 +148,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
-          cname: [subdomain].strata.game
+          cname: '[subdomain].strata.game'
 ```
 
 ---

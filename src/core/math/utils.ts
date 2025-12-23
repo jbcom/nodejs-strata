@@ -43,7 +43,7 @@ export { maathRandom as random };
  * ```
  */
 export function lerp(a: number, b: number, t: number): number {
-    return a + (b - a) * t;
+    return a + (b - a) * Math.max(0, Math.min(1, t));
 }
 
 /**

@@ -6,13 +6,13 @@
 
 Today, game development tooling is fragmented across multiple repositories with different languages, approaches, and branding:
 
-| Repo | Language | Focus | Current Brand |
-|------|----------|-------|---------------|
-| `nodejs-strata` | TypeScript | 3D rendering engine for R3F | Strata |
-| `nodejs-strata-typescript-tutor` | TypeScript | Interactive education + wizard flows | Professor Pixel |
-| `python-agentic-game-development` | Python | AI-assisted game dev academy | Professor Pixel's Arcade Academy |
-| `rust-agentic-game-generator` | Rust | AI-powered RPG generation | (none) |
-| `rust-agentic-game-development` | Rust | Core AI client libraries | (none) |
+| Repo | Language | Focus | Target Package |
+|------|----------|-------|----------------|
+| `nodejs-strata` | TypeScript | 3D rendering engine for R3F | `@strata/core` |
+| `nodejs-strata-typescript-tutor` | TypeScript | Interactive education + wizard flows | `@strata/studio` |
+| `python-agentic-game-development` | Python | AI-assisted game dev academy | (internal/bindings) |
+| `rust-agentic-game-generator` | Rust | AI-powered RPG generation | `strata-ai-core` (crate) |
+| `rust-agentic-game-development` | Rust | Core AI client libraries | `strata-ai-core` (crate) |
 
 **Plus validation games:**
 - `nodejs-rivermarsh` - Mobile exploration
@@ -65,7 +65,7 @@ Today, game development tooling is fragmented across multiple repositories with 
 - Compositional objects (materials, skeletons, creatures)
 - World topology (regions, connections)
 
-**Package:** `@jbcom/strata`
+**Package:** `@strata/core`
 **Domain:** `strata.game` (apex)
 
 ---
@@ -86,7 +86,7 @@ Consolidates:
 - Code generation targeting Strata Engine
 - Export to standalone projects
 
-**Package:** `@strata/workshop`
+**Package:** `@strata/workshop` (part of `@strata/studio`)
 **Domain:** `workshop.strata.game`
 
 **Agentic Control Integration:**
@@ -357,9 +357,68 @@ ai:
 
 ---
 
+## Control Center Integration
+
+Repository management via `jbcom/control-center`:
+
+### Ecosystem Sync
+
+All Strata repositories are managed through control-center's ecosystem sync:
+
+```json
+// control-center/repo-config.json
+{
+  "ecosystems": {
+    "strata": {
+      "domain": "strata.game",
+      "npm_scope": "@strata",
+      "repos": [
+        "nodejs-strata",
+        "nodejs-strata-shaders",
+        "nodejs-strata-presets",
+        "nodejs-strata-examples",
+        "nodejs-strata-typescript-tutor",
+        "nodejs-strata-react-native-plugin",
+        "nodejs-strata-capacitor-plugin"
+      ]
+    }
+  }
+}
+```
+
+### Settings.yml Configuration
+
+Each repository uses standardized settings:
+
+```yaml
+# .github/settings.yml
+repository:
+  homepage: https://[package].strata.game
+  topics:
+    - strata
+    - game-development
+    - react-three-fiber
+
+pages:
+  enabled: true
+  cname: [package].strata.game
+```
+
+### Related Control Center Issues
+
+| Issue | Title |
+|-------|-------|
+| [#417](https://github.com/jbcom/control-center/issues/417) | Domain: Configure strata.game |
+| [#416](https://github.com/jbcom/control-center/issues/416) | Domain: Configure agentic.dev |
+| [#418](https://github.com/jbcom/control-center/issues/418) | Document multi-repo domain standard |
+| [#349](https://github.com/jbcom/control-center/issues/349) | EPIC: Game Development Ecosystem Integration |
+| [#351](https://github.com/jbcom/control-center/issues/351) | EPIC: Unify Professor Pixel |
+
+---
+
 ## Immediate Next Steps
 
-1. **Create Epic Issue** - "Strata Game Studio Unification" spanning all repos
+1. **Create Epic Issue** - "Strata Game Studio Unification" spanning all repos ✅ (#101)
 2. **Prototype Studio Monorepo** - Start with typescript-tutor as base
 3. **Update Branding** - Apply Strata brand to Professor Pixel properties
 4. **Document AI Architecture** - How Rust core serves TypeScript/Python

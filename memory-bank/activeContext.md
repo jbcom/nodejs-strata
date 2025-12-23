@@ -229,11 +229,50 @@ From "tutor mascot" → Strata's official brand mascot across ALL properties
 - nodejs-otterfall (3D adventure)
 - nodejs-rivers-of-reckoning (roguelike)
 
+**Decisions Made**:
+1. npm scope: **@strata** ✅ (DECIDED)
+2. Repository management: control-center ecosystem sync + settings.yml
+
 **Open Decisions for Maintainer**:
 1. Monorepo vs multi-repo for Studio?
-2. npm scope: @jbcom/ or @strata/?
-3. AI Core distribution (WASM + bindings?)
-4. Professor Pixel assets (commission art?)
+2. AI Core distribution (WASM + bindings?)
+3. Professor Pixel assets (commission art?)
+
+---
+
+### Control Center Integration (2025-12-23)
+
+**Issues Created in jbcom/control-center**:
+
+| Issue | Title |
+|-------|-------|
+| [#416](https://github.com/jbcom/control-center/issues/416) | 🌐 Domain: Configure agentic.dev for @agentic ecosystem |
+| [#417](https://github.com/jbcom/control-center/issues/417) | 🌐 Domain: Configure strata.game for @strata ecosystem |
+| [#418](https://github.com/jbcom/control-center/issues/418) | 📚 docs: Document multi-repo domain standard |
+
+**Multi-Repo Domain Standard Defined**:
+
+Projects qualifying for dedicated domain:
+- ≥ 3 active repositories
+- Cross-repository dependencies
+- ≥ 2 published packages
+- Unified documentation need
+
+**Qualified Ecosystems**:
+
+| Ecosystem | Domain | npm Scope |
+|-----------|--------|-----------|
+| Strata | strata.game | @strata |
+| Agentic | agentic.dev | @agentic |
+
+**npm Package Mapping**:
+
+| Current | Target |
+|---------|--------|
+| @jbcom/strata | @strata/core |
+| @jbcom/strata-shaders | @strata/shaders |
+| @jbcom/strata-presets | @strata/presets |
+| (new) | @strata/studio |
 
 ---
 

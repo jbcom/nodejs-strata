@@ -266,20 +266,20 @@ src/
 
 | Path | Content | Dependencies |
 |------|---------|--------------|
-| `@jbcom/strata` | Core algorithms | three |
-| `@jbcom/strata/react` | React components | react, @react-three/fiber |
-| `@jbcom/strata/game` | Game orchestration | core + react |
-| `@jbcom/strata/world` | World topology | core |
-| `@jbcom/strata/compose` | Compositional objects | core + react |
-| `@jbcom/strata/ai` | AI components | yuka (optional) |
-| `@jbcom/strata/state` | State management | zustand (optional) |
-| `@jbcom/strata/physics` | Physics components | @react-three/rapier (optional) |
+| `@strata/core` | Core algorithms | three |
+| `@strata/core/react` | React components | react, @react-three/fiber |
+| `@strata/core/game` | Game orchestration | core + react |
+| `@strata/core/world` | World topology | core |
+| `@strata/core/compose` | Compositional objects | core + react |
+| `@strata/core/ai` | AI components | yuka (optional) |
+| `@strata/core/state` | State management | zustand (optional) |
+| `@strata/core/physics` | Physics components | @react-three/rapier (optional) |
 
 ### package.json Exports (Target)
 
 ```json
 {
-  "name": "@jbcom/strata",
+  "name": "@strata/core",
   "version": "2.0.0",
   "exports": {
     ".": {
@@ -317,6 +317,9 @@ src/
   }
 }
 ```
+
+> **Migration**: Users will migrate from `@jbcom/strata` → `@strata/core`. 
+> The `@jbcom/strata` package will be deprecated with a postinstall message pointing to `@strata/core`.
 
 ---
 
@@ -647,9 +650,16 @@ All v2.0 issues should have:
 
 ### Package Publishing
 
-- [ ] npm org scope: Stay with `@jbcom/` or create `@strata/`?
+- [x] npm org scope: **`@strata`** (DECIDED)
 - [ ] Who has npm publish access?
 - [ ] Automated release via semantic-release?
+
+> **Decision**: Use `@strata` npm scope. Packages will be:
+> - `@strata/core` (was `@jbcom/strata`)
+> - `@strata/shaders`
+> - `@strata/presets`
+> - `@strata/studio`
+> - etc.
 
 ### Branding Approval
 

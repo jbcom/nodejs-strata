@@ -60,7 +60,12 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
+<<<<<<< HEAD
           ref: ${{ github.event.pull_request.head.sha }}
+=======
+          # No ref specified -> checks out main or merge commit (safe)
+          token: ${{ secrets.CI_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+>>>>>>> b3e104d (chore(ci): pin actions to SHA and fix CodeQL security alerts)
 
       - name: Get PR diff
         env:
@@ -250,7 +255,12 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
+<<<<<<< HEAD
           ref: ${{ github.event.pull_request.head.sha }}
+=======
+          # No ref specified -> checks out main or merge commit (safe)
+          token: ${{ secrets.CI_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+>>>>>>> b3e104d (chore(ci): pin actions to SHA and fix CodeQL security alerts)
 
       - name: Checkout PR branch
         env:
@@ -446,7 +456,7 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
+          # No ref specified -> checks out main or merge commit (safe)
           token: ${{ secrets.CI_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Checkout PR branch
@@ -619,8 +629,8 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
-          # Use CI_GITHUB_TOKEN to allow commits to trigger workflows
-          token: ${{ secrets.CI_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+          # Use GH_TOKEN directly for better reliability in fork/PR contexts
+          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Get PR number
         id: pr

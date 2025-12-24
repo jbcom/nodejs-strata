@@ -267,6 +267,30 @@ From "tutor mascot" → Strata's official brand mascot across ALL properties
 
 ---
 
+### Google Jules Sessions Created (2025-12-23)
+
+**Active Sessions**:
+
+| Session ID | Repo | Issue | State |
+|------------|------|-------|-------|
+| 6461977688710426187 | nodejs-strata | #85 (type re-exports) | IN_PROGRESS |
+| 12458278989436703513 | nodejs-strata | #86 (rename conflicts) | IN_PROGRESS |
+| 9336518623683428774 | nodejs-strata | #87 (migration guide) | PLANNING |
+| 11669387661492834547 | nodejs-strata | #62 (JSDoc) | PLANNING |
+| 6639394045107953411 | typescript-tutor | #25 (lessons) | PLANNING |
+| 8513814861901981159 | typescript-tutor | #26 (alignment) | PLANNING |
+| 8629052423384508351 | strata-shaders | #1 (setup) | IN_PROGRESS |
+| 5205724061551026724 | strata-presets | #1 (setup) | IN_PROGRESS |
+| 6147624975303516306 | strata-examples | #4 (migrate) | PLANNING |
+| 10632111278932960213 | agentic-triage | #23 (tooling) | AWAITING_PLAN_APPROVAL |
+| 3886505127057072428 | agentic-control | #8 (tooling) | PLANNING |
+
+**Monitor**: https://jules.google.com
+
+**API Key**: Set as JULES_API_KEY environment variable
+
+---
+
 ### Control Center Integration (2025-12-23)
 
 **Issues Created in jbcom/control-center**:

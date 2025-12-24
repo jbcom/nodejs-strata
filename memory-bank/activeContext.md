@@ -333,4 +333,50 @@ Projects qualifying for dedicated domain:
 
 ---
 
+### Unified Multi-Agent Orchestrator (2025-12-23)
+
+**EPIC Created**: [control-center#422](https://github.com/jbcom/control-center/issues/422)
+
+**Vision**: Fully self-contained autonomous development loop combining:
+
+| Agent | Use Case | Status |
+|-------|----------|--------|
+| **Ollama** | Quick fixes, code review, routing | ✅ OLLAMA_API_KEY exists |
+| **Google Jules** | Async refactoring, multi-file changes | ✅ GOOGLE_JULES_API_KEY exists |
+| **Cursor Cloud** | Long-running background processes | ⏳ CURSOR_API_KEY needed (#423) |
+| **AI Reviewers** | PR quality gates | ✅ Available (Gemini, Copilot, Q, CodeRabbit) |
+
+**Task Routing Matrix**:
+
+| Task Type | Agent | Reason |
+|-----------|-------|--------|
+| Quick fix (<5 lines) | Ollama | Inline, fast |
+| Code review | Ollama | Structured JSON |
+| Multi-file refactor | Jules | Async, AUTO_CREATE_PR |
+| Large feature (>100 lines) | Cursor Cloud | Full IDE context |
+| Documentation | Jules | Full file context |
+| Complex bug fix | Cursor Cloud | Debugging capability |
+
+**Architecture**:
+```
+ISSUE → Task Router (Ollama) → [Ollama | Jules | Cursor] → PR → AI Review Swarm → Feedback Processor → Auto-merge
+```
+
+**Implementation Phases**:
+1. ✅ Jules Integration (#420 + session 7376203189327359068)
+2. ⏳ Cursor Cloud Integration (#423)
+3. ⏳ Unified Router
+4. ⏳ Feedback Loop
+5. ⏳ Monitoring Dashboard
+
+**Token Status (CURSOR_GITHUB_TOKEN)**:
+- ✅ Org secrets (admin:org)
+- ✅ Org projects (project)
+- ✅ Repo CRUD (repo)
+- ✅ Workflows (workflow)
+- ✅ Packages (write:packages)
+- ⚠️ Missing: admin:org_hook (optional - for org webhooks)
+
+---
+
 Last updated: 2025-12-23

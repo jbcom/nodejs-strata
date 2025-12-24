@@ -754,16 +754,37 @@ From this point, the nightly workflow takes over autonomous development operatio
 
 ---
 
-### Orchestration Triad - COMPLETE ✅
+### Ecosystem Family - COMPLETE ✅ (2025-12-24)
 
-| Workflow | Schedule | Purpose |
-|----------|----------|---------|
-| Ecosystem Curator | Nightly (2 AM UTC) | Scan, triage, spawn agents |
-| Ecosystem Harvester | Every 15 min | Monitor agents, merge PRs, request reviews |
-| Ecosystem Sage | On-call | Answer questions, decompose tasks, unblock |
+Unified all workflows into a single `ecosystem-*` family:
 
-All three use the standard Ollama pattern from `ollama-cloud-pr-review.yml`.
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `ecosystem-curator` | Nightly (2 AM UTC) | Scan repos, triage issues/PRs, spawn agents |
+| `ecosystem-harvester` | Every 15 min | Monitor agents, merge PRs, request reviews |
+| `ecosystem-sage` | On-call (`@sage`, `/sage`) | Answer questions, decompose tasks, unblock |
+| `ecosystem-reviewer` | PR events | Per-PR lifecycle: review, feedback, fixes |
+| `ecosystem-fixer` | CI failure | Auto-resolve CI failures on branches |
+| `ecosystem-delegator` | `/jules`, `/cursor` | Delegate issues to AI agents |
+
+**Renamed**:
+- `ollama-cloud-pr-review.yml` → `ecosystem-reviewer.yml`
+- `ci-failure-resolution.yml` → `ecosystem-fixer.yml`
+- `jules-issue-automation.yml` → `ecosystem-delegator.yml`
+
+**Removed** (absorbed into harvester):
+- `cursor-jules-orchestrator.mjs`
+
+**Enhanced**:
+- `ecosystem-delegator.yml` now supports both `/jules` and `/cursor` commands
+
+**Documentation**: `docs/ECOSYSTEM.md`
+
+All workflows use consistent configuration:
+- `OLLAMA_HOST`: `https://ollama.com` (from vars)
+- `OLLAMA_API_KEY`: secret for Bearer auth
+- `OLLAMA_MODEL`: `glm-4.6:cloud`
 
 ---
 
-Last updated: 2025-12-24T07:05:00Z
+Last updated: 2025-12-24T07:50:00Z

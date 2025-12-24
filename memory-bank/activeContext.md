@@ -432,4 +432,57 @@ Jules creates PR → Ollama reviews → GitHub Security scans → Self-resolutio
 
 ---
 
+### @agentic Package Architecture (2025-12-24)
+
+**EPIC**: [control-center#427](https://github.com/jbcom/control-center/issues/427)
+
+**Problem Identified**: Orchestration logic is 500+ lines of inline YAML instead of proper packages.
+
+**Correct Architecture**:
+```
+@agentic/triage (PRIMITIVES)
+├── schemas/        # Zod schemas
+├── tools/          # Vercel AI SDK tools
+└── handlers/       # Structured outputs
+       ↓
+@agentic/control (ORCHESTRATION)  
+├── orchestrators/  # Multi-agent routing
+├── pipelines/      # CI resolution, PR lifecycle
+└── actions/        # GitHub Marketplace actions
+       ↓
+GitHub Marketplace Actions
+├── jbcom/agentic-pr-review@v1
+├── jbcom/agentic-ci-resolution@v1
+└── jbcom/agentic-orchestrator@v1
+```
+
+**Current State (Wrong)**:
+- triage depends on control ❌
+
+**Target State (Correct)**:
+- control depends on triage ✅
+
+**Jules Sessions Created**:
+
+| Session | Repo | Purpose |
+|---------|------|---------|
+| 867602547104757968 | agentic-triage | @agentic/triage primitives |
+| 13162632522779514336 | agentic-control | @agentic/control orchestration |
+| 14191893082884266475 | agentic-control | GitHub Marketplace actions |
+
+**Tracking Issues**:
+- control-center#427 (Architecture EPIC)
+- agentic-triage#34 (Primitives refactor)
+- agentic-control#17 (Orchestration refactor)
+
+**End Goal**:
+```yaml
+# Replace 500 lines of bash with:
+- uses: jbcom/agentic-control/actions/orchestrator@v1
+  with:
+    model: glm-4.6:cloud
+```
+
+---
+
 Last updated: 2025-12-24

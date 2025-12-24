@@ -699,4 +699,41 @@ From this point, the nightly workflow takes over autonomous development operatio
 
 ---
 
-Last updated: 2025-12-24T03:02:00Z
+### Ecosystem Curator - PRODUCTION ✅ (2025-12-24)
+
+**Status**: OPERATIONAL
+
+**Fixes Applied**:
+1. ✅ Corrected action SHAs (checkout, setup-node)
+2. ✅ Fixed Jules API payload format (prompt, sourceContext, automationMode)
+3. ✅ Security incident cleaned up (issue #432)
+4. ✅ Org secrets set (CURSOR_GITHUB_TOKEN, JULES_GITHUB_TOKEN)
+
+**Test Results**:
+- Single repo test (strata-shaders): ✅ SUCCESS
+  - Spawned 2 Cursor agents
+  - 0 errors
+- Full ecosystem scan: IN PROGRESS
+
+**Workflow Details**:
+- Location: `.github/workflows/ecosystem-curator.yml`
+- Schedule: `cron: '0 2 * * *'` (nightly at 2 AM UTC)
+- Manual: `workflow_dispatch` with dry_run and target_repo
+- Synced to all repos via `always-sync/`
+
+**What It Does**:
+1. Scans all jbcom repos
+2. Triages issues → spawns Jules (complex) or Cursor (quick)
+3. Processes PRs → fixes CI, addresses reviews, auto-merges
+4. Resolves agent blockers via Ollama (GLM-4.6 Cloud)
+5. Reports stats to GitHub Actions summary
+
+**Secrets Used**:
+- GITHUB_TOKEN (auto)
+- CURSOR_API_KEY
+- GOOGLE_JULES_API_KEY
+- JULES_GITHUB_TOKEN
+
+---
+
+Last updated: 2025-12-24T05:09:00Z

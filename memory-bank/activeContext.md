@@ -522,4 +522,27 @@ GitHub Marketplace Actions
 
 ---
 
+### Cursor Cloud Agent Infrastructure (2025-12-24)
+
+**Environment Variables for Future Agents**:
+- `JULES_API_KEY` ✅ - Google Jules API
+- `CURSOR_GITHUB_TOKEN` ✅ - GitHub operations
+
+**Orchestration Pattern**:
+```
+Cursor Cloud Agent (supervisor)
+    ├── Monitors Jules sessions
+    ├── Reviews PRs when complete
+    ├── Handles AI feedback
+    ├── Merges when ready
+    └── Spawns sub-agents for complex work
+```
+
+**Assets Created**:
+- `/workspace/scripts/cursor-jules-orchestrator.mjs` - Monitoring script
+- `/workspace/.cursor/rules/04-cursor-agent-orchestration.mdc` - Agent instructions
+- [control-center#429](https://github.com/jbcom/control-center/issues/429) - Pattern documentation
+
+---
+
 Last updated: 2025-12-24

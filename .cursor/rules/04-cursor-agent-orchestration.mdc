@@ -1,0 +1,58 @@
+# Cursor Agent Orchestration
+
+## Environment Variables
+
+You have access to:
+- `JULES_API_KEY` - Google Jules API for async code changes
+- `CURSOR_GITHUB_TOKEN` - GitHub API for repo operations
+
+## Jules API
+
+```bash
+# Create session
+curl -X POST 'https://jules.googleapis.com/v1alpha/sessions' \
+  -H "X-Goog-Api-Key: $JULES_API_KEY" \
+  -d '{
+    "prompt": "Task description",
+    "sourceContext": {
+      "source": "sources/github/jbcom/REPO_NAME",
+      "githubRepoContext": {"startingBranch": "main"}
+    },
+    "automationMode": "AUTO_CREATE_PR"
+  }'
+
+# Check session
+curl "https://jules.googleapis.com/v1alpha/sessions/SESSION_ID" \
+  -H "X-Goog-Api-Key: $JULES_API_KEY"
+```
+
+## When to Use Jules vs Cursor
+
+| Task Type | Use |
+|-----------|-----|
+| Quick fix (<10 lines) | Handle directly |
+| Multi-file refactor | Jules session |
+| Complex debugging | Handle directly |
+| Documentation | Jules session |
+| CI fixes | Handle directly |
+
+## Orchestrator Script
+
+```bash
+# Monitor Jules sessions and merge PRs
+node scripts/cursor-jules-orchestrator.mjs
+```
+
+## Spawning Sub-Agents
+
+For complex multi-repo work:
+1. Create Jules sessions for each repo
+2. Monitor via orchestrator script
+3. Handle PRs as they complete
+
+## PR Review Pattern
+
+1. Check CI status
+2. Read AI reviewer comments
+3. If issues: fix or request Jules fix
+4. If ready: merge with squash

@@ -43,8 +43,10 @@ export function createSpawnSystem<T extends SpawnSystemEntity>(
                 continue;
 
             // Count entities currently in this region
-            // In a real implementation, we might use a spatial query or a component tag
-            const entitiesInRegion = world.entities.filter((e) => e.regionId === region.id).length;
+            // Use query to find entities with regionId and filter by specific region
+            const entitiesInRegion = Array.from(world.query('regionId')).filter(
+                (e) => e.regionId === region.id
+            ).length;
 
             if (entitiesInRegion < maxEntitiesPerRegion) {
                 // Try to spawn creatures or resources
@@ -127,7 +129,7 @@ function getRandomPositionInRegion(region: Region): THREE.Vector3 {
     if (bounds.type === 'sphere') {
         const r = Math.random() * bounds.radius;
         const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
+        const _phi = Math.acos(2 * Math.random() - 1);
 
         // Simple 2D random for now if it's on terrain
         pos.x += r * Math.sin(theta);

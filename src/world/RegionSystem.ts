@@ -1,3 +1,4 @@
+import type * as THREE from 'three';
 import type { BaseEntity, StrataWorld, SystemFn } from '../core/ecs/types';
 import type { GameStoreApi } from '../core/state/types';
 import type { Region } from './types';
@@ -6,7 +7,7 @@ import type { WorldGraph } from './WorldGraph';
 export interface RegionSystemEntity extends BaseEntity {
     isPlayer?: boolean;
     transform?: {
-        position: { x: number; y: number; z: number };
+        position: THREE.Vector3;
     };
 }
 
@@ -29,7 +30,7 @@ export function createRegionSystem<T extends RegionSystemEntity>(
 ): SystemFn<T> {
     let currentRegion: Region | null = null;
 
-    return (world: StrataWorld<T>, deltaTime: number) => {
+    return (world: StrataWorld<T>, _deltaTime: number) => {
         // 1. Find the player entity
         let player: any = null;
         for (const entity of world.query('isPlayer' as any, 'transform' as any)) {

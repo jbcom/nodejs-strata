@@ -1,7 +1,7 @@
 import type * as THREE from 'three';
 import type { BaseEntity, StrataWorld, SystemFn } from '../core/ecs/types';
 import type { GameStoreApi } from '../core/state/types';
-import { Connection, type UnlockCondition } from './types';
+import type { UnlockCondition } from './types';
 import type { WorldGraph } from './WorldGraph';
 
 export interface ConnectionSystemEntity extends BaseEntity {
@@ -35,7 +35,7 @@ export function createConnectionSystem<T extends ConnectionSystemEntity>(
 ): SystemFn<T> {
     const TRIGGER_RADIUS = 5;
 
-    return (world: StrataWorld<T>, deltaTime: number) => {
+    return (world: StrataWorld<T>, _deltaTime: number) => {
         // 1. Find the player entity
         let player: any = null;
         for (const entity of world.query('isPlayer' as any, 'transform' as any)) {
@@ -84,7 +84,14 @@ export function createConnectionSystem<T extends ConnectionSystemEntity>(
                     // In a real game, we might show a travel prompt here
                     // For now, if it's a portal, just teleport
                     if (connection.type === 'portal') {
-                        player.transform.position.copy(connection.toPosition);
+                        // Add cooldown to prevent infinite teleportation
+                        const now = Date.now();
+                        const lastTeleport = (player as any).lastTeleportTime || 0;
+                        if (now - lastTeleport > 1000) {
+                            // 1 second cooldown
+                            player.transform.position.copy(connection.toPosition);
+                            (player as any).lastTeleportTime = now;
+                        }
                     }
                 }
             }

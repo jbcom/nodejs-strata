@@ -1,5 +1,4 @@
 import type * as THREE from 'three';
-import type { GameMode } from '../core/state/types';
 import type { WeatherStateConfig } from '../core/weather';
 import type { BiomeType } from '../utils/texture-loader';
 
@@ -7,6 +6,8 @@ import type { BiomeType } from '../utils/texture-loader';
  * World Topology Type Definitions
  * Based on RFC-003: World Topology System
  */
+
+export type GameMode = string;
 
 export type BoundingShape =
     | { type: 'sphere'; radius: number }
@@ -36,6 +37,16 @@ export interface SpawnTable {
     resources?: ResourceEntry[];
 }
 
+export interface LightingConfig {
+    ambientColor?: string;
+    ambientIntensity?: number;
+    sunDirection?: [number, number, number];
+    sunColor?: string;
+    sunIntensity?: number;
+    fogColor?: string;
+    fogDensity?: number;
+}
+
 export interface Region {
     id: string;
     name: string;
@@ -59,7 +70,7 @@ export interface Region {
     ambientAudio?: string;
     music?: string;
     weather?: WeatherStateConfig;
-    lighting?: any; // To be defined
+    lighting?: LightingConfig;
 
     // State (persisted)
     discovered: boolean;

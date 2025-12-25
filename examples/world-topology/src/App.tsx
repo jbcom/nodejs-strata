@@ -82,8 +82,14 @@ function RegionVisual({ region }: { region: any }) {
             wireframe={!isCurrent}
           />
         </Sphere>
-      ) : (
-        <Box args={[region.bounds.size.x, region.bounds.size.y, region.bounds.size.z]}>
+      ) : region.bounds.type === 'box' ? (
+        <Box
+          args={[
+            region.bounds.size.x,
+            region.bounds.size.y,
+            region.bounds.size.z,
+          ]}
+        >
           <meshStandardMaterial
             color={color}
             transparent
@@ -91,7 +97,7 @@ function RegionVisual({ region }: { region: any }) {
             wireframe={!isCurrent}
           />
         </Box>
-      )}
+      ) : null}
       <Text
         position={[0, region.bounds.radius || 10, 0]}
         fontSize={5}
@@ -165,7 +171,7 @@ export function App() {
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 10]} intensity={1} />
 
-        {Object.values(worldGraph.regions).map((region: any) => (
+        {Array.from(worldGraph.regions.values()).map((region: any) => (
           <RegionVisual key={region.id} region={region} />
         ))}
 

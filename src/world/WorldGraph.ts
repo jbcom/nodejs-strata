@@ -1,17 +1,17 @@
 import * as THREE from 'three';
-import {
-    type Connection,
-    ConnectionDefinition,
-    type Region,
-    type RegionDefinition,
-    type WorldGraphDefinition,
+import type {
+    BoundingShape,
+    Connection,
+    Region,
+    RegionDefinition,
+    WorldGraphDefinition,
 } from './types';
 
 export class WorldGraph {
     public regions: Map<string, Region> = new Map();
     public connections: Connection[] = [];
 
-    private eventHandlers: Map<string, Set<Function>> = new Map();
+    private eventHandlers: Map<string, Set<(...args: any[]) => void>> = new Map();
 
     constructor(definition?: WorldGraphDefinition) {
         if (definition) {
@@ -65,7 +65,7 @@ export class WorldGraph {
                     : toRegion.center.clone(),
                 bidirectional: connDef.bidirectional || false,
                 traversalMode: connDef.traversalMode,
-                unlocked: connDef.unlockCondition ? false : true,
+                unlocked: !connDef.unlockCondition,
                 unlockCondition: connDef.unlockCondition,
             };
             this.connections.push(connection);
@@ -84,7 +84,7 @@ export class WorldGraph {
         }
     }
 
-    private createBoundsFromDefinition(regDef: RegionDefinition): any {
+    private createBoundsFromDefinition(regDef: RegionDefinition): BoundingShape {
         if (regDef.radius !== undefined) {
             return { type: 'sphere', radius: regDef.radius };
         }
@@ -163,7 +163,9 @@ export class WorldGraph {
         const visited = new Set<string>([fromId]);
 
         while (queue.length > 0) {
-            const [currentId, path] = queue.shift()!;
+            const entry = queue.shift();
+            if (!entry) continue;
+            const [currentId, path] = entry;
 
             for (const conn of this.getUnlockedConnections(currentId)) {
                 if (conn.to === toId) {
@@ -210,14 +212,14 @@ export class WorldGraph {
         }
     }
 
-    public on(event: string, handler: Function): void {
+    public on(event: string, handler: (...args: any[]) => void): void {
         if (!this.eventHandlers.has(event)) {
             this.eventHandlers.set(event, new Set());
         }
-        this.eventHandlers.get(event)!.add(handler);
+        this.eventHandlers.get(event)?.add(handler);
     }
 
-    public off(event: string, handler: Function): void {
+    public off(event: string, handler: (...args: any[]) => void): void {
         const handlers = this.eventHandlers.get(event);
         if (handlers) {
             handlers.delete(handler);

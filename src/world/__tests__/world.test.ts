@@ -4,7 +4,7 @@ import { createWorld } from '../../core/ecs/world';
 import { createConnectionSystem } from '../ConnectionSystem';
 import { createRegionSystem } from '../RegionSystem';
 import { createSpawnSystem } from '../SpawnSystem';
-import { createWorldGraph, WorldGraph } from '../WorldGraph';
+import { createWorldGraph } from '../WorldGraph';
 
 describe('World Topology System', () => {
     const definition = {
@@ -85,7 +85,7 @@ describe('World Topology System', () => {
             const system = createRegionSystem(graph, mockStore as any);
             const world = createWorld<any>();
 
-            const player = world.spawn({
+            world.spawn({
                 isPlayer: true,
                 transform: { position: new THREE.Vector3(10, 0, 0) },
             });

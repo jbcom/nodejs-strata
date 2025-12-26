@@ -43,6 +43,8 @@ export interface CharacterState {
     rotation: number;
     position: THREE.Vector3;
     velocity: THREE.Vector3;
+    /** Whether the character is currently performing an attack. */
+    isAttacking?: boolean;
 }
 
 /**

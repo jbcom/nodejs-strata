@@ -38,7 +38,7 @@ The main package remains the primary entry point, containing:
 
 ### Optional Package: `@jbcom/strata-shaders`
 
-**Repository:** `jbcom/nodejs-strata-shaders`
+**Repository:** `jbcom/strata-shaders`
 
 Pure GLSL shader strings with zero dependencies on strata core.
 
@@ -68,7 +68,7 @@ import { waterFragmentShader } from '@jbcom/strata/shaders';
 
 ### Optional Package: `@jbcom/strata-presets`
 
-**Repository:** `jbcom/nodejs-strata-presets`
+**Repository:** `jbcom/strata-presets`
 
 Pre-configured settings that depend on `@jbcom/strata` from npm.
 
@@ -161,12 +161,12 @@ if (optionalPresets) {
 
 ### Phase 2: Create Companion Repositories
 
-1. [ ] Create `nodejs-strata-shaders` repository
+1. [ ] Create `strata-shaders` repository
    - Copy `src/shaders/` contents
    - Create independent package.json with zero dependencies
    - Set up CI/CD for independent releases
 
-2. [ ] Create `nodejs-strata-presets` repository
+2. [ ] Create `strata-presets` repository
    - Copy `src/presets/` contents
    - Create package.json with `@jbcom/strata` peer dependency
    - Set up CI/CD for independent releases

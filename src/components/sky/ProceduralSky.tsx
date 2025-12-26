@@ -47,6 +47,8 @@ export interface TimeOfDayState {
     sunIntensity: number;
     /** Sun angle in degrees (0 = horizon, 90 = zenith/noon, 180 = sunset). */
     sunAngle: number;
+    /** Alias for sunAngle. @deprecated Use sunAngle instead. */
+    sunElevation?: number;
     /** Ambient light level (0-1). Base light level for the scene. */
     ambientLight: number;
     /** Star visibility (0-1). 0 = hidden, 1 = fully visible. */

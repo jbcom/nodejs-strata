@@ -62,6 +62,11 @@ export interface TimeOfDayState {
     sunAngle: number;
 
     /**
+     * Alias for sunAngle. @deprecated Use sunAngle instead.
+     */
+    sunElevation?: number;
+
+    /**
      * Ambient light intensity (0-1).
      *
      * Base light level independent of direct sunlight.
@@ -189,6 +194,12 @@ export function createSkyMaterial(options: SkyMaterialOptions): THREE.ShaderMate
     };
 
     const mergedTimeOfDay = { ...defaultTimeOfDay, ...timeOfDay };
+    
+    // Handle sunElevation alias
+    if (timeOfDay.sunElevation !== undefined) {
+        mergedTimeOfDay.sunAngle = timeOfDay.sunElevation;
+    }
+
     const mergedWeather = { ...defaultWeather, ...weather };
 
     const uniforms = createSkyUniforms(mergedTimeOfDay, mergedWeather, gyroTilt);

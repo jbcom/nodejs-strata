@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { createSkyMaterial } from '../../../src/core/sky';
 
+// Note: THREE is not directly used in tests but imported for type compatibility
+
 describe('createSkyMaterial', () => {
     it('should allow sunAngle between -180 and 360', () => {
         // These should not throw

@@ -54,9 +54,10 @@ export function GPUInstancedMesh({
     material,
     count,
     instances,
-    enableWind = true,
-    windStrength = 0.5,
-    lodDistance = 100,
+    // Reserved for future wind/LOD implementation
+    enableWind: _enableWind = true,
+    windStrength: _windStrength = 0.5,
+    lodDistance: _lodDistance = 100,
     frustumCulled = true,
     castShadow = true,
     receiveShadow = true,

@@ -222,13 +222,11 @@ export function animateCharacter(
 ): void {
     const { joints, state } = character;
 
-    let _deltaTime = 0.016;
+    // Extract options - deltaTime is accepted for API compatibility but currently unused
+    // as animation is driven by absolute time rather than delta time
     let isAttacking = false;
 
-    if (typeof options === 'number') {
-        _deltaTime = options;
-    } else {
-        _deltaTime = options.deltaTime ?? 0.016;
+    if (typeof options === 'object') {
         isAttacking = options.isAttacking ?? false;
     }
 
@@ -314,9 +312,9 @@ export function animateCharacter(
     }
 
     // Update fur uniforms for all furry parts
-    Object.values(joints).forEach((joint) => {
+    for (const joint of Object.values(joints)) {
         if (joint?.mesh) {
-            updateFurUniforms(joint.mesh as unknown as THREE.Group, time);
+            updateFurUniforms(joint.mesh, time);
         }
-    });
+    }
 }

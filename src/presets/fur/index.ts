@@ -114,27 +114,40 @@ export function createFurSystem(
  * @param furSystem - The group containing fur shells (returned by createFurSystem)
  * @param time - Current animation time in seconds
  */
-export function updateFurUniforms(furSystem: THREE.Group, time: number): void {
+export function updateFurUniforms(furSystem: THREE.Object3D, time: number): void {
     if (!furSystem) {
         throw new Error('updateFurUniforms: furSystem is required');
     }
 
-    // Optimization: Cache fur materials on the group to avoid traversal
-    let furMaterials = furSystem.userData.cachedFurMaterials;
+    // Optimization: Cache fur materials on the object to avoid traversal
+    let furMaterials = furSystem.userData.cachedFurMaterials as THREE.ShaderMaterial[] | undefined;
 
     if (!furMaterials) {
-        furMaterials = [];
+        const materials: THREE.ShaderMaterial[] = [];
         furSystem.traverse((child) => {
             if (child instanceof THREE.Mesh && child.material instanceof THREE.ShaderMaterial) {
                 if (child.material.uniforms?.time) {
-                    furMaterials.push(child.material);
+                    materials.push(child.material);
                 }
             }
         });
+        furMaterials = materials;
         furSystem.userData.cachedFurMaterials = furMaterials;
     }
 
-    for (let i = 0; i < furMaterials.length; i++) {
-        furMaterials[i].uniforms.time.value = time;
+    for (const material of furMaterials) {
+        material.uniforms.time.value = time;
+    }
+}
+
+/**
+ * Invalidate the cached fur materials, forcing a re-traversal on next update.
+ * Call this if the fur system's structure changes after creation.
+ *
+ * @param furSystem - The fur system object
+ */
+export function invalidateFurCache(furSystem: THREE.Object3D): void {
+    if (furSystem?.userData) {
+        delete furSystem.userData.cachedFurMaterials;
     }
 }

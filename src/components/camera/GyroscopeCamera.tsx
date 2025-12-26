@@ -93,34 +93,44 @@ export function GyroscopeCamera({
             pinchDistance.current = null;
         };
 
-        if (
-            typeof window !== 'undefined' &&
-            window.DeviceOrientationEvent &&
-            typeof (DeviceOrientationEvent as any).requestPermission === 'function'
-        ) {
-            (DeviceOrientationEvent as any)
-                .requestPermission()
-                .then((response: string) => {
+        let orientationListenerAdded = false;
+
+        const requestPermissionAndListen = async () => {
+            try {
+                if (
+                    typeof window !== 'undefined' &&
+                    window.DeviceOrientationEvent &&
+                    typeof (DeviceOrientationEvent as any).requestPermission === 'function'
+                ) {
+                    const response = await (DeviceOrientationEvent as any).requestPermission();
                     if (response === 'granted') {
                         window.addEventListener('deviceorientation', handleOrientation);
+                        orientationListenerAdded = true;
+                    } else {
+                        console.warn('DeviceOrientation permission not granted');
                     }
-                })
-                .catch((error: Error) => {
-                    console.warn('DeviceOrientation permission denied:', error.message);
-                });
-        } else if (typeof window !== 'undefined') {
-            window.addEventListener('deviceorientation', handleOrientation);
-        }
+                } else if (typeof window !== 'undefined') {
+                    window.addEventListener('deviceorientation', handleOrientation);
+                    orientationListenerAdded = true;
+                }
+            } catch (error) {
+                console.warn('DeviceOrientation permission request failed:', error instanceof Error ? error.message : error);
+            }
+        };
+
+        requestPermissionAndListen();
 
         window.addEventListener('touchstart', handleTouchStart, { passive: true });
         window.addEventListener('touchmove', handleTouchMove, { passive: true });
         window.addEventListener('touchend', handleTouchEnd);
 
         return () => {
-            window.removeEventListener('deviceorientation', handleOrientation);
-            window.removeEventListener('touchstart', handleTouchStart);
-            window.removeEventListener('touchmove', handleTouchMove);
-            window.removeEventListener('touchend', handleTouchEnd);
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('deviceorientation', handleOrientation);
+                window.removeEventListener('touchstart', handleTouchStart);
+                window.removeEventListener('touchmove', handleTouchMove);
+                window.removeEventListener('touchend', handleTouchEnd);
+            }
         };
     }, [enableZoom, minDistance, maxDistance]);
 

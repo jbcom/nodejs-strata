@@ -6,7 +6,7 @@
  */
 
 import * as THREE from 'three';
-import { createFurSystem, updateFurUniforms, type FurOptions } from '../fur';
+import { createFurSystem, type FurOptions, updateFurUniforms } from '../fur';
 
 export interface CharacterJoint {
     group: THREE.Group;
@@ -182,7 +182,10 @@ export function createCharacter(options: CharacterOptions = {}): {
         tail.position.set(0, 0, -0.3 * scale);
         hips.add(tail);
         joints.tail = { group: tail };
-        const tailMesh = createFurryPart(new THREE.ConeGeometry(0.15 * scale, 0.8 * scale, 8), tail);
+        const tailMesh = createFurryPart(
+            new THREE.ConeGeometry(0.15 * scale, 0.8 * scale, 8),
+            tail
+        );
         tailMesh.rotation.x = -1.2;
         tailMesh.position.y = -0.2 * scale;
         joints.tail.mesh = tailMesh;
@@ -200,18 +203,46 @@ export function createCharacter(options: CharacterOptions = {}): {
 }
 
 /**
+ * Options for character animation.
+ */
+export interface AnimateCharacterOptions {
+    /** Time step for physics-based animation parts. Default: 0.016 */
+    deltaTime?: number;
+    /** Whether the character is currently performing an attack. */
+    isAttacking?: boolean;
+}
+
+/**
  * Animate character based on state
  */
 export function animateCharacter(
     character: { root: THREE.Group; joints: CharacterJoints; state: CharacterState },
     time: number,
-    _deltaTime: number = 0.016
+    options: number | AnimateCharacterOptions = 0.016
 ): void {
     const { joints, state } = character;
+
+    let deltaTime = 0.016;
+    let isAttacking = false;
+
+    if (typeof options === 'number') {
+        deltaTime = options;
+    } else {
+        deltaTime = options.deltaTime ?? 0.016;
+        isAttacking = options.isAttacking ?? false;
+    }
+
     const speed = state.speed / state.maxSpeed; // 0 to 1
     const walkCycle = time * 10;
 
-    if (speed > 0.1) {
+    if (isAttacking) {
+        // Attack animation (pounce/swipe)
+        if (joints.armL?.group) joints.armL.group.rotation.x = -2.5;
+        if (joints.armR?.group) joints.armR.group.rotation.x = -2.5;
+        if (joints.torso?.group) joints.torso.group.rotation.x = 0.4;
+        if (joints.head?.group) joints.head.group.rotation.x = -0.2;
+        if (joints.tail?.group) joints.tail.group.rotation.x = 0.5;
+    } else if (speed > 0.1) {
         // Walk/Run animation
         if (joints.legL?.group) {
             joints.legL.group.rotation.x = Math.sin(walkCycle) * 0.8 * speed;

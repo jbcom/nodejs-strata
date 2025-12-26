@@ -47,6 +47,25 @@ describe('UI Components', () => {
             render(<KillStreakNotification streak={7} />);
             expect(screen.getByText('MONSTER KILL')).toBeDefined();
         });
+
+        it('should fall back to max defined name for streaks beyond max', () => {
+            render(<KillStreakNotification streak={10} />);
+            // Streak 10 is beyond max defined (7), should fall back to highest: MONSTER KILL
+            expect(screen.getByText('MONSTER KILL')).toBeDefined();
+            expect(screen.getByText('10 KILLS')).toBeDefined();
+        });
+
+        it('should use max key correctly for custom non-sequential streak names', () => {
+            const customStreaks = {
+                3: 'THREE',
+                5: 'FIVE',
+                10: 'TEN',
+            };
+            render(<KillStreakNotification streak={15} streakNames={customStreaks} />);
+            // Streak 15 is beyond max defined (10), should fall back to highest: TEN
+            expect(screen.getByText('TEN')).toBeDefined();
+            expect(screen.getByText('15 KILLS')).toBeDefined();
+        });
     });
 
     describe('VirtualJoystick', () => {

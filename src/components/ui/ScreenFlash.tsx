@@ -22,20 +22,19 @@ export function ScreenFlash({
     color = 'rgba(255, 0, 0, 0.3)',
     onComplete,
 }: ScreenFlashProps) {
-    const [isVisible, setIsVisible] = useState(false);
+    const [isFlashing, setIsFlashing] = useState(false);
+    const transitionDuration = duration / 2;
 
     useEffect(() => {
         if (active) {
-            setIsVisible(true);
+            setIsFlashing(true);
             const timer = setTimeout(() => {
-                setIsVisible(false);
+                setIsFlashing(false);
                 onComplete?.();
             }, duration);
             return () => clearTimeout(timer);
         }
     }, [active, duration, onComplete]);
-
-    if (!isVisible) return null;
 
     return (
         <div
@@ -48,7 +47,9 @@ export function ScreenFlash({
                 backgroundColor: color,
                 pointerEvents: 'none',
                 zIndex: 9999,
-                transition: `opacity ${duration / 2}ms ease-out`,
+                opacity: isFlashing ? 1 : 0,
+                transition: `opacity ${transitionDuration}ms ease-out`,
+                visibility: isFlashing ? 'visible' : 'hidden',
             }}
         />
     );

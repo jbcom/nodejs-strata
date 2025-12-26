@@ -47,7 +47,25 @@ export function KillStreakNotification({
 
     if (!isVisible || currentStreak < 2) return null;
 
-    const streakName = streakNames[currentStreak] || streakNames[Object.keys(streakNames).length + 1] || 'STREAK!';
+    // Find the highest-numbered streak name that is <= currentStreak
+    const getStreakText = () => {
+        // Direct match
+        if (streakNames[currentStreak]) {
+            return streakNames[currentStreak];
+        }
+        // Find highest key <= currentStreak
+        const keys = Object.keys(streakNames)
+            .map(Number)
+            .sort((a, b) => b - a);
+        for (const key of keys) {
+            if (currentStreak >= key) {
+                return streakNames[key];
+            }
+        }
+        return 'STREAK!';
+    };
+
+    const streakName = getStreakText();
 
     return (
         <div

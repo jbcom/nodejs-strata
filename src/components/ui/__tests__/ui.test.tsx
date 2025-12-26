@@ -1,6 +1,6 @@
-import { render, screen, act } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ScreenFlash, KillStreakNotification, VirtualJoystick } from '../index';
+import { KillStreakNotification, ScreenFlash, VirtualJoystick } from '../index';
 
 describe('UI Components', () => {
     describe('ScreenFlash', () => {
@@ -9,20 +9,23 @@ describe('UI Components', () => {
             expect(container.firstChild).not.toBeNull();
         });
 
-        it('should not render when inactive', () => {
+        it('should be hidden when inactive', () => {
             const { container } = render(<ScreenFlash active={false} />);
-            expect(container.firstChild).toBeNull();
+            const flash = container.firstChild as HTMLElement;
+            expect(flash).not.toBeNull();
+            expect(flash.style.visibility).toBe('hidden');
+            expect(flash.style.opacity).toBe('0');
         });
 
         it('should call onComplete after duration', () => {
             vi.useFakeTimers();
             const onComplete = vi.fn();
             render(<ScreenFlash active={true} duration={100} onComplete={onComplete} />);
-            
+
             act(() => {
                 vi.advanceTimersByTime(100);
             });
-            
+
             expect(onComplete).toHaveBeenCalled();
             vi.useRealTimers();
         });

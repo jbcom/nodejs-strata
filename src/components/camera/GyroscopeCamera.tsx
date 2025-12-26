@@ -18,6 +18,16 @@ export interface GyroscopeCameraProps {
     enableZoom?: boolean;
     /** Called when the camera azimuth changes. */
     onAzimuthChange?: (azimuth: number) => void;
+    /** Lerp speed for smooth camera movement. Default: 5. */
+    lerpSpeed?: number;
+    /** Default elevation angle in radians. Default: Math.PI / 6 (~30°). */
+    defaultElevation?: number;
+    /** Minimum elevation angle in radians. Default: Math.PI / 12 (~15°). */
+    minElevation?: number;
+    /** Maximum elevation angle in radians. Default: Math.PI / 3 (~60°). */
+    maxElevation?: number;
+    /** Beta (tilt) sensitivity multiplier. Default: 0.3. */
+    tiltSensitivity?: number;
 }
 
 /**
@@ -36,9 +46,14 @@ export function GyroscopeCamera({
     sensitivity = 0.5,
     enableZoom = true,
     onAzimuthChange,
+    lerpSpeed = 5,
+    defaultElevation = Math.PI / 6,
+    minElevation = Math.PI / 12,
+    maxElevation = Math.PI / 3,
+    tiltSensitivity = 0.3,
 }: GyroscopeCameraProps) {
     const { camera } = useThree();
-    const cameraRotation = useRef({ azimuth: 0, elevation: Math.PI / 6 });
+    const cameraRotation = useRef({ azimuth: 0, elevation: defaultElevation });
     const currentTargetPos = useRef(new THREE.Vector3());
     const cameraDistance = useRef(initialDistance);
     const targetDistance = useRef(initialDistance);
@@ -93,8 +108,6 @@ export function GyroscopeCamera({
             pinchDistance.current = null;
         };
 
-        let orientationListenerAdded = false;
-
         const requestPermissionAndListen = async () => {
             try {
                 if (
@@ -105,16 +118,17 @@ export function GyroscopeCamera({
                     const response = await (DeviceOrientationEvent as any).requestPermission();
                     if (response === 'granted') {
                         window.addEventListener('deviceorientation', handleOrientation);
-                        orientationListenerAdded = true;
                     } else {
                         console.warn('DeviceOrientation permission not granted');
                     }
                 } else if (typeof window !== 'undefined') {
                     window.addEventListener('deviceorientation', handleOrientation);
-                    orientationListenerAdded = true;
                 }
             } catch (error) {
-                console.warn('DeviceOrientation permission request failed:', error instanceof Error ? error.message : error);
+                console.warn(
+                    'DeviceOrientation permission request failed:',
+                    error instanceof Error ? error.message : error
+                );
             }
         };
 
@@ -135,13 +149,15 @@ export function GyroscopeCamera({
     }, [enableZoom, minDistance, maxDistance]);
 
     useFrame((_state, delta) => {
+        const smoothFactor = delta * lerpSpeed;
+
         // Update target position
         if (target instanceof THREE.Vector3) {
-            currentTargetPos.current.lerp(target, delta * 5);
+            currentTargetPos.current.lerp(target, smoothFactor);
         } else if (target?.current) {
             const worldPos = new THREE.Vector3();
             target.current.getWorldPosition(worldPos);
-            currentTargetPos.current.lerp(worldPos, delta * 5);
+            currentTargetPos.current.lerp(worldPos, smoothFactor);
         }
 
         // Apply gyro rotation
@@ -153,9 +169,9 @@ export function GyroscopeCamera({
 
             cameraRotation.current.azimuth = -alphaDelta * sensitivity;
             cameraRotation.current.elevation = THREE.MathUtils.clamp(
-                Math.PI / 6 + betaDelta * 0.3,
-                Math.PI / 12,
-                Math.PI / 3
+                defaultElevation + betaDelta * tiltSensitivity,
+                minElevation,
+                maxElevation
             );
         }
 
@@ -165,7 +181,7 @@ export function GyroscopeCamera({
         cameraDistance.current = THREE.MathUtils.lerp(
             cameraDistance.current,
             targetDistance.current,
-            delta * 5
+            smoothFactor
         );
 
         const dist = cameraDistance.current;

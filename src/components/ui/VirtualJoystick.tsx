@@ -14,9 +14,13 @@ export interface VirtualJoystickProps {
     color?: string;
     /** Opacity of the joystick when not in use. Default: 0.5. */
     opacity?: number;
-    /** CSS class for the container. */
+    /** CSS class for the touch container. */
     className?: string;
-    /** CSS styles for the container. */
+    /** CSS styles for the touch container (full-screen touch area). */
+    containerStyle?: React.CSSProperties;
+    /** CSS styles for the joystick base (circular control). */
+    baseStyle?: React.CSSProperties;
+    /** @deprecated Use containerStyle instead. */
     style?: React.CSSProperties;
 }
 
@@ -33,8 +37,12 @@ export function VirtualJoystick({
     color = 'white',
     opacity = 0.5,
     className,
+    containerStyle,
+    baseStyle,
     style,
 }: VirtualJoystickProps) {
+    // Handle deprecated style prop
+    const effectiveContainerStyle = containerStyle ?? style;
     const [isActive, setIsActive] = useState(false);
     const [origin, setOrigin] = useState({ x: 0, y: 0 });
     const [knobPos, setKnobPos] = useState({ x: 0, y: 0 });
@@ -83,7 +91,7 @@ export function VirtualJoystick({
         onEnd?.();
     }, [onMove, onEnd]);
 
-    const baseStyle: React.CSSProperties = {
+    const joystickBaseStyle: React.CSSProperties = {
         width: size,
         height: size,
         borderRadius: '50%',
@@ -95,7 +103,7 @@ export function VirtualJoystick({
         pointerEvents: 'none',
         display: isActive ? 'block' : 'none',
         zIndex: 1000,
-        ...style,
+        ...baseStyle,
     };
 
     const knobStyle: React.CSSProperties = {
@@ -122,7 +130,7 @@ export function VirtualJoystick({
                     height: '100%',
                     zIndex: 999,
                     touchAction: 'none',
-                    ...style,
+                    ...effectiveContainerStyle,
                 }}
                 onTouchStart={handleStart}
                 onTouchMove={handleMove}
@@ -132,7 +140,7 @@ export function VirtualJoystick({
                 onMouseUp={handleEnd}
                 onMouseLeave={handleEnd}
             />
-            <div style={baseStyle}>
+            <div style={joystickBaseStyle}>
                 <div style={knobStyle} />
             </div>
         </>

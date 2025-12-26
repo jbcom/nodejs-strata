@@ -14,9 +14,9 @@ Generated: 2025-12-26
 
 | # | Title | Status | Notes |
 |---|-------|--------|-------|
-| 89 | Extract presets and shaders to standalone packages | Open | See PACKAGE_DECOMPOSITION.md |
-| 86 | Rename conflicting core exports | Open | ParticleEmitter, CameraShake, WeatherSystem |
-| 85 | Remove type re-exports from presets modules | Open | ✅ Partially addressed in this PR |
+| 89 | Extract presets and shaders to standalone packages | In Progress | Repos exist, need package renames |
+| 86 | Rename conflicting core exports | ✅ Complete | ParticleEmitter→Core, CameraShake→Core, WeatherSystem→Core |
+| 85 | Remove type re-exports from presets modules | ✅ Complete | Deprecation notices added |
 
 ### Medium Priority - Documentation
 
@@ -40,11 +40,11 @@ Generated: 2025-12-26
 
 ```
 #101 EPIC: Strata Game Studio
-├── #89 Extract presets/shaders
-│   ├── #85 Remove type re-exports ✅ (in progress)
-│   └── #86 Rename conflicting exports
-├── #87 Migration Guide
-│   └── Depends on #85, #86
+├── #89 Extract presets/shaders (in progress)
+│   ├── #85 Remove type re-exports ✅ COMPLETE
+│   └── #86 Rename conflicting exports ✅ COMPLETE
+├── #87 Migration Guide (unblocked)
+│   └── Depends on #85 ✅, #86 ✅
 └── #62 JSDoc enhancement
 ```
 

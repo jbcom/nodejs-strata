@@ -61,9 +61,9 @@ jobs:
       improvement_needed: ${{ steps.summary.outputs.improvement_needed }}
 
     steps:
-      # actions/checkout v6.0.1
+
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -89,7 +89,7 @@ jobs:
             LANGUAGE="unknown"
           fi
           echo "language=$LANGUAGE" >> $GITHUB_OUTPUT
-          
+
           # Detect framework
           FRAMEWORK="none"
           if [ "$LANGUAGE" = "python" ]; then
@@ -114,12 +114,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO="${{ github.repository }}"
-          
+
           # Try to get coverage from Coveralls API
           echo "📊 Fetching coverage data from Coveralls..."
-          
+
           COVERALLS_DATA=$(curl -s "https://coveralls.io/github/${REPO}.json" 2>/dev/null || echo "{}")
-          
+
           # Extract coverage percentage
           COVERAGE_PCT=$(echo "$COVERALLS_DATA" | jq -r '.covered_percent // 0' | cut -d. -f1)
           if [ -z "$COVERAGE_PCT" ] || [ "$COVERAGE_PCT" = "null" ]; then
@@ -127,23 +127,23 @@ jobs:
           fi
           echo "percent=$COVERAGE_PCT" >> $GITHUB_OUTPUT
           echo "📈 Coveralls coverage: ${COVERAGE_PCT}%"
-          
+
           # Get list of files with low coverage from Coveralls
           # This gives us targeted information about what needs tests
           UNCOVERED_FILES=$(echo "$COVERALLS_DATA" | jq -r '
-            .source_files // [] | 
-            map(select(.covered_percent < 80)) | 
-            sort_by(.covered_percent) | 
-            .[0:10] | 
-            map(.name) | 
+            .source_files // [] |
+            map(select(.covered_percent < 80)) |
+            sort_by(.covered_percent) |
+            .[0:10] |
+            map(.name) |
             join(",")
           ' 2>/dev/null || echo "")
           echo "uncovered_files=$UNCOVERED_FILES" >> $GITHUB_OUTPUT
-          
+
           if [ -n "$UNCOVERED_FILES" ] && [ "$UNCOVERED_FILES" != "null" ]; then
             echo "📉 Low coverage files: $UNCOVERED_FILES"
           fi
-          
+
           # Determine if tests are needed
           if [ "$COVERAGE_PCT" -lt "${{ env.COVERAGE_TARGET }}" ]; then
             echo "needs_tests=true" >> $GITHUB_OUTPUT
@@ -158,13 +158,13 @@ jobs:
         run: |
           NEEDS_DOCS="false"
           LANGUAGE="${{ steps.detect.outputs.language }}"
-          
+
           # Check for README
           if [ ! -f "README.md" ]; then
             NEEDS_DOCS="true"
             echo "📝 Missing README.md"
           fi
-          
+
           # Check for missing docstrings/JSDoc
           case "$LANGUAGE" in
             python)
@@ -178,7 +178,7 @@ jobs:
               [ "$MISSING_DOCS" -gt 3 ] && NEEDS_DOCS="true"
               ;;
           esac
-          
+
           echo "needs_docs=$NEEDS_DOCS" >> $GITHUB_OUTPUT
 
       - name: Check security issues
@@ -186,7 +186,7 @@ jobs:
         run: |
           NEEDS_SECURITY="false"
           LANGUAGE="${{ steps.detect.outputs.language }}"
-          
+
           case "$LANGUAGE" in
             python)
               # Check for hardcoded secrets patterns
@@ -201,7 +201,7 @@ jobs:
               fi
               ;;
           esac
-          
+
           echo "needs_security=$NEEDS_SECURITY" >> $GITHUB_OUTPUT
 
       - name: Summarize analysis
@@ -211,9 +211,9 @@ jobs:
           NEEDS_DOCS="${{ steps.docs.outputs.needs_docs }}"
           NEEDS_SECURITY="${{ steps.security.outputs.needs_security }}"
           FOCUS="${{ inputs.focus || 'all' }}"
-          
+
           IMPROVEMENT_NEEDED="false"
-          
+
           case "$FOCUS" in
             all)
               [ "$NEEDS_TESTS" = "true" ] || [ "$NEEDS_DOCS" = "true" ] || [ "$NEEDS_SECURITY" = "true" ] && IMPROVEMENT_NEEDED="true"
@@ -231,9 +231,9 @@ jobs:
               IMPROVEMENT_NEEDED="true"
               ;;
           esac
-          
+
           echo "improvement_needed=$IMPROVEMENT_NEEDED" >> $GITHUB_OUTPUT
-          
+
           # Summary
           echo "## 📊 Analysis Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -260,9 +260,9 @@ jobs:
       commit_sha: ${{ steps.commit.outputs.sha }}
 
     steps:
-      # actions/checkout v6.0.1
+
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -271,7 +271,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
+
           # Check if nightly branch exists
           if git ls-remote --exit-code --heads origin "${{ env.NIGHTLY_BRANCH }}" >/dev/null 2>&1; then
             echo "📌 Updating existing nightly branch..."
@@ -291,7 +291,7 @@ jobs:
       - name: Setup language environment
         run: |
           LANGUAGE="${{ needs.analyze.outputs.language }}"
-          
+
           case "$LANGUAGE" in
             python)
               python3 -m pip install --upgrade pip
@@ -316,7 +316,7 @@ jobs:
         run: |
           LANGUAGE="${{ needs.analyze.outputs.language }}"
           echo "🧪 Improving test coverage for $LANGUAGE..."
-          
+
           # Use Coveralls data to target specific files
           if [ -n "$UNCOVERED_FILES" ] && [ "$UNCOVERED_FILES" != "null" ]; then
             echo "📊 Targeting files from Coveralls: $UNCOVERED_FILES"
@@ -325,11 +325,11 @@ jobs:
             # Fallback to discovering files without tests
             TARGET_FILES=""
           fi
-          
+
           case "$LANGUAGE" in
             python)
               mkdir -p tests
-              
+
               # Generate test stubs for low-coverage files
               if [ -n "$TARGET_FILES" ]; then
                 IFS=',' read -ra FILES <<< "$TARGET_FILES"
@@ -337,7 +337,7 @@ jobs:
                   if [ -f "$src" ]; then
                     module_name=$(basename "$src" .py)
                     test_file="tests/test_${module_name}.py"
-                    
+
                     if [ ! -f "$test_file" ] && [ "$module_name" != "__init__" ]; then
                       echo "Creating test for low-coverage file: $src"
                       printf '"""Tests for %s module.\n\nGenerated by nightly-improve workflow.\nCoveralls shows this file needs more coverage.\n"""\nimport pytest\n\n\nclass Test%s:\n    """Test cases for %s."""\n\n    def test_placeholder(self):\n        """Placeholder - implement actual tests."""\n        # TODO: Add tests to improve coverage\n        assert True\n' "$module_name" "${module_name^}" "$module_name" > "$test_file"
@@ -349,7 +349,7 @@ jobs:
                 for src in $(find . -name "*.py" -not -path "*/test*" -not -path "*/.venv/*" -not -name "conftest.py" -not -name "__init__.py" 2>/dev/null | head -10); do
                   module_name=$(basename "$src" .py)
                   test_file="tests/test_${module_name}.py"
-                  
+
                   if [ ! -f "$test_file" ]; then
                     echo "Creating test stub: $test_file"
                     printf '"""Tests for %s module.\n\nGenerated by nightly-improve workflow.\n"""\nimport pytest\n\n\nclass Test%s:\n    """Test cases for %s."""\n\n    def test_placeholder(self):\n        """Placeholder - implement actual tests."""\n        assert True\n' "$module_name" "${module_name^}" "$module_name" > "$test_file"
@@ -357,26 +357,26 @@ jobs:
                 done
               fi
               ;;
-              
+
             typescript|javascript)
               mkdir -p __tests__
-              
+
               for src in $(find src -name "*.ts" -o -name "*.tsx" 2>/dev/null | head -10); do
                 base_name=$(basename "$src" | sed 's/\.[^.]*$//')
                 test_file="__tests__/${base_name}.test.ts"
-                
+
                 if [ ! -f "$test_file" ]; then
                   echo "Creating test stub: $test_file"
                   printf '/**\n * Tests for %s\n * Generated by nightly-improve workflow.\n */\nimport { describe, it, expect } from '\''vitest'\'';\n\ndescribe('\''%s'\'', () => {\n  it('\''placeholder test'\'', () => {\n    expect(true).toBe(true);\n  });\n});\n' "$base_name" "$base_name" > "$test_file"
                 fi
               done
               ;;
-              
+
             go)
               for src in $(find . -name "*.go" -not -name "*_test.go" 2>/dev/null | head -10); do
                 test_file="${src%.go}_test.go"
                 pkg_name=$(head -1 "$src" | awk '{print $2}')
-                
+
                 if [ ! -f "$test_file" ] && [ -n "$pkg_name" ]; then
                   echo "Creating test stub: $test_file"
                   printf 'package %s\n\nimport "testing"\n\n// Generated by nightly-improve workflow\n\nfunc TestPlaceholder(t *testing.T) {\n\tt.Log("Placeholder test")\n}\n' "$pkg_name" > "$test_file"
@@ -390,11 +390,11 @@ jobs:
         if: needs.analyze.outputs.needs_docs == 'true' && (inputs.focus == 'all' || inputs.focus == 'docs')
         run: |
           echo "📝 Improving documentation..."
-          
+
           if [ ! -f "README.md" ]; then
             REPO_SHORT="${{ github.repository }}"
             REPO_SHORT="${REPO_SHORT#*/}"
-            
+
             printf '# %s\n\n> TODO: Add project description\n\n## Installation\n\n```bash\n# TODO: Add installation instructions\n```\n\n## Usage\n\n```bash\n# TODO: Add usage examples\n```\n\n## License\n\nSee [LICENSE](LICENSE) for details.\n' "$REPO_SHORT" > README.md
           fi
 
@@ -404,7 +404,7 @@ jobs:
         run: |
           LANGUAGE="${{ needs.analyze.outputs.language }}"
           echo "✨ Running code quality fixes..."
-          
+
           case "$LANGUAGE" in
             python)
               ruff check --fix . 2>/dev/null || true
@@ -425,7 +425,7 @@ jobs:
         run: |
           LANGUAGE="${{ needs.analyze.outputs.language }}"
           echo "🔒 Applying security improvements..."
-          
+
           case "$LANGUAGE" in
             typescript|javascript)
               npm audit fix 2>/dev/null || true
@@ -446,20 +446,20 @@ jobs:
             echo "ℹ️ No changes to commit"
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            
+
             git add -A
             git commit -m "chore: nightly improvements ($(date +%Y-%m-%d))
-            
+
             Automated improvements:
             - Language: ${{ needs.analyze.outputs.language }}
             - Coveralls coverage: ${{ needs.analyze.outputs.coverage_pct }}%
             - Focus: ${{ inputs.focus || 'all' }}
-            
+
             Run: ${{ github.run_id }}"
-            
+
             # Force push to update the fixed branch
             git push origin "${{ env.NIGHTLY_BRANCH }}" --force-with-lease || git push origin "${{ env.NIGHTLY_BRANCH }}" --force
-            
+
             echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
             echo "✅ Pushed to ${{ env.NIGHTLY_BRANCH }}"
           fi
@@ -474,9 +474,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # actions/checkout v6.0.1
+
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.NIGHTLY_BRANCH }}
           fetch-depth: 0
@@ -497,7 +497,7 @@ jobs:
         run: |
           # Check if PR already exists
           EXISTING_PR=$(gh pr list --head "${{ env.NIGHTLY_BRANCH }}" --json number -q '.[0].number' 2>/dev/null || echo "")
-          
+
           # Build PR body
           PR_BODY="## 🌙 Nightly Codebase Improvements
 
@@ -515,16 +515,16 @@ jobs:
           Coverage data sourced from [Coveralls](https://coveralls.io/github/${{ github.repository }}).
 
           ### ✅ Improvements Included"
-          
+
           [ "$NEEDS_TESTS" = "true" ] && PR_BODY="${PR_BODY}
           - 🧪 Test stubs for low-coverage modules"
-          
+
           [ "$NEEDS_DOCS" = "true" ] && PR_BODY="${PR_BODY}
           - 📝 Documentation improvements"
-          
+
           [ "$NEEDS_SECURITY" = "true" ] && PR_BODY="${PR_BODY}
           - 🔒 Security fixes"
-          
+
           PR_BODY="${PR_BODY}
           - ✨ Code quality fixes
 
@@ -542,23 +542,23 @@ jobs:
           ---
           *Last updated: $(date -u '+%Y-%m-%d %H:%M UTC')*
           *[View workflow run](${RUN_URL})*"
-          
+
           if [ -n "$EXISTING_PR" ]; then
             echo "📝 Updating existing PR #${EXISTING_PR}..."
             gh pr edit "$EXISTING_PR" --body "$PR_BODY"
-            
+
             # Add comment about the update
             gh pr comment "$EXISTING_PR" --body "🔄 **Nightly update** ($(date +%Y-%m-%d))
 
             New improvements have been pushed to this branch.
-            
+
             **Coverage:** ${COVERAGE}% (target: ${TARGET}%)
-            
+
             Please review the latest changes.
-            
+
             ---
             *[Workflow run](${RUN_URL})*"
-            
+
             echo "pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
             echo "✅ Updated PR #${EXISTING_PR}"
           else
@@ -569,7 +569,7 @@ jobs:
               --label "automated,nightly,improvements" \
               --base main \
               --head "${{ env.NIGHTLY_BRANCH }}")
-            
+
             PR_NUM=$(echo "$PR_URL" | grep -oE '[0-9]+$')
             echo "pr_number=$PR_NUM" >> $GITHUB_OUTPUT
             echo "✅ Created PR: $PR_URL"
@@ -580,14 +580,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUM="${{ steps.pr.outputs.pr_number }}"
-          
+
           if [ -n "$PR_NUM" ]; then
             echo "🤖 Requesting AI reviews..."
-            
+
             # Note: Ollama review triggers automatically on PR open/sync
             # But we can request a focused review if the PR was just updated
             gh pr comment "$PR_NUM" --body "/ollama-review Please review the latest nightly improvements" 2>/dev/null || true
-            
+
             # Request reviews from other AI assistants
             gh pr comment "$PR_NUM" --body "/gemini review" 2>/dev/null || true
             gh pr comment "$PR_NUM" --body "/q review" 2>/dev/null || true
@@ -598,7 +598,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_URL=$(gh pr view --json url -q '.url' 2>/dev/null || echo "")
-          
+
           echo "## 🎉 PR Ready for Review" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**URL:** $PR_URL" >> $GITHUB_STEP_SUMMARY

@@ -28,9 +28,9 @@ jobs:
       github.event_name == 'pull_request_review'
 
     steps:
-      # actions/checkout v6.0.1 (pinned for security)
+
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@v4
 
       - name: Check if auto-merge eligible
         id: check
@@ -52,15 +52,15 @@ jobs:
 
           # Get PR labels
           LABELS=$(gh pr view "$PR_NUMBER" --json labels -q '.labels[].name' 2>/dev/null || echo "")
-          
+
           # Check if this is a Dependabot PR
           if [[ "$PR_ACTOR" == "dependabot[bot]" ]]; then
             # Extract major versions from PR title
             FROM_MAJOR=$(echo "$PR_TITLE" | grep -oiE 'from [0-9]+' | head -1 | grep -oE '[0-9]+')
             TO_MAJOR=$(echo "$PR_TITLE" | grep -oiE 'to [0-9]+' | head -1 | grep -oE '[0-9]+')
-            
+
             echo "Detected versions: from=$FROM_MAJOR to=$TO_MAJOR"
-            
+
             if [[ -n "$FROM_MAJOR" && -n "$TO_MAJOR" && "$FROM_MAJOR" != "$TO_MAJOR" ]]; then
               REASON="Major version update ($FROM_MAJOR → $TO_MAJOR) requires manual review"
             elif [[ -n "$FROM_MAJOR" && -n "$TO_MAJOR" ]]; then
@@ -80,11 +80,11 @@ jobs:
           # Check if this is a nightly improvement PR
           if echo "$LABELS" | grep -q '^nightly$'; then
             echo "🌙 Nightly improvement PR detected"
-            
+
             # For nightly PRs, we need AI review approval
             # Check for approving reviews from AI bots or any approved review
             APPROVALS=$(gh pr reviews "$PR_NUMBER" --json author,state -q '[.[] | select(.state == "APPROVED")] | length' 2>/dev/null || echo "0")
-            
+
             if [[ "$APPROVALS" -gt 0 ]]; then
               ELIGIBLE="true"
               REASON="Nightly improvement PR with $APPROVALS approval(s)"
@@ -101,7 +101,7 @@ jobs:
 
           echo "eligible=$ELIGIBLE" >> $GITHUB_OUTPUT
           echo "reason=$REASON" >> $GITHUB_OUTPUT
-          
+
           if [[ "$ELIGIBLE" == "true" ]]; then
             echo "✅ Auto-merge eligible: $REASON"
           else
@@ -115,12 +115,12 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "Waiting for CI checks to complete..."
-          
+
           # Wait up to 10 minutes for checks
           MAX_WAIT=600
           WAIT_INTERVAL=30
           ELAPSED=0
-          
+
           while [[ $ELAPSED -lt $MAX_WAIT ]]; do
             # Get check status with error handling
             if ! RAW_STATUS=$(gh pr checks "$PR_NUMBER" --json state -q '.[].state' 2>&1); then
@@ -130,16 +130,16 @@ jobs:
               ELAPSED=$((ELAPSED + WAIT_INTERVAL))
               continue
             fi
-            
+
             STATUS=$(echo "$RAW_STATUS" | sort -u)
-            
+
             # Handle case where no CI checks are configured
             if [[ -z "$STATUS" ]]; then
               echo "ℹ️ No CI checks found for this PR"
               echo "⏸️ Skipping auto-merge - manual verification required"
               exit 1
             fi
-            
+
             # Check if any are still pending
             if echo "$STATUS" | grep -qE 'PENDING|IN_PROGRESS|QUEUED'; then
               echo "Checks still running... waiting ${WAIT_INTERVAL}s (${ELAPSED}s elapsed)"
@@ -153,7 +153,7 @@ jobs:
               break
             fi
           done
-          
+
           if [[ $ELAPSED -ge $MAX_WAIT ]]; then
             echo "⚠️ Timeout waiting for CI checks"
             exit 1
@@ -168,10 +168,10 @@ jobs:
         run: |
           echo "Enabling auto-merge for PR #$PR_NUMBER"
           echo "Reason: $REASON"
-          
+
           # Enable auto-merge with squash
           gh pr merge "$PR_NUMBER" --auto --squash --delete-branch
-          
+
           echo "✅ Auto-merge enabled"
 
       - name: Add comment

@@ -150,10 +150,8 @@ export const EffectStack: React.FC<EffectStackProps> = ({
 
     return (
         <EffectComposer multisampling={multisampling}>
-            <>
-                {effects}
-                {children}
-            </>
+            {effects}
+            {children}
         </EffectComposer>
     );
 };

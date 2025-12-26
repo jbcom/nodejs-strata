@@ -46,7 +46,7 @@ export const AnimatedBillboard = forwardRef<AnimatedBillboardRef, AnimatedBillbo
             opacity = 1,
             transparent = true,
             alphaTest = 0.1,
-            lockY = false,
+            lockY: _lockY = false,
             depthWrite = false,
             renderOrder = 0,
         },

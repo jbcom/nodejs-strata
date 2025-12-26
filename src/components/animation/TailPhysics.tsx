@@ -92,7 +92,7 @@ export const TailPhysics = forwardRef<TailPhysicsRef, TailPhysicsProps>(
         const segments = useMemo(() => {
             return Array.from({ length: segmentCount }, (_, i) => (
                 <object3D
-                    key={i}
+                    key={`segment-${i}-${segmentLength}`}
                     ref={(el) => {
                         if (el) segmentsRef.current[i] = el;
                     }}

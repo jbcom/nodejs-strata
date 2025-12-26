@@ -39,9 +39,10 @@ export function createVegetationMesh(options: VegetationOptions): THREE.Instance
         seed,
         geometry,
         material,
-        enableWind = true,
-        windStrength = 0.5,
-        lodDistance = 100,
+        // These options are available for future wind/LOD implementation
+        enableWind: _enableWind = true,
+        windStrength: _windStrength = 0.5,
+        lodDistance: _lodDistance = 100,
     } = options;
 
     // Input validation

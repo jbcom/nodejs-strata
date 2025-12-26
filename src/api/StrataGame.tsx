@@ -41,8 +41,8 @@ export function StrataGame({ game, loading, error: ErrorComponent, children }: S
 
     if (status === 'loading') return loading || <div>Loading...</div>;
     if (status === 'error') {
-        return ErrorComponent ? (
-            <ErrorComponent error={gameError!} />
+        return ErrorComponent && gameError ? (
+            <ErrorComponent error={gameError} />
         ) : (
             <div>Error: {gameError?.message}</div>
         );

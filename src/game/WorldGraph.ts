@@ -79,7 +79,12 @@ export function createWorldGraph(definition: WorldGraphDefinition): WorldGraph {
             handlers.get(event)?.add(handler);
         },
         emit: (event: string, ...args: any[]) => {
-            handlers.get(event)?.forEach((h) => h(...args));
+            const eventHandlers = handlers.get(event);
+            if (eventHandlers) {
+                for (const h of eventHandlers) {
+                    h(...args);
+                }
+            }
         },
     };
 }

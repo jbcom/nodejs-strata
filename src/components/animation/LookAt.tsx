@@ -26,7 +26,12 @@ export const LookAt = forwardRef<LookAtRef, LookAtProps>(({ target, config, chil
     const controller = useMemo(() => new LookAtController(config), [config]);
 
     useImperativeHandle(ref, () => ({
-        getRotation: () => controller.update(groupRef.current!, new THREE.Vector3(), 0),
+        getRotation: () => {
+            if (!groupRef.current) {
+                return new THREE.Quaternion();
+            }
+            return controller.update(groupRef.current, new THREE.Vector3(), 0);
+        },
         reset: () => controller.reset(),
     }));
 

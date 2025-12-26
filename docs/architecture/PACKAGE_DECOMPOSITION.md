@@ -14,14 +14,14 @@ This document outlines the strategy for decomposing the Strata library into modu
 
 ## Organization Structure
 
-All packages live under the `strata` GitHub organization:
+All packages live under the `strata-game-library` GitHub organization:
 
 | Package | Repository | npm Package |
 |---------|------------|-------------|
-| Core | `strata/core` | `@strata/core` |
-| Shaders | `strata/shaders` | `@strata/shaders` |
-| Presets | `strata/presets` | `@strata/presets` |
-| Examples | `strata/examples` | (not published) |
+| Core | `strata-game-library/core` | `@strata/core` |
+| Shaders | `strata-game-library/shaders` | `@strata/shaders` |
+| Presets | `strata-game-library/presets` | `@strata/presets` |
+| Examples | `strata-game-library/examples` | (not published) |
 
 ## Package Architecture
 
@@ -49,7 +49,7 @@ The main package remains the primary entry point, containing:
 
 ### Optional Package: `@strata/shaders`
 
-**Repository:** `strata/shaders`
+**Repository:** `strata-game-library/shaders`
 
 Pure GLSL shader strings with zero dependencies on strata core.
 
@@ -172,12 +172,12 @@ if (optionalPresets) {
 
 ### Phase 2: Create Companion Repositories
 
-1. [ ] Create `strata/shaders` repository
+1. [ ] Create `strata-game-library/shaders` repository
    - Copy `src/shaders/` contents
    - Create independent package.json with zero dependencies
    - Set up CI/CD for independent releases
 
-2. [ ] Create `strata/presets` repository
+2. [ ] Create `strata-game-library/presets` repository
    - Copy `src/presets/` contents
    - Create package.json with `@strata/core` peer dependency
    - Set up CI/CD for independent releases

@@ -77,8 +77,8 @@ The type re-exports have been addressed:
 **Blocks:** Nothing
 
 **Action Plan:**
-1. Create `strata/shaders` repository
-2. Create `strata/presets` repository
+1. Create `strata-game-library/shaders` repository
+2. Create `strata-game-library/presets` repository
 3. Implement transparent folding mechanism
 4. Update documentation
 
@@ -142,14 +142,14 @@ The type re-exports have been addressed:
 
 ## Strata Organization Structure
 
-The `strata` GitHub organization will host all Strata packages:
+The `strata-game-library` GitHub organization hosts all Strata packages:
 
 | Repository | Purpose | npm Package |
 |------------|---------|-------------|
-| `strata/core` | Main library | `@strata/core` |
-| `strata/shaders` | GLSL shaders | `@strata/shaders` |
-| `strata/presets` | Pre-configured presets | `@strata/presets` |
-| `strata/examples` | Example projects | (not published) |
+| `strata-game-library/core` | Main library | `@strata/core` |
+| `strata-game-library/shaders` | GLSL shaders | `@strata/shaders` |
+| `strata-game-library/presets` | Pre-configured presets | `@strata/presets` |
+| `strata-game-library/examples` | Example projects | (not published) |
 
 **Migration:** `@jbcom/strata` → `@strata/core` (v2.0)
 

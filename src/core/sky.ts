@@ -171,9 +171,9 @@ export function createSkyMaterial(options: SkyMaterialOptions): THREE.ShaderMate
     if (
         timeOfDay &&
         timeOfDay.sunAngle !== undefined &&
-        (timeOfDay.sunAngle < 0 || timeOfDay.sunAngle > 180)
+        (timeOfDay.sunAngle < -180 || timeOfDay.sunAngle > 360)
     ) {
-        throw new Error('createSkyMaterial: sunAngle must be between 0 and 180');
+        throw new Error('createSkyMaterial: sunAngle must be between -180 and 360');
     }
 
     const defaultTimeOfDay: TimeOfDayState = {

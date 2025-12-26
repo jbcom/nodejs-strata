@@ -6,7 +6,7 @@
  */
 
 import * as THREE from 'three';
-import { createFurSystem, type FurOptions } from '../fur';
+import { createFurSystem, updateFurUniforms, type FurOptions } from '../fur';
 
 export interface CharacterJoint {
     group: THREE.Group;
@@ -267,4 +267,11 @@ export function animateCharacter(
             );
         }
     }
+
+    // Update fur uniforms for all furry parts
+    Object.values(joints).forEach((joint) => {
+        if (joint?.mesh) {
+            updateFurUniforms(joint.mesh as unknown as THREE.Group, time);
+        }
+    });
 }

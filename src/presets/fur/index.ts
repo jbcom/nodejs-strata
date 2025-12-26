@@ -8,6 +8,11 @@
 import * as THREE from 'three';
 import { furFragmentShader, furVertexShader } from './shaders';
 
+/**
+ * Key used in THREE.Group.userData to identify a fur system group.
+ */
+export const FUR_GROUP_USER_DATA_KEY = 'isFurGroup';
+
 export interface FurOptions {
     baseColor?: THREE.ColorRepresentation;
     tipColor?: THREE.ColorRepresentation;
@@ -83,7 +88,7 @@ export function createFurSystem(
 
     const group = new THREE.Group();
     // Mark as fur group for detection
-    group.userData.isFurGroup = true;
+    group.userData[FUR_GROUP_USER_DATA_KEY] = true;
 
     // Base mesh
     const baseMesh = new THREE.Mesh(geometry, baseMaterial);

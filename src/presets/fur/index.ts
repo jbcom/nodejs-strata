@@ -82,6 +82,8 @@ export function createFurSystem(
     }
 
     const group = new THREE.Group();
+    // Mark as fur group for detection
+    group.userData.isFurGroup = true;
 
     // Base mesh
     const baseMesh = new THREE.Mesh(geometry, baseMaterial);

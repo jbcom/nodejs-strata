@@ -1,4 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
+import type React from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 export interface VirtualJoystickProps {
     /** Called when the joystick moves. Values are normalized between -1 and 1. */

@@ -31,6 +31,10 @@ export interface CharacterOptions {
     skinColor?: THREE.ColorRepresentation;
     furOptions?: FurOptions;
     scale?: number;
+    /** Whether to include a muzzle/snout on the head. Default: true */
+    includeMuzzle?: boolean;
+    /** Whether to include a tail. Default: true */
+    includeTail?: boolean;
 }
 
 export interface CharacterState {
@@ -49,7 +53,13 @@ export function createCharacter(options: CharacterOptions = {}): {
     joints: CharacterJoints;
     state: CharacterState;
 } {
-    const { skinColor = 0x3e2723, furOptions = {}, scale = 1.0 } = options;
+    const {
+        skinColor = 0x3e2723,
+        furOptions = {},
+        scale = 1.0,
+        includeMuzzle = true,
+        includeTail = true,
+    } = options;
 
     const root = new THREE.Group();
     const joints: CharacterJoints = {};
@@ -109,20 +119,22 @@ export function createCharacter(options: CharacterOptions = {}): {
     joints.head.mesh = headMesh;
 
     // Muzzle & Eyes (Detail)
-    const muzzle = new THREE.Mesh(
-        new THREE.SphereGeometry(0.15 * scale, 16, 16),
-        new THREE.MeshStandardMaterial({ color: 0x5d4037 })
-    );
-    muzzle.position.set(0, -0.05 * scale, 0.2 * scale);
-    muzzle.scale.set(1, 0.8, 1.2);
-    headMesh.add(muzzle);
+    if (includeMuzzle) {
+        const muzzle = new THREE.Mesh(
+            new THREE.SphereGeometry(0.15 * scale, 16, 16),
+            new THREE.MeshStandardMaterial({ color: 0x5d4037 })
+        );
+        muzzle.position.set(0, -0.05 * scale, 0.2 * scale);
+        muzzle.scale.set(1, 0.8, 1.2);
+        headMesh.add(muzzle);
 
-    const nose = new THREE.Mesh(
-        new THREE.SphereGeometry(0.05 * scale),
-        new THREE.MeshBasicMaterial({ color: 0x111 })
-    );
-    nose.position.set(0, 0, 0.25 * scale);
-    muzzle.add(nose);
+        const nose = new THREE.Mesh(
+            new THREE.SphereGeometry(0.05 * scale),
+            new THREE.MeshBasicMaterial({ color: 0x111 })
+        );
+        nose.position.set(0, 0, 0.25 * scale);
+        muzzle.add(nose);
+    }
 
     // LEGS
     const legGeo = new THREE.CapsuleGeometry(0.12 * scale, 0.4 * scale, 4, 8);
@@ -165,14 +177,16 @@ export function createCharacter(options: CharacterOptions = {}): {
     joints.armR.mesh = armRMesh;
 
     // TAIL
-    const tail = new THREE.Group();
-    tail.position.set(0, 0, -0.3 * scale);
-    hips.add(tail);
-    joints.tail = { group: tail };
-    const tailMesh = createFurryPart(new THREE.ConeGeometry(0.15 * scale, 0.8 * scale, 8), tail);
-    tailMesh.rotation.x = -1.2;
-    tailMesh.position.y = -0.2 * scale;
-    joints.tail.mesh = tailMesh;
+    if (includeTail) {
+        const tail = new THREE.Group();
+        tail.position.set(0, 0, -0.3 * scale);
+        hips.add(tail);
+        joints.tail = { group: tail };
+        const tailMesh = createFurryPart(new THREE.ConeGeometry(0.15 * scale, 0.8 * scale, 8), tail);
+        tailMesh.rotation.x = -1.2;
+        tailMesh.position.y = -0.2 * scale;
+        joints.tail.mesh = tailMesh;
+    }
 
     // Store default positions/rotations
     Object.values(joints).forEach((joint) => {

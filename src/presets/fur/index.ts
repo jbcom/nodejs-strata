@@ -106,19 +106,35 @@ export function createFurSystem(
 }
 
 /**
- * Update fur uniforms for animation
+ * Update fur uniforms for animation.
+ *
+ * Automatically detects fur meshes within the provided group and updates their
+ * time-based uniforms for wind and movement effects.
+ *
+ * @param furSystem - The group containing fur shells (returned by createFurSystem)
+ * @param time - Current animation time in seconds
  */
 export function updateFurUniforms(furSystem: THREE.Group, time: number): void {
     if (!furSystem) {
         throw new Error('updateFurUniforms: furSystem is required');
     }
 
-    furSystem.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.material instanceof THREE.ShaderMaterial) {
-            const uniforms = child.material.uniforms;
-            if (uniforms?.time) {
-                uniforms.time.value = time;
+    // Optimization: Cache fur materials on the group to avoid traversal
+    let furMaterials = furSystem.userData.cachedFurMaterials;
+
+    if (!furMaterials) {
+        furMaterials = [];
+        furSystem.traverse((child) => {
+            if (child instanceof THREE.Mesh && child.material instanceof THREE.ShaderMaterial) {
+                if (child.material.uniforms?.time) {
+                    furMaterials.push(child.material);
+                }
             }
-        }
-    });
+        });
+        furSystem.userData.cachedFurMaterials = furMaterials;
+    }
+
+    for (let i = 0; i < furMaterials.length; i++) {
+        furMaterials[i].uniforms.time.value = time;
+    }
 }
